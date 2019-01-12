@@ -33,7 +33,12 @@ getopts_long() {
         unset OPTARG
     else
         # Invalid option
-        [[ "${optspec_short:0:1}" == ':' ]] && OPTARG="${!optvar}" || unset OPTARG
+        if [[ "${optspec_short:0:1}" == ':' ]]; then
+            OPTARG="${!optvar}"
+        else
+            echo "${0}: illegal option -- ${!optvar}" >&2
+            unset OPTARG
+        fi
         printf -v ${optvar} '?'
     fi
 }
