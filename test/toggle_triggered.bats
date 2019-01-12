@@ -3,11 +3,11 @@
 load test_helper
 
 @test "${FEATURE}: short option, verbose" {
-    run "getopts-${BATS_TEST_DESCRIPTION##* }" -t
+    run getopts-${BATS_TEST_DESCRIPTION##* } -t
     local expected_output="${output}"
     local expected_status=${status}
 
-    run "getopts_long-${BATS_TEST_DESCRIPTION##* }" -t
+    run getopts_long-${BATS_TEST_DESCRIPTION##* } -t
     local actual_output="${output}"
     local actual_status=${status}
 
@@ -16,11 +16,11 @@ load test_helper
 }
 
 @test "${FEATURE}: short option, silent" {
-    run "getopts-${BATS_TEST_DESCRIPTION##* }" -t
+    run getopts-${BATS_TEST_DESCRIPTION##* } -t
     local expected_output="${output}"
     local expected_status=${status}
 
-    run "getopts_long-${BATS_TEST_DESCRIPTION##* }" -t
+    run getopts_long-${BATS_TEST_DESCRIPTION##* } -t
     local actual_output="${output}"
     local actual_status=${status}
 
@@ -29,11 +29,11 @@ load test_helper
 }
 
 @test "${FEATURE}: long option, verbose" {
-    run "getopts-${BATS_TEST_DESCRIPTION##* }" -t
+    run getopts-${BATS_TEST_DESCRIPTION##* } -t
     local expected_output="${output}"
     local expected_status=${status}
 
-    run "getopts_long-${BATS_TEST_DESCRIPTION##* }" --toggle
+    run getopts_long-${BATS_TEST_DESCRIPTION##* } --toggle
     local actual_output="${output}"
     local actual_status=${status}
 
@@ -43,11 +43,11 @@ load test_helper
 }
 
 @test "${FEATURE}: long option, silent" {
-    run "getopts-${BATS_TEST_DESCRIPTION##* }" -t
+    run getopts-${BATS_TEST_DESCRIPTION##* } -t
     local expected_output="${output}"
     local expected_status=${status}
 
-    run "getopts_long-${BATS_TEST_DESCRIPTION##* }" --toggle
+    run getopts_long-${BATS_TEST_DESCRIPTION##* } --toggle
     local actual_output="${output}"
     local actual_status=${status}
 
