@@ -120,24 +120,24 @@ load test_helper
 
 # option without an argument
 
-@test "${FEATURE}: short option with no value, silent" {
+@test "${FEATURE}: short option, missing value, silent" {
     run_tests   '-o' \
                 '-o'
 }
-@test "${FEATURE}: short option with no value, verbose" {
+@test "${FEATURE}: short option, missing value, verbose" {
     run_tests   '-o' \
                 '-o' \
                 's/getopts_long-verbose/getopts-verbose/g'
 }
 
-@test "${FEATURE}: long option with no value, silent" {
+@test "${FEATURE}: long option, missing value, silent" {
     run_tests   '-o' \
                 '--option' \
                 '/^MISSING ARGUMENT -- /d'
     test "${expected_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=o'
     test "${actual_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=option'
 }
-@test "${FEATURE}: long option with no value, verbose" {
+@test "${FEATURE}: long option, missing value, verbose" {
     run_tests   '-o' \
                 '--option' \
                 's/getopts_long-verbose: (.*) option$/getopts-verbose: \1 o/g'
