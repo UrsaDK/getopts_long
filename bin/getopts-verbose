@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
-while getopts "ta:v:" OPTKEY; do
+while getopts "to:v:" OPTKEY; do
     case ${OPTKEY} in
         't')
             printf 'toggle triggered'
             ;;
-        'a')
-            printf 'argument supplied'
+        'o')
+            printf 'option supplied'
             ;;
         'v')
-            printf 'value supplied'
+            printf 'variable supplied'
             ;;
         '?')
             printf "INVALID OPTION or MISSING ARGUMENT"

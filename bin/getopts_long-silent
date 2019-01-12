@@ -2,16 +2,16 @@
 
 source "$(git rev-parse --show-toplevel)/lib/getopts_long.bash"
 
-while getopts_long ':ta:v: toggle arg: value:' OPTKEY "${@}"; do
+while getopts_long ':to:v: toggle option: variable:' OPTKEY "${@}"; do
     case ${OPTKEY} in
         't'|'toggle')
             printf 'toggle triggered'
             ;;
-        'a'|'arg')
-            printf 'argument supplied'
+        'o'|'option')
+            printf 'option supplied'
             ;;
-        'v'|'value')
-            printf 'value supplied'
+        'v'|'variable')
+            printf 'variable supplied'
             ;;
         '?')
             printf "INVALID OPTION"
