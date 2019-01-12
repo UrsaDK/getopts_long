@@ -141,3 +141,28 @@ load test_helper
                 '/^\$@: /d'
     test "${actual_lines[4]}" == '$@: --variable=user_val user_arg'
 }
+
+# variable without an argument
+
+@test "${FEATURE}: short option with no value, silent" {
+    run_tests   '-v' \
+                '-v'
+}
+@test "${FEATURE}: short option with no value, verbose" {
+    run_tests   '-v' \
+                '-v' \
+                's/getopts_long-verbose/getopts-verbose/g'
+}
+
+@test "${FEATURE}: long option with no value, silent" {
+    run_tests   '-v' \
+                '--variable' \
+                '/^MISSING ARGUMENT -- /d'
+    test "${expected_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=v'
+    test "${actual_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=variable'
+}
+@test "${FEATURE}: long option with no value, verbose" {
+    run_tests   '-v' \
+                '--variable' \
+                's/getopts_long-verbose: (.*) variable$/getopts-verbose: \1 v/g'
+}

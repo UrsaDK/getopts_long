@@ -25,8 +25,8 @@ getopts_long() {
             if [[ "${optspec_short:0:1}" == ':' ]]; then
                 OPTARG="${!optvar}" && printf -v "${optvar}" ':'
             else
-                unset OPTARG && printf -v "${optvar}" ':'
-                echo "${1:?Missing required parameter -- error message}" >&2
+                echo "${0}: option requires an argument -- ${!optvar}" >&2
+                unset OPTARG && printf -v "${optvar}" '?'
             fi
         fi
     elif [[ "${optspec_long}" =~ (^|[[:space:]])${!optvar}([[:space:]]|$) ]]; then

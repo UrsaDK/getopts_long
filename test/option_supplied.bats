@@ -117,3 +117,28 @@ load test_helper
                 '/^\$@: /d'
     test "${actual_lines[4]}" == '$@: --option user_val user_arg'
 }
+
+# option without an argument
+
+@test "${FEATURE}: short option with no value, silent" {
+    run_tests   '-o' \
+                '-o'
+}
+@test "${FEATURE}: short option with no value, verbose" {
+    run_tests   '-o' \
+                '-o' \
+                's/getopts_long-verbose/getopts-verbose/g'
+}
+
+@test "${FEATURE}: long option with no value, silent" {
+    run_tests   '-o' \
+                '--option' \
+                '/^MISSING ARGUMENT -- /d'
+    test "${expected_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=o'
+    test "${actual_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=option'
+}
+@test "${FEATURE}: long option with no value, verbose" {
+    run_tests   '-o' \
+                '--option' \
+                's/getopts_long-verbose: (.*) option$/getopts-verbose: \1 o/g'
+}
