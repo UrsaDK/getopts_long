@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+source "$(git rev-parse --show-toplevel)/lib/getopts_long.bash"
+
+while getopts_long 'ta:v: toggle arg: value:' OPTKEY "${@}"; do
+    case ${OPTKEY} in
+        't'|'toggle')
+            printf 'toggle triggered'
+            ;;
+        'a'|'arg')
+            printf 'argument supplied'
+            ;;
+        'v'|'value')
+            printf 'value supplied'
+            ;;
+        '?')
+            printf "INVALID OPTION or MISSING ARGUMENT"
+            ;;
+        *)
+            printf "NEVER REACHED"
+            ;;
+    esac
+    printf ' -- '
+    [[ -z "${OPTARG+SET}" ]] && echo 'OPTARG is unset' || echo "OPTARG=${OPTARG}"
+done
+
+shift $(( OPTIND - 1 ))
+[[ "${1}" == "--" ]] && shift
+
+echo "OPTERR: ${OPTERR}"
+echo "OPTKEY: ${OPTKEY}"
+echo "OPTARG: ${OPTARG}"
+echo "OPTIND: ${OPTIND}"
+echo "\$@: ${@}"

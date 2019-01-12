@@ -1,5 +1,10 @@
-: ${GIT_TOPLEVEL_DIR:="$(git rev-parse --show-toplevel)"}
-: ${GIT_TEST_DIR:="${GIT_TOPLEVEL_DIR}/test"}
+PATH="$(git rev-parse --show-toplevel)/bin:${PATH}"
+FEATURE="$(basename "${BATS_TEST_FILENAME}" '.bats' | tr '_' ' ')"
 
-: ${TEST_BIN:="${GIT_TOPLEVEL_DIR}/bin/example.sh"}
-: ${TEST_CMD:="${EXAMPLE_BIN##*/}"}
+show_output() {
+    printf '\nEXPECTED:\n--------\n%s\n$?: %i\n' \
+        "${expected_output}" ${expected_status} >&3
+
+    printf '\nACTUAL:\n------\n%s\n$?: %i\n\n' \
+        "${actual_output}" ${actual_status} >&3
+}
