@@ -5,7 +5,7 @@
 
 <br>
 
-# Getopts_long
+# getopts_long
 
 This is a pure BASH implementation of `getopts_long` function, which expands on bash built-in `getopts` by implementing support for GNU style long options, such as `--option`, `--option value`, and `--option=value`.
 
@@ -153,5 +153,5 @@ In order to run the tests you need to have [Bash Automated Testing System (BATS)
 Once `bats` is installed, `getopts_long` test suit can be run simply be executing the following command in the top directory of this repo:
 
 ```
-bats tests
+bats test
 ```
