@@ -61,6 +61,41 @@ the function will recognise the following options:
 
 If the very first character of the optspec-string is a `:` (colon), which would normally be nonsense because there's no option letter preceding it, `getopts_long` switches to "silent error reporting mode". In productive scripts, this is usually what you want because it allows you to handle errors yourself without being disturbed by annoying messages.
 
+### Usage example
+
+The following is a simple example of using the function in a script:
+
+``` bash
+OPTSPEC=':af: all file:'
+while getopts_long "${OPTSPEC}" 'OPTKEY' "${@}"; do
+    case ${OPTKEY} in
+        'a'|'all')
+            echo 'all triggered'
+            ;;
+        'f'|'file')
+            echo "file supplied -- ${OPTARG}"
+            ;;
+        '?')
+            [[ "${OPTSPEC:0:1}" == ':' ]] \
+                && echo "INVALID OPTION -- ${OPTARG}" >&2
+                || echo "INVALID OPTION or MISSING ARGUMENT" >&2
+            exit 1
+            ;;
+        ':')
+            echo "MISSING ARGUMENT for option -- ${OPTARG}" >&2
+            exit 1
+            ;;
+        *)
+            echo "Misconfigured OPTSPEC or uncaught option -- ${OPTKEY}" >&2
+            exit 1
+            ;;
+    esac
+done
+
+shift $(( OPTIND - 1 ))
+[[ "${1}" == "--" ]] && shift
+```
+
 ## How it works
 
 In general the use of `getopts_long` is identical to that of BASH built-in `getopts`: you need to call `getopts_long` several times. Each time it will use the next positional parameter and a possible argument, if parsable, and provide it to you. The function will not change the set of positional parameters. If you want to shift them, it must be done manually:
