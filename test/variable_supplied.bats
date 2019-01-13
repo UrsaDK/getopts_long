@@ -166,3 +166,55 @@ load test_helper
                 '--variable' \
                 's/getopts_long-verbose: (.*) variable$/getopts-verbose: \1 v/g'
 }
+
+# option with a value that start with a dash
+
+@test "${FEATURE}: short option, value starts with -, silent" {
+    run_tests   '-v -user_val' \
+                '-v -user_val'
+}
+@test "${FEATURE}: short option, value starts with -, verbose" {
+    run_tests   '-v -user_val' \
+                '-v -user_val'
+}
+
+@test "${FEATURE}: long option, value starts with -, silent" {
+    run_tests   '-v -user_val' \
+                '--variable=-user_val' \
+                '/^OPTIND: /d'
+    test "${expected_lines[4]}" == 'OPTIND: 3'
+    test "${actual_lines[4]}" == 'OPTIND: 2'
+}
+@test "${FEATURE}: long option, value starts with -, verbose" {
+    run_tests   '-v -user_val' \
+                '--variable=-user_val' \
+                '/^OPTIND: /d'
+    test "${expected_lines[4]}" == 'OPTIND: 3'
+    test "${actual_lines[4]}" == 'OPTIND: 2'
+}
+
+# option with a value that start with an equals sign
+
+@test "${FEATURE}: short option, value starts with =, silent" {
+    run_tests   '-v =user_val' \
+                '-v =user_val'
+}
+@test "${FEATURE}: short option, value starts with =, verbose" {
+    run_tests   '-v =user_val' \
+                '-v =user_val'
+}
+
+@test "${FEATURE}: long option, value starts with =, silent" {
+    run_tests   '-v =user_val' \
+                '--variable==user_val' \
+                '/^OPTIND: /d'
+    test "${expected_lines[4]}" == 'OPTIND: 3'
+    test "${actual_lines[4]}" == 'OPTIND: 2'
+}
+@test "${FEATURE}: long option, value starts with =, verbose" {
+    run_tests   '-v =user_val' \
+                '--variable==user_val' \
+                '/^OPTIND: /d'
+    test "${expected_lines[4]}" == 'OPTIND: 3'
+    test "${actual_lines[4]}" == 'OPTIND: 2'
+}

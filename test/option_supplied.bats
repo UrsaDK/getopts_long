@@ -142,3 +142,43 @@ load test_helper
                 '--option' \
                 's/getopts_long-verbose: (.*) option$/getopts-verbose: \1 o/g'
 }
+
+# option with a value that start with a dash
+
+@test "${FEATURE}: short option, value starts with -, silent" {
+    run_tests   '-o -user_val' \
+                '-o -user_val'
+}
+@test "${FEATURE}: short option, value starts with -, verbose" {
+    run_tests   '-o -user_val' \
+                '-o -user_val'
+}
+
+@test "${FEATURE}: long option, value starts with -, silent" {
+    run_tests   '-o -user_val' \
+                '--option -user_val'
+}
+@test "${FEATURE}: long option, value starts with -, verbose" {
+    run_tests   '-o -user_val' \
+                '--option -user_val'
+}
+
+# option with a value that start with an equals sign
+
+@test "${FEATURE}: short option, value starts with =, silent" {
+    run_tests   '-o =user_val' \
+                '-o =user_val'
+}
+@test "${FEATURE}: short option, value starts with =, verbose" {
+    run_tests   '-o =user_val' \
+                '-o =user_val'
+}
+
+@test "${FEATURE}: long option, value starts with =, silent" {
+    run_tests   '-o =user_val' \
+                '--option =user_val'
+}
+@test "${FEATURE}: long option, value starts with =, verbose" {
+    run_tests   '-o =user_val' \
+                '--option =user_val'
+}
