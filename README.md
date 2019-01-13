@@ -11,13 +11,15 @@ This is a pure BASH implementation of `getopts_long` function, which expands on 
 
 Getopts_long interface is 100% compatible with the explicit use of the shell uilt-in `getopts`. The function is implemented with no external dependencies, and relies solely on BASH built-in tools to provide all of its functionality.
 
-To use it, you can either check out this repository and source the `./lib/getopts_long.bash` file in your script, like so:
+To use `getopts_long` you can:
 
-```
-source "${PATH_TO_THIS_REPO}/lib/getopts_long.bash"
-```
+- check out this repository and source the `./lib/getopts_long.bash` file from within your script, eg:
 
-or simply cut-n-paste the function into your script.
+  ```
+  source "${PATH_TO_THIS_REPO}/lib/getopts_long.bash"
+  ```
+
+- or simply cut-n-paste the content of `./lib/getopts_long.bash` directly into your script.
 
 **NOTE:** `getopts_long` does not support the implicit syntax of the built-in `getopts`. Where the later function can be used with only two parameters (optspec & variable name), while omitting the list of arguments to process, `getopts_long` requires you to explicitly list the arguments.
 
