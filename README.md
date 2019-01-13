@@ -1,4 +1,4 @@
-<img src="https://umka.dk/getopts_logo/logo.png" alt="getopts_long" align="left" height="70">
+<img src="https://umka.dk/getopts_long/logo.png" alt="getopts_long" align="left" height="70">
 
 **Version:** 1.0.0 <br>
 **Status:** Fully functional
