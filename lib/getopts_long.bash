@@ -25,7 +25,8 @@ getopts_long() {
             if [[ "${optspec_short:0:1}" == ':' ]]; then
                 OPTARG="${!optvar}" && printf -v "${optvar}" ':'
             else
-                echo "${0}: option requires an argument -- ${!optvar}" >&2
+                [[ "${OPTERR}" == 0 ]] || \
+                    echo "${0}: option requires an argument -- ${!optvar}" >&2
                 unset OPTARG && printf -v "${optvar}" '?'
             fi
         fi
@@ -36,7 +37,7 @@ getopts_long() {
         if [[ "${optspec_short:0:1}" == ':' ]]; then
             OPTARG="${!optvar}"
         else
-            echo "${0}: illegal option -- ${!optvar}" >&2
+            [[ "${OPTERR}" == 0 ]] || echo "${0}: illegal option -- ${!optvar}" >&2
             unset OPTARG
         fi
         printf -v ${optvar} '?'
