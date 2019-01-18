@@ -68,8 +68,7 @@ If the very first character of the optspec-string is a `:` (colon), which would 
 The following is a simple example of using the function in a script:
 
 ``` bash
-OPTSPEC=':af: all file:'
-while getopts_long "${OPTSPEC}" 'OPTKEY' "${@}"; do
+while getopts_long ':af: all file:' 'OPTKEY' "${@}"; do
     case ${OPTKEY} in
         'a'|'all')
             echo 'all triggered'
@@ -78,9 +77,7 @@ while getopts_long "${OPTSPEC}" 'OPTKEY' "${@}"; do
             echo "file supplied -- ${OPTARG}"
             ;;
         '?')
-            [[ "${OPTSPEC:0:1}" == ':' ]] \
-                && echo "INVALID OPTION -- ${OPTARG}" >&2
-                || echo "INVALID OPTION or MISSING ARGUMENT" >&2
+            echo "INVALID OPTION -- ${OPTARG}" >&2
             exit 1
             ;;
         ':')
