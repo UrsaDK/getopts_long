@@ -8,7 +8,16 @@ getopts_long() {
 
     shift 2
 
-    getopts "${optspec_short}" "${optvar}" "${@}" || return 1
+    if [[ "${#}" == 0 ]]; then
+        local args=()
+        while [[ ${#BASH_ARGV[@]} -gt ${#args[@]} ]]; do
+            local index=$(( ${#BASH_ARGV[@]} - ${#args[@]} - 1 ))
+            args[${#args[@]}]="${BASH_ARGV[${index}]}"
+        done
+        set -- "${args[@]}"
+    fi
+
+    builtin getopts "${optspec_short}" "${optvar}" "${@}" || return 1
     [[ "${!optvar}" == '-' ]] || return 0
 
     printf -v "${optvar}" "${OPTARG%%=*}"
