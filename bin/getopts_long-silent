@@ -2,7 +2,7 @@
 
 source "$(git rev-parse --show-toplevel)/lib/getopts_long.bash"
 
-while getopts_long ':to:v: toggle option: variable:' OPTKEY "${@}"; do
+while getopts_long ':to:v: toggle option: variable:' OPTKEY; do
     case ${OPTKEY} in
         't'|'toggle')
             printf 'toggle triggered'
