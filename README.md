@@ -7,68 +7,59 @@
 
 # getopts_long
 
-This is a pure BASH implementation of `getopts_long` function, which expands on bash built-in `getopts` by implementing support for GNU style long options, such as `--option`, `--option value`, and `--option=value`.
+This is a pure BASH implementation of `getopts_long` function, which "upgrades" bash built-in `getopts` with support for GNU style long options, such as:
 
-Getopts_long interface is 100% compatible with the explicit use of the shell uilt-in `getopts`. The function is implemented with no external dependencies, and relies solely on BASH built-in tools to provide all of its functionality.
+  - `--option`
+  - `--option value`
+  - `--option=value`
 
-To use `getopts_long` you can:
-
-- check out this repository and source the `./lib/getopts_long.bash` file from within your script, eg:
-
-  ```
-  source "${PATH_TO_THIS_REPO}/lib/getopts_long.bash"
-  ```
-
-- or simply cut-n-paste the content of `./lib/getopts_long.bash` directly into your script.
-
-**NOTE:** `getopts_long` does not support the implicit syntax of the built-in `getopts`. Where the later function can be used with only two parameters (optspec & variable name), while omitting the list of arguments to process, `getopts_long` requires you to explicitly list the arguments.
+This function is 100% compatible with the built-in `getopts`. It is implemented with no external dependencies, and relies solely on BASH built-in tools to provide all of its functionality.
 
 ## Usage
 
-The base-syntax for `getopts` is the same as the explisit syntax for BASH built-in `getopts`:
+The syntax for `getopts_long` is the same as the syntax for the built-in `getopts`:
 
 ``` bash
-getopts_long OPTSPEC VARNAME ARGS...
+getopts_long OPTSPEC VARNAME [ARGS...]
 ```
 
 where:
 
 | name    | description |
 | ------- | ----------- |
-| OPTSPEC | a list of expected options and arguments |
-| VARNAME | a shell-variable to use for option reporting |
-| ARGS    | a list of arguments to parse, eg: `"${@}"` |
+| OPTSPEC | A list of expected options and arguments. |
+| VARNAME | A shell-variable to use for option reporting. |
+| ARGS    | an optional list of arguments to parse. If omitted then `getopts_long` will parse arguments supplied to the script. |
 
-### OPTSPEC: expected options and arguments
+### Extended OPTSPEC
 
-The OPTSPEC tells `getopts_long` which options to expect and which of them must have an argument. The syntax is very simple:
+An OPTSPEC string tells `getopts_long` which options to expect and which of them must have an argument. The syntax is very simple:
 
 - single-character options are named first (identical to the built-in `getopts`);
-- long options follow the single-character options, they are named as is and separated from each other by a space.
+- long options follow the single-character options, they are named as is and are separated from each other and the single-character options by a space.
 
 Just like with the original `getopts`, when you want `getopts_long` to expect an argument for an option, just place a `:` (colon) after the option.
 
-For example, given the following invocation:
-
-``` bash
-getopts_long 'af: all file:' OPTKEY "${@}"
-```
-
-the function will recognise the following options:
+For example, given `'af: all file:'` as the OPTSPEC string, `getopts_long` will recognise the following options:
 
 - `-a` - a single character (short) option with no argument;
 - `-f ARG` - a single character (short) option with an argument;
 - `--all` - a multi-character (long) option with no argument;
 - `--file ARG` - a multi-character (long) option with an argument.
 
-If the very first character of the optspec-string is a `:` (colon), which would normally be nonsense because there's no option letter preceding it, `getopts_long` switches to "silent error reporting mode". In productive scripts, this is usually what you want because it allows you to handle errors yourself without being disturbed by annoying messages.
+If the very first character of the optspec-string is a `:` (colon), which would normally be nonsense because there's no option letter preceding it, `getopts_long` switches to "silent error reporting mode" (See [Error Reporting](#error-reporting) for more info).
 
-### Usage example
+In production scripts, "silent mode" is usually what you want because it allows you to handle errors yourself without being distracted by default error messages. It's also easier to handle, since the failure cases are indicated by assigning distinct characters to `VARNAME`.
 
-The following is a simple example of using the function in a script:
+### Example script
+
+A good example is worth a thousand words, so here is an example of how you could use the function within a script:
 
 ``` bash
-while getopts_long ':af: all file:' 'OPTKEY' "${@}"; do
+#!/usr/bin/env bash
+source "${PATH_TO_REPO}/lib/getopts_long.bash"
+
+while getopts_long ':af: all file:' 'OPTKEY'; do
     case ${OPTKEY} in
         'a'|'all')
             echo 'all triggered'
@@ -85,7 +76,7 @@ while getopts_long ':af: all file:' 'OPTKEY' "${@}"; do
             exit 1
             ;;
         *)
-            echo "Misconfigured OPTSPEC or uncaught option -- ${OPTKEY}" >&2
+            echo "UNCAUGHT OPTION -- ${OPTKEY}" >&2
             exit 1
             ;;
     esac
@@ -93,6 +84,8 @@ done
 
 shift $(( OPTIND - 1 ))
 [[ "${1}" == "--" ]] && shift
+
+...
 ```
 
 ## How it works
@@ -100,7 +93,7 @@ shift $(( OPTIND - 1 ))
 In general the use of `getopts_long` is identical to that of BASH built-in `getopts`: you need to call `getopts_long` several times. Each time it will use the next positional parameter and a possible argument, if parsable, and provide it to you. The function will not change the set of positional parameters. If you want to shift them, it must be done manually:
 
 ``` bash
-shift $((OPTIND-1))
+shift $(( OPTIND - 1 ))
 # now do something with $@
 ```
 
@@ -126,10 +119,10 @@ Like the original `getopts`, `getopts_long` sets the following variables:
 
 Regarding error-reporting, there are two modes `getopts_long` can run in:
 
-- verbose mode
-- silent mode
+  - verbose mode
+  - silent mode
 
-For productive scripts I recommend using the silent mode, since everything looks more professional, when you don't see annoying standard messages. Also it's easier to handle, since the failure cases are indicated by assigning distinct characters to `VARNAME`.
+In production scripts I recommend using the silent mode, because it allows you to handle errors yourself without being distracted by default error messages. It's also easier to handle, since the failure cases are indicated by assigning distinct characters to `VARNAME`.
 
 ### Verbose mode
 
