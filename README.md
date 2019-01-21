@@ -76,7 +76,7 @@ while getopts_long ':af: all file:' 'OPTKEY'; do
             exit 1
             ;;
         *)
-            echo "UNCAUGHT OPTION -- ${OPTKEY}" >&2
+            echo "UNIMPLEMENTED OPTION -- ${OPTKEY}" >&2
             exit 1
             ;;
     esac
