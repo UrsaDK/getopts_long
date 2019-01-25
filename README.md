@@ -59,7 +59,7 @@ A good example is worth a thousand words, so here is an example of how you could
 #!/usr/bin/env bash
 source "${PATH_TO_REPO}/lib/getopts_long.bash"
 
-while getopts_long ':af: all file:' 'OPTKEY'; do
+while getopts_long ':af: all file:' OPTKEY; do
     case ${OPTKEY} in
         'a'|'all')
             echo 'all triggered'
