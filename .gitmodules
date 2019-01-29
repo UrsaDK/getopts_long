@@ -1,0 +1,6 @@
+[submodule "vendor/kcov"]
+	path = vendor/kcov
+	url = https://github.com/SimonKagstrom/kcov.git
+[submodule "vendor/bats"]
+	path = vendor/bats
+	url = https://github.com/bats-core/bats-core.git
