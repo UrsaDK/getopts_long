@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+TOPDIR="$(git rev-parse --show-toplevel 2>/dev/null)"
+${TOPDIR:="$(cd $(dirname ${0})/.. && pwd)"}
+${TOPDIR:?Failed to identify repository's parent directory}
+
+docker run
