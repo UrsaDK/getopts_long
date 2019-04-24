@@ -1,0 +1,6 @@
+#!/bin/bash --login
+if [[ -z "${*}" ]]; then
+  exec bash --login
+else
+  exec "${@}"
+fi

@@ -1,0 +1,10 @@
+#!/bin/bash --login
+if [[ -z "${*}" ]]; then
+  bats -t test \
+    && echo "Generating coverage report ..." \
+    && exec kcov --clean --include-path=/mnt/lib coverage bats test
+else
+  source /mnt/lib/getopts_long.bash \
+    && export -f getopts_long \
+    && exec "${@}"
+fi
