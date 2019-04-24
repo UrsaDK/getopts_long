@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-TOPDIR="$(git rev-parse --show-toplevel 2>/dev/null)"
-: ${TOPDIR:="$(cd $(dirname ${0})/.. && pwd)"}
-: ${TOPDIR:?Failed to identify repository top level directory}
-
-docker build --tag getopts_long/bats "${TOPDIR}/vendor/bats"
-docker build --tag getopts_long/kcov "${TOPDIR}/vendor/kcov"
