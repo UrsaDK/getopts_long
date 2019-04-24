@@ -87,22 +87,22 @@ load test_helper
 @test "${FEATURE}: short option, multiple same arguments, silent" {
     compare '-v user_val1 -v user_val2' \
             '-v user_val1 -v user_val2'
-    expect "${actual_lines[0]}" == 'variable supplied -- OPTARG=user_val1'
-    expect "${actual_lines[1]}" == 'variable supplied -- OPTARG=user_val2'
+    expect "${actual_lines[0]}" == 'value supplied -- OPTARG=user_val1'
+    expect "${actual_lines[1]}" == 'value supplied -- OPTARG=user_val2'
 }
 @test "${FEATURE}: short option, multiple same arguments, verbose" {
     compare '-v user_val1 -v user_val2' \
             '-v user_val1 -v user_val2'
-    expect "${actual_lines[0]}" == 'variable supplied -- OPTARG=user_val1'
-    expect "${actual_lines[1]}" == 'variable supplied -- OPTARG=user_val2'
+    expect "${actual_lines[0]}" == 'value supplied -- OPTARG=user_val1'
+    expect "${actual_lines[1]}" == 'value supplied -- OPTARG=user_val2'
 }
 
 @test "${FEATURE}: long option, multiple same arguments, silent" {
     compare '-v user_val1 -v user_val2' \
             '--variable=user_val1 --variable=user_val2' \
             '/^OPTIND: /d'
-    expect "${actual_lines[0]}" == 'variable supplied -- OPTARG=user_val1'
-    expect "${actual_lines[1]}" == 'variable supplied -- OPTARG=user_val2'
+    expect "${actual_lines[0]}" == 'value supplied -- OPTARG=user_val1'
+    expect "${actual_lines[1]}" == 'value supplied -- OPTARG=user_val2'
     expect "${expected_lines[5]}" == 'OPTIND: 5'
     expect "${actual_lines[5]}" == 'OPTIND: 3'
 }
@@ -110,8 +110,8 @@ load test_helper
     compare '-v user_val1 -v user_val2' \
             '--variable=user_val1 --variable=user_val2' \
             '/^OPTIND: /d'
-    expect "${actual_lines[0]}" == 'variable supplied -- OPTARG=user_val1'
-    expect "${actual_lines[1]}" == 'variable supplied -- OPTARG=user_val2'
+    expect "${actual_lines[0]}" == 'value supplied -- OPTARG=user_val1'
+    expect "${actual_lines[1]}" == 'value supplied -- OPTARG=user_val2'
     expect "${expected_lines[5]}" == 'OPTIND: 5'
     expect "${actual_lines[5]}" == 'OPTIND: 3'
 }

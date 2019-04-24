@@ -9,7 +9,7 @@ while getopts ":to:v:" OPTKEY; do
             printf 'option supplied'
             ;;
         'v')
-            printf 'variable supplied'
+            printf 'value supplied'
             ;;
         '?')
             printf "INVALID OPTION"
