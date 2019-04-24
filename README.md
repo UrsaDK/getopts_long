@@ -18,6 +18,21 @@ This is a pure BASH implementation of `getopts_long` function, which "upgrades" 
 
 This function is 100% compatible with the built-in `getopts`. It is implemented with no external dependencies, and relies solely on BASH built-in tools to provide all of its functionality.
 
+## Table of Content
+
+- [Installation](#installation)
+- [Usage](#usage)
+  - [Extended OPTSPEC](#extended-optspec)
+  - [Example script](#example-script)
+- [How it works](#how-it-works)
+  - [Error reporting](#error-reporting)
+    - [Verbose mode](#verbose-mode)
+    - [Silent mode](#silent-mode)
+- [Contributions](#contributions)
+  - [Test Suite](#test-suite)
+  - [Quick Launch](#quick-launch)
+  - [Container Shell](#container-shell)
+
 ## Installation
 
 There are two alternative ways to install and use the function:
