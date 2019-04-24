@@ -1,4 +1,5 @@
-PATH="$(git rev-parse --show-toplevel)/bin:${PATH}"
+TOPDIR="$(cd ${BATS_TEST_DIRNAME}/.. && pwd)"
+PATH="${TOPDIR}/bin:${PATH}"
 FEATURE="$(basename "${BATS_TEST_FILENAME}" '.bats' | tr '_' ' ')"
 
 debug() {
