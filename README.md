@@ -2,7 +2,7 @@
 
   ![getopts_long](./images/logo.png)<br>
 
-  ![project version: 1.1.0](https://img.shields.io/badge/version-1.1.0-blue.svg)
+  ![project version: 1.2.0](https://img.shields.io/badge/version-1.2.0-blue.svg)
   ![test coverage: 100%](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)
   ![donate via coinbase](https://img.shields.io/badge/donate-coinbase-gold.svg?colorB=ff8e00&logo=bitcoin&link=https://commerce.coinbase.com/checkout/17ae30c2-9c3f-45fb-a911-36d01a3c81b6)
 
