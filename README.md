@@ -29,9 +29,9 @@ This function is 100% compatible with the built-in `getopts`. It is implemented 
     - [Verbose mode](#verbose-mode)
     - [Silent mode](#silent-mode)
 - [Contributions](#contributions)
-  - [Test Suite](#test-suite)
-  - [Quick Launch](#quick-launch)
-  - [Container Shell](#container-shell)
+  - [Test suite](#test-suite)
+  - [Quick launch](#quick-launch)
+  - [Container shell](#container-shell)
 
 ## Installation
 
@@ -185,7 +185,7 @@ Even though I consider this function feature complete, contributions are always 
 
 Test suite for this function is implemented using a [docker](https://docker.com), so you need it installed on your system in order to run the test, generate test coverage reports, and quick launch your scripts.
 
-### Test Suite
+### Test suite
 
 Docker image can be built locally with the following command:
 ```
@@ -197,7 +197,7 @@ Execute the container to run all the tests and to generate a coverage report, wh
 docker container run --rm --init -it -v ${PWD}:/mnt getopts_long
 ```
 
-### Quick Launch
+### Quick launch
 
 Arguments supplied to the `container run` command will be executed in the context of the container with `getopts_long` function exported and made available to them.
 
@@ -206,7 +206,7 @@ In other words, if you want to test if your script works with `getopt_long` func
 docker container run --rm --init -it -v ${PWD}:/mnt getopts_long ./my_script
 ```
 
-### Container Shell
+### Container shell
 
 Sometimes it is necessary to have additional control over the container or to investigate its inner workings. In this case, being able to open a shell inside a container is invaluable:
 ```
