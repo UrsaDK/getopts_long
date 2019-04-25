@@ -42,7 +42,8 @@ ENTRYPOINT ["/etc/entrypoints/login_shell"]
 
 FROM base AS latest
 RUN adduser --disabled-password --no-create-home --home /home --shell /bin/bash --gecos "" payload \
-    && chown -R payload:payload /home /mnt
+    && chown -R payload:payload /home /mnt \
+    && install --mode 0644 --owner=payload --group=payload /etc/skel/.??* /home
 COPY --from=build /usr/local /usr/local
 USER payload
 WORKDIR /mnt
