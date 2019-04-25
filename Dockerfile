@@ -45,6 +45,8 @@ RUN adduser --disabled-password --no-create-home --home /home --shell /bin/bash 
     && chown -R payload:payload /home /mnt \
     && install --mode 0644 --owner=payload --group=payload /etc/skel/.??* /home
 COPY --from=build /usr/local /usr/local
+COPY --chown=payload . /home
+RUN rm -Rf /home/docker-fs
 USER payload
 WORKDIR /mnt
 ENTRYPOINT ["/etc/entrypoints/test_or_exec"]

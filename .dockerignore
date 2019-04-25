@@ -1,0 +1,11 @@
+.dockerignore
+.git*
+bin
+coverage
+Dockerfile
+images
+test
+
+**/.DS_Store
+**/Thumbs.db
+**/*~
