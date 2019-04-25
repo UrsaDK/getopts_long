@@ -21,37 +21,56 @@ This function is 100% compatible with the built-in `getopts`. It is implemented 
 ## Table of Content
 
 - [Installation](#installation)
+  - [Source the library](#source-the-library)
+  - [Paste the content](#paste-the-content)
+  - [Run in docker](#run-in-docker)
 - [Usage](#usage)
   - [Extended OPTSPEC](#extended-optspec)
   - [Example script](#example-script)
 - [How it works](#how-it-works)
+  - [Internal variables](#internal-variables)
   - [Error reporting](#error-reporting)
     - [Verbose mode](#verbose-mode)
     - [Silent mode](#silent-mode)
 - [Contributions](#contributions)
   - [Test suite](#test-suite)
-  - [Quick launch](#quick-launch)
   - [Container shell](#container-shell)
 
 ## Installation
 
-There are two alternative ways to install and use the function:
+The function is distributed via a single self-contained file: `lib/getopts_long.bash`. As such, there are a number of ways to make it available to your script. All of these ways come with their own advantages and disadvantages. Consider carefully all of the following and pick the one that suits your needs best.
 
-- Source the function in your script
+### Source the library
 
-  The function is distributed via a single self-contained file: `lib/getopts_long.bash`. To use the function in your script the file needs to be sourced in your script, which means that you need to have a local copy of this repository. So, cone the repository with:
+This is the recommended way of providing `getopts_long` functionality to your script. To use it, clone this repository somewhere on your system:
 
-  ```
-  git clone https://github.com/UmkaDK/getopts_long.git
-  ```
+```
+git clone https://github.com/UmkaDK/getopts_long.git
+```
 
-  Then update your script to include the following:
+Then update your script to include the following:
 
-  ```
-  source "__PATH_TO__/getopts_long/lib/getopts_long.bash"
-  ```
+```
+source "__PATH_TO__/getopts_long/lib/getopts_long.bash"
+```
 
-- Cut-n-paste the content of `lib/getopts_long.bash` into your script.
+This method allows you to receive any future updates and all fixes to the function by simply running `git pull` within the repository. However it might introduce conflicts if you need to customise the function for your own needs.
+
+### Paste the content
+
+An alternative method of installation to simply copy-n-paste the content of `lib/getopts_long.bash` into your script.
+
+This will make the function available to a single script and you will be easily able to customise it for your own needs. However, you will need to keep an eye on this repository and manually upgrade the function whenever a fix or a new version is released.
+
+### Run in docker
+
+Arguments supplied to the `container run` command of the `getoptions_long` docker image will be executed in the context of the container with `getopts_long` function exported and made available in the environment.
+
+In other words, if you want to test that your script works with `getopt_long` function and you have getopts_long docker image available, then you can `cd` into your scripts parent directory and run it by giving it as an argument to the `docker run` command:
+
+```
+docker container run --rm --init -it -v ${PWD}:/mnt getopts_long ./my_script
+```
 
 ## Usage
 
@@ -145,6 +164,8 @@ done
 
 Identical to `getopts`, `getopts_long` will parse options and their possible arguments. It will stop parsing on the first non-option argument (a string that doesn't begin with a hyphen (`-`) that isn't an argument for any option in front of it). It will also stop parsing when it sees the `--` (double-hyphen), which means end of options.
 
+### Internal variables
+
 Like the original `getopts`, `getopts_long` sets the following variables:
 
 | Variable | Description |
@@ -183,32 +204,29 @@ Even though I consider this function feature complete, contributions are always 
 1. Ensure that all existing tests pass;
 2. Add all tests required to test your PR.
 
-Test suite for this function is implemented using a [docker](https://docker.com), so you need it installed on your system in order to run the test, generate test coverage reports, and quick launch your scripts.
 
 ### Test suite
 
-Docker image can be built locally with the following command:
+Test suite for this function is implemented using [docker](https://docker.com), so you need it available on your system in order to run the tests, generate test coverage reports, and quick launch your scripts.
+
+A local docker image can easily be built with the following command:
+
 ```
 docker image build --tag getopts_long .
 ```
 
 Execute the container to run all the tests and to generate a coverage report, which will be placed in the `coverage` subdirectory of the projects root:
+
 ```
 docker container run --rm --init -it -v ${PWD}:/mnt getopts_long
 ```
 
-### Quick launch
-
-Arguments supplied to the `container run` command will be executed in the context of the container with `getopts_long` function exported and made available to them.
-
-In other words, if you want to test if your script works with `getopt_long` function and you have getopts_long docker image available, then you can `cd` into your scripts parent directory and run the script via the container:
-```
-docker container run --rm --init -it -v ${PWD}:/mnt getopts_long ./my_script
-```
-
 ### Container shell
 
-Sometimes it is necessary to have additional control over the container or to investigate its inner workings. In this case, being able to open a shell inside a container is invaluable:
+Sometimes it is necessary to have additional control over the container (eg: to investigate its inner workings, or to run multiple commands in the same shell). In this case, you can open a login shell inside a container with:
+
 ```
 docker container run --rm --init -it -v ${PWD}:/mnt getopts_long bash --login
 ```
+
+By running the above, the current directory on your host will be mounted under `/mnt` inside the container, and the version of `getopts_long` function exposed by the container will be available under `/home`.
