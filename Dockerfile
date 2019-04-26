@@ -1,5 +1,6 @@
 FROM debian:stable-slim AS base
 LABEL maintainer="UmkaDK <umka.dk@icloud.com>"
+COPY ./docker-fs /
 RUN apt-get -y update \
     && apt-get -y install \
         bash \
@@ -10,8 +11,15 @@ RUN apt-get -y update \
         python \
         zlib1g \
     && apt-get --purge autoremove \
-    && apt-get clean
-COPY ./docker-fs /
+    && apt-get clean \
+    && rmdir /home \
+    && adduser \
+        --disabled-password \
+        --disabled-login \
+        --home /home \
+        --shell /bin/bash \
+        --gecos "" \
+        payload
 ENTRYPOINT ["/etc/entrypoints/login_shell"]
 
 FROM base AS build
@@ -41,12 +49,10 @@ RUN git clone --depth 1 --branch v36 https://github.com/SimonKagstrom/kcov.git \
 ENTRYPOINT ["/etc/entrypoints/login_shell"]
 
 FROM base AS latest
-RUN adduser --disabled-password --no-create-home --home /home --shell /bin/bash --gecos "" payload \
-    && chown -R payload:payload /home /mnt \
-    && install --mode 0644 --owner=payload --group=payload /etc/skel/.??* /home
 COPY --from=build /usr/local /usr/local
 COPY --chown=payload . /home
 RUN rm -Rf /home/docker-fs
 USER payload
+VOLUME ["/mnt"]
 WORKDIR /mnt
 ENTRYPOINT ["/etc/entrypoints/test_or_exec"]
