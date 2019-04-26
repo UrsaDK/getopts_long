@@ -2,7 +2,8 @@
 if [[ -z "${*}" ]]; then
   bats --tap test \
     && echo "Generating coverage report ..." \
-    && exec kcov --clean --include-path=/mnt/lib /mnt/coverage bats --tap test
+    && kcov --clean --include-path=/mnt/lib /tmp/kcov bats --tap test \
+    && cp -pLR /tmp/kcov/bats /mnt/coverage
 else
   source /home/lib/getopts_long.bash \
     && export -f getopts_long \
