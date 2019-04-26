@@ -1,8 +1,8 @@
 #!/bin/bash --login
 if [[ -z "${*}" ]]; then
-  bats -t test \
+  bats --tap test \
     && echo "Generating coverage report ..." \
-    && exec kcov --clean --include-path=/mnt/lib coverage bats test
+    && exec kcov --clean --include-path=/mnt/lib /mnt/coverage bats --tap test
 else
   source /home/lib/getopts_long.bash \
     && export -f getopts_long \
