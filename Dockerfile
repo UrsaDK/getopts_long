@@ -1,7 +1,19 @@
 FROM debian:stable-slim AS base
 LABEL maintainer="UmkaDK <umka.dk@icloud.com>"
 COPY ./docker-fs /
-RUN apt-get -y update \
+RUN cp /etc/skel/.??* /root \
+    && adduser \
+        --quiet \
+        --disabled-password \
+        --disabled-login \
+        --no-create-home \
+        --home /home \
+        --shell /bin/bash \
+        --gecos "" \
+        payload \
+    && cp /etc/skel/.??* /home \
+    && chown -R payload:payload /home \
+    && apt-get -y update \
     && apt-get -y install \
         bash \
         binutils \
@@ -11,16 +23,8 @@ RUN apt-get -y update \
         python \
         zlib1g \
     && apt-get --purge autoremove \
-    && apt-get clean \
-    && rmdir /home \
-    && adduser \
-        --disabled-password \
-        --disabled-login \
-        --home /home \
-        --shell /bin/bash \
-        --gecos "" \
-        payload
-ENTRYPOINT ["/etc/entrypoints/login_shell"]
+    && apt-get clean
+ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
 
 FROM base AS build
 RUN apt-get -y update \
@@ -46,13 +50,14 @@ RUN git clone --depth 1 --branch v36 https://github.com/SimonKagstrom/kcov.git \
     && cmake .. \
     && make \
     && make install
-ENTRYPOINT ["/etc/entrypoints/login_shell"]
+ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
 
 FROM base AS latest
 COPY --from=build /usr/local /usr/local
 COPY --chown=payload . /home
-RUN rm -Rf /home/docker-fs
+RUN rm -Rf /home/docker-fs \
+    && chown -R payload:payload /mnt
 USER payload
-VOLUME ["/mnt"]
 WORKDIR /mnt
-ENTRYPOINT ["/etc/entrypoints/test_or_exec"]
+VOLUME ["/mnt"]
+ENTRYPOINT ["/etc/entrypoint.d/test_getopts_long"]
