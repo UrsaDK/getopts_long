@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+
+set -e
+
+bats --tap --recursive "${@:-./test}"
+[ -n "${*}" ] && exit
+
+echo "Generating coverage report: ./coverage/index.html"
+kcov --clean --include-path=./lib /tmp/kcov bats ./test
+
+# Clean up kcov report
+rm /tmp/kcov/bats/{bcov.css,amber.png,glass.png}
+sed -i 's#"../data/bcov.css"#"data/bcov.css"#g' /tmp/kcov/bats/*.html
+
+# Present kcov report
+cp -pLR /tmp/kcov/bats ./coverage
