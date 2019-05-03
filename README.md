@@ -1,16 +1,16 @@
 <div align="center">
 
-  ![getopts_long](./images/logo.png)<br>
+  ![getopts_long logo](./images/logo.png)<br>
 
-  ![project version: 1.2.0](https://img.shields.io/badge/version-1.2.0-blue.svg)
-  ![test coverage: 100%](https://img.shields.io/badge/coverage-100%25-brightgreen.svg)
+  ![release branch: master](https://img.shields.io/badge/dynamic/json.svg?color=blue&label=release%20branch&query=%24.default_branch&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long)
+  ![test coverage: 100%](https://img.shields.io/badge/test_coverage-100%25-brightgreen.svg)
   [![donate via coinbase](https://img.shields.io/badge/donate-coinbase-gold.svg?colorB=ff8e00&logo=bitcoin)](https://commerce.coinbase.com/checkout/17ae30c2-9c3f-45fb-a911-36d01a3c81b6)
 
 </div>
 
 # getopts_long
 
-This is a pure BASH implementation of `getopts_long` function, which "upgrades" bash built-in `getopts` with support for GNU style long options, such as:
+This is a pure BASH implementation of `getopts_long` function, which "upgrades" the built-in `getopts` with support for GNU style long options, such as:
 
   - `--option`
   - `--option value`
@@ -23,7 +23,6 @@ This function is 100% compatible with the built-in `getopts`. It is implemented 
 - [Installation](#installation)
   - [Source the library](#source-the-library)
   - [Paste the content](#paste-the-content)
-  - [Run in docker](#run-in-docker)
 - [Usage](#usage)
   - [Extended OPTSPEC](#extended-optspec)
   - [Example script](#example-script)
@@ -38,7 +37,12 @@ This function is 100% compatible with the built-in `getopts`. It is implemented 
 
 ## Installation
 
-The function is distributed via a single self-contained file: `lib/getopts_long.bash`. As such, there are a number of ways to make it available to your script. All of these ways come with their own advantages and disadvantages. Consider carefully all of the following and pick the one that suits your needs best.
+The function is distributed via a single self-contained file:
+```
+lib/getopts_long.bash
+```
+
+There are a number of ways to make it available to your script, all of them come with their own advantages and disadvantages. Consider carefully all of the following and pick the method of installation that suits your needs best.
 
 ### Source the library
 
@@ -48,35 +52,25 @@ This is the recommended way of providing `getopts_long` functionality to your sc
 git clone https://github.com/UmkaDK/getopts_long.git
 ```
 
-Then update your script to include the following:
+Then update your script to source the function code:
 
 ```
-source "__PATH_TO__/getopts_long/lib/getopts_long.bash"
+. "__PATH_TO__/getopts_long/lib/getopts_long.bash"
 ```
 
-This method allows you to receive any future updates and all fixes to the function by simply running `git pull` within the repository. However it might introduce conflicts if you need to customise the function for your own needs.
+This method allows you to receive any future updates and all fixes to the function by simply running `git pull` within the repository. However, if you customise the function for your own needs, you might end up having to fix git merge conflicts in the future.
 
 ### Paste the content
 
-An alternative method of installation to simply copy-n-paste the content of `lib/getopts_long.bash` into your script.
+An alternative method of installation is to simply copy-n-paste the content of `lib/getopts_long.bash` into your script.
 
-This will make the function available to a single script and you will be easily able to customise it for your own needs. However, you will need to keep an eye on this repository and manually upgrade the function whenever a fix or a new version is released.
-
-### Run in docker
-
-Arguments supplied to the `container run` command of the `getoptions_long` docker image will be executed in the context of the container with `getopts_long` function exported and made available in the environment.
-
-In other words, if you want to test that your script works with `getopt_long` function and you have getopts_long docker image available, then you can `cd` into your scripts parent directory and run it by giving it as an argument to the `docker run` command:
-
-```
-docker container run --rm --init -it -v ${PWD}:/mnt getopts_long ./my_script
-```
+This will make the function available to a single script and you will easily be able to customise it for your own needs. However, you will need to keep an eye on this repository and manually upgrade the function whenever an update is released.
 
 ## Usage
 
 The syntax for `getopts_long` is the same as the syntax for the built-in `getopts`:
 
-``` bash
+```
 getopts_long OPTSPEC VARNAME [ARGS...]
 ```
 
@@ -147,7 +141,7 @@ shift $(( OPTIND - 1 ))
 
 ## How it works
 
-In general the use of `getopts_long` is identical to that of BASH built-in `getopts`. Just like the builtin function, you need to call `getopts_long` several times. Each time it will use the next positional parameter and a possible argument, if parsable, and provide it to you. The function will not change the set of positional parameters. If you want to shift them, it must be done manually:
+In general the use of `getopts_long` is identical to that of the built-in `getopts`. Just like the builtin function, you need to call `getopts_long` several times. Each time it will use the next positional parameter and a possible argument, if parsable, and provide it to you. The function will not change the set of positional parameters. If you want to shift them, it must be done manually:
 
 ``` bash
 shift $(( OPTIND - 1 ))
@@ -202,31 +196,39 @@ In production scripts I recommend using the silent mode, because it allows you t
 Even though I consider this function feature complete, contributions are always welcome. New ideas, bugs, and pull requests, all will be very much appreciated. The only thing I ask is that if you're submitting a PR, please:
 
 1. Ensure that all existing tests pass;
-2. Add all tests required to test your PR.
+2. Add all tests required by your PR.
 
 
 ### Test suite
 
-Test suite for this function is implemented using [docker](https://docker.com), so you need it available on your system in order to run the tests, generate test coverage reports, and quick launch your scripts.
+Tests for this function live in the `./test` subdirectory of the project root. They are implemented using [BATS](https://github.com/bats-core/bats-core) (Unit Tests), and [Kcov](https://github.com/SimonKagstrom/kcov) (coverage report), and all the tools are provided by the included Dockerfile.
 
-A local docker image can easily be built with the following command:
+A local docker image is built using the following command:
 
 ```
 docker image build --tag getopts_long .
 ```
 
-Execute the container to run all the tests and to generate a coverage report, which will be placed in the `coverage` subdirectory of the projects root:
+After that, executing the container with no arguments will run all tests and generate a coverage report in the `coverage` subdirectory of the projects root:
 
 ```
 docker container run --rm --init -it -v ${PWD}:/mnt getopts_long
+open ./coverage/index.html
 ```
+
+Individual tests could be run by passing a relative path of the BATS test file as an argument to `docker run` command:
+
+```
+docker container run --rm --init -it -v ${PWD}:/mnt getopts_long ./test/no_arguments.bats
+```
+
 
 ### Container shell
 
-Sometimes it is necessary to have additional control over the container (eg: to investigate its inner workings, or to run multiple commands in the same shell). In this case, you can open a login shell inside a container with:
+By supplying `-l` or `--login` as a parameter to `docker run` command you can start the container with the login shell.
 
 ```
-docker container run --rm --init -it -v ${PWD}:/mnt getopts_long bash --login
+docker container run --rm --init -it -v ${PWD}:/mnt getopts_long -l
 ```
 
-By running the above, the current directory on your host will be mounted under `/mnt` inside the container, and the version of `getopts_long` function exposed by the container will be available under `/home`.
+Inside the container, `getopts_long` source code is available under `/home`, while your current working directory on the host will be mounted under `/mnt`. This setup can be used to experimenting with your own script which rely on `getopts_long` functionality.
