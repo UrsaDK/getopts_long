@@ -1,15 +1,26 @@
 workflow "New workflow" {
   on = "push"
-  resolves = ["Run docker container"]
+  resolves = ["docker.push"]
 }
 
-action "Build docker image" {
-  uses = "actions/docker/cli@master"
-  args = ["image", "build", "--tag", "$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]'):$(echo ${GITHUB_SHA} | head -c7)", "."]
+action "docker.login" {
+  uses = "actions/docker/login@master"
+  secrets = ["DOCKER_USERNAME", "DOCKER_PASSWORD"]
 }
 
-action "Run docker container" {
+action "docker.image" {
   uses = "actions/docker/cli@master"
-  needs = ["Build docker image"]
-  args = ["container", "run", "--rm", "--init", "-v", "${GITHUB_WORKSPACE}:/mnt", "$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]'):$(echo ${GITHUB_SHA} | head -c7)"]
+  args = ["image", "build", "--tag", "${GITHUB_REPOSITORY}", "."]
+}
+
+action "docker.tag" {
+  uses = "actions/docker/tag@master"
+  needs = ["docker.image"]
+  args = ["${GITHUB_REPOSITORY}", "$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')"]
+}
+
+action "docker.push" {
+  uses = "actions/docker/cli@master"
+  needs = ["docker.tag", "docker.login"]
+  args = ["image", "push", "$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')"]
 }
