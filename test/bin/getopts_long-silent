@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-TOPDIR="$(cd $(dirname ${0})/.. && pwd)"
+TOPDIR="$(cd $(dirname ${0})/../.. && pwd)"
 source "${TOPDIR}/lib/getopts_long.bash"
 
 while getopts_long ':to:v: toggle option: variable:' OPTKEY; do

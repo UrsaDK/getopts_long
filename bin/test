@@ -1,16 +1,18 @@
 #!/usr/bin/env bash
 
 set -e
+TEMP_DIR="$(mktemp -d -t kcov.XXXXXXXXX)"
+trap "rm -Rf ${TEMP_DIR}" EXIT
 
 bats --tap --recursive "${@:-./test}"
 [ -n "${*}" ] && exit
 
 echo "Generating coverage report: ./coverage/index.html"
-kcov --clean --include-path=./lib /tmp/kcov bats ./test
+kcov --clean --include-path=./lib ${TEMP_DIR} bats --recursive ./test
 
 # Clean up kcov report
-rm /tmp/kcov/bats/{bcov.css,amber.png,glass.png}
-sed -i 's#"../data/bcov.css"#"data/bcov.css"#g' /tmp/kcov/bats/*.html
+rm ${TEMP_DIR}/bats/{bcov.css,amber.png,glass.png}
+sed -i 's#"../data/bcov.css"#"data/bcov.css"#g' ${TEMP_DIR}/bats/*.html
 
 # Present kcov report
-cp -pLR /tmp/kcov/bats ./coverage
+cp -LR ${TEMP_DIR}/bats ./coverage

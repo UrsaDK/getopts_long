@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-load test_helper
+load ../test_helper
 
 @test "${FEATURE}: short option, silent" {
     compare '-o user_val' \
