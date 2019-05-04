@@ -10,13 +10,13 @@ action "docker.login" {
 
 action "docker.image" {
   uses = "actions/docker/cli@master"
-  args = ["image", "build", "--tag", "${GITHUB_REPOSITORY}", "."]
+  args = ["image", "build", "--tag", "${GITHUB_SHA}", "."]
 }
 
 action "docker.tag" {
   uses = "actions/docker/tag@master"
   needs = ["docker.image"]
-  args = ["${GITHUB_REPOSITORY}", "$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')"]
+  args = ["${GITHUB_SHA}", "$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')"]
 }
 
 action "docker.push" {
