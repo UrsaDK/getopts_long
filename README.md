@@ -1,13 +1,16 @@
-<img src="https://umka.dk/getopts_long/logo.png" alt="getopts_long" align="left" height="70">
+<div align="center">
 
-**Version:** 1.1.0 <br>
-**Status:** Fully functional
+  ![getopts_long logo](./images/logo.png)<br>
 
-<br>
+  ![release branch: master](https://img.shields.io/badge/dynamic/json.svg?color=blue&label=release%20branch&query=%24.default_branch&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long)
+  ![test coverage: 100%](https://img.shields.io/badge/test_coverage-100%25-brightgreen.svg)
+  [![donate via coinbase](https://img.shields.io/badge/donate-coinbase-gold.svg?colorB=ff8e00&logo=bitcoin)](https://commerce.coinbase.com/checkout/17ae30c2-9c3f-45fb-a911-36d01a3c81b6)
+
+</div>
 
 # getopts_long
 
-This is a pure BASH implementation of `getopts_long` function, which "upgrades" bash built-in `getopts` with support for GNU style long options, such as:
+This is a pure BASH implementation of `getopts_long` function, which "upgrades" the built-in `getopts` with support for GNU-style long options, such as:
 
   - `--option`
   - `--option value`
@@ -15,21 +18,69 @@ This is a pure BASH implementation of `getopts_long` function, which "upgrades" 
 
 This function is 100% compatible with the built-in `getopts`. It is implemented with no external dependencies, and relies solely on BASH built-in tools to provide all of its functionality.
 
+## Table of Content
+
+- [Installation](#installation)
+  - [Source the library](#source-the-library)
+  - [Paste the content](#paste-the-content)
+- [Usage](#usage)
+  - [Extended OPTSPEC](#extended-optspec)
+  - [Example script](#example-script)
+- [How it works](#how-it-works)
+  - [Internal variables](#internal-variables)
+  - [Error reporting](#error-reporting)
+    - [Verbose mode](#verbose-mode)
+    - [Silent mode](#silent-mode)
+- [Contributions](#contributions)
+  - [Test suite](#test-suite)
+  - [Container shell](#container-shell)
+
+## Installation
+
+The function is distributed via a single self-contained file:
+```
+lib/getopts_long.bash
+```
+
+There are a number of ways to make it available to your script, all of them come with their own advantages and disadvantages. Consider carefully all of the following and pick the method of installation that suits your needs best.
+
+### Source the library
+
+This is the recommended way of providing `getopts_long` functionality to your script. To use it, clone this repository somewhere on your system:
+
+```
+git clone https://github.com/UmkaDK/getopts_long.git
+```
+
+Then update your script to source the function code:
+
+```
+. "__PATH_TO__/getopts_long/lib/getopts_long.bash"
+```
+
+This method allows you to receive any future updates and all fixes to the function by simply running `git pull` within the repository. However, if you customise the function for your own needs, you might end up having to fix git merge conflicts in the future.
+
+### Paste the content
+
+An alternative method of installation is to simply copy-n-paste the content of `lib/getopts_long.bash` into your script.
+
+This will make the function available to a single script and you will easily be able to customise it for your own needs. However, you will need to keep an eye on this repository and manually upgrade the function whenever an update is released.
+
 ## Usage
 
 The syntax for `getopts_long` is the same as the syntax for the built-in `getopts`:
 
-``` bash
+```
 getopts_long OPTSPEC VARNAME [ARGS...]
 ```
 
 where:
 
-| name    | description |
+| Name    | Description |
 | ------- | ----------- |
-| OPTSPEC | A list of expected options and arguments. |
+| OPTSPEC | An extended list of expected options and their arguments. |
 | VARNAME | A shell-variable to use for option reporting. |
-| ARGS    | an optional list of arguments to parse. If omitted then `getopts_long` will parse arguments supplied to the script. |
+| ARGS    | An optional list of arguments to parse. If omitted, then `getopts_long` will parse arguments supplied to the script. |
 
 ### Extended OPTSPEC
 
@@ -90,7 +141,7 @@ shift $(( OPTIND - 1 ))
 
 ## How it works
 
-In general the use of `getopts_long` is identical to that of BASH built-in `getopts`: you need to call `getopts_long` several times. Each time it will use the next positional parameter and a possible argument, if parsable, and provide it to you. The function will not change the set of positional parameters. If you want to shift them, it must be done manually:
+In general the use of `getopts_long` is identical to that of the built-in `getopts`. Just like the built-in function, you need to call `getopts_long` several times. Each time it will use the next positional parameter and a possible argument, if parsable, and provide it to you. The function will not change the set of positional parameters. If you want to shift them, it must be done manually:
 
 ``` bash
 shift $(( OPTIND - 1 ))
@@ -107,15 +158,17 @@ done
 
 Identical to `getopts`, `getopts_long` will parse options and their possible arguments. It will stop parsing on the first non-option argument (a string that doesn't begin with a hyphen (`-`) that isn't an argument for any option in front of it). It will also stop parsing when it sees the `--` (double-hyphen), which means end of options.
 
+### Internal variables
+
 Like the original `getopts`, `getopts_long` sets the following variables:
 
-| variable | description |
+| Variable | Description |
 | -------- | ----------- |
 | OPTIND   | Holds the index to the next argument to be processed. This is how the function "remembers" its own status between invocations. OPTIND is initially set to 1, and **needs to be re-set to 1 if you want to parse anything again with getopts**. |
 | OPTARG   | This variable is set to any argument for an option found by `getopts_long`. It also contains the option flag of an unknown option. |
-| OPTERR   | (Values 0 or 1) Indicates if Bash should display error messages generated by `getopts_long`. The value is initialised to 1 on every shell startup - so be sure to always set it to 0 if you don't want to see annoying messages! <br><br> OPTERR is not specified by POSIX for the getopts builtin utility — only for the C getopt() function in unistd.h (opterr). OPTERR is bash-specific and not supported by shells such as ksh93, mksh, zsh, or dash. |
+| OPTERR   | (Values 0 or 1) Indicates if Bash should display error messages generated by `getopts_long`. The value is initialised to 1 on every shell startup - so be sure to always set it to 0 if you don't want to see annoying messages! <br><br> OPTERR is not specified by POSIX for the getopts built-in utility — only for the C getopt() function in unistd.h (opterr). OPTERR is bash-specific and not supported by shells such as ksh93, mksh, zsh, or dash. |
 
-## Error reporting
+### Error reporting
 
 Regarding error-reporting, there are two modes `getopts_long` can run in:
 
@@ -124,26 +177,58 @@ Regarding error-reporting, there are two modes `getopts_long` can run in:
 
 In production scripts I recommend using the silent mode, because it allows you to handle errors yourself without being distracted by default error messages. It's also easier to handle, since the failure cases are indicated by assigning distinct characters to `VARNAME`.
 
-### Verbose mode
+#### Verbose mode
 
 | Error type                  | What happens |
 | --------------------------- | ------------ |
 | invalid option              | `VARNAME` is set to `?` (question-mark) and `OPTARG` is unset. |
 | required argument not found | `VARNAME` is set to `?` (question-mark), `OPTARG` is unset and an _error message is printed_. |
 
-### Silent mode
+#### Silent mode
 
 | Error type                  | What happens |
 | --------------------------- | ------------ |
 | invalid option              | `VARNAME` is set to `?` (question-mark) and `OPTARG` is set to the (invalid) option character. |
 | required argument not found | `VARNAME` is set to `:` (colon) and `OPTARG` contains the option in question. |
 
-## Tests
+## Contributions
 
-In order to run the tests you need to have [Bash Automated Testing System (BATS)](https://github.com/bats-core/bats-core) installed. Please consult [their repository](https://github.com/bats-core/bats-core) for the installation instructions.
+Even though I consider this function feature complete, contributions are always welcome. New ideas, bugs, and pull requests, all will be very much appreciated. The only thing I ask is that if you're submitting a PR, please:
 
-Once `bats` is installed, `getopts_long` test suit can be run simply be executing the following command in the top directory of this repo:
+1. Ensure that all existing tests pass;
+2. Add all tests required by your PR.
+
+
+### Test suite
+
+Tests for this function live in the `./test` subdirectory of the project root. They are implemented using [BATS](https://github.com/bats-core/bats-core) (Unit Tests), and [Kcov](https://github.com/SimonKagstrom/kcov) (coverage report), and all the tools are provided by the included Dockerfile.
+
+A local docker image is built using the following command:
 
 ```
-bats test
+docker image build --tag getopts_long .
 ```
+
+After that, executing the container with no arguments will run all tests and generate a coverage report in the `coverage` subdirectory of the projects root:
+
+```
+docker container run --rm --init -it -v ${PWD}:/mnt getopts_long
+open ./coverage/index.html
+```
+
+Individual tests could be run by passing a relative path of the BATS test file as an argument to `docker run` command:
+
+```
+docker container run --rm --init -it -v ${PWD}:/mnt getopts_long ./test/no_arguments.bats
+```
+
+
+### Container shell
+
+By supplying `-l` or `--login` as a parameter to `docker run` command you can start the container with the login shell.
+
+```
+docker container run --rm --init -it -v ${PWD}:/mnt getopts_long -l
+```
+
+Inside the container, `getopts_long` source code is available under `/home`, while your current working directory on the host will be mounted under `/mnt`. This setup can be used to experiment with your own script which rely on `getopts_long` functionality.

@@ -1,21 +1,15 @@
 #!/usr/bin/env bash
 
-TOPDIR="$(git rev-parse --show-toplevel 2>/dev/null)"
-${TOPDIR:="$(cd $(dirname ${0})/.. && pwd)"}
-${TOPDIR:?Failed to identify repository's parent directory}
-
-source "${TOPDIR}/lib/getopts_long.bash"
-
-while getopts_long ':to:v: toggle option: variable:' OPTKEY; do
+while getopts ":to:v:" OPTKEY; do
     case ${OPTKEY} in
-        't'|'toggle')
+        't')
             printf 'toggle triggered'
             ;;
-        'o'|'option')
+        'o')
             printf 'option supplied'
             ;;
-        'v'|'variable')
-            printf 'variable supplied'
+        'v')
+            printf 'value supplied'
             ;;
         '?')
             printf "INVALID OPTION"

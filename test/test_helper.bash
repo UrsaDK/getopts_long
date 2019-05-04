@@ -1,7 +1,27 @@
-PATH="$(git rev-parse --show-toplevel)/bin:${PATH}"
+TOPDIR="$(cd ${BATS_TEST_DIRNAME}/.. && pwd)"
+PATH="${TOPDIR}/bin:${PATH}"
 FEATURE="$(basename "${BATS_TEST_FILENAME}" '.bats' | tr '_' ' ')"
 
-run_tests() {
+debug() {
+    printf '\nACTUAL:\n––––––––\n%s\n' "${2}" >&3
+    printf '\nEXPECTED:\n––––––––\n%s\n\n' "${1}" >&3
+}
+
+expect() {
+  if ! test "${@}"; then
+    case ${1} in
+      -[[:alpha:]])
+        debug "[[ ${1} ACTUAL ]]" "${!#}"
+        ;;
+      *)
+        debug "${!#}" "${1}"
+        ;;
+    esac
+    return 1
+  fi
+}
+
+compare() {
     : ${1?Missing required parameter -- getopts arguments}
     : ${2?Missing required parameter -- getopts_long arguments}
 
@@ -20,14 +40,6 @@ run_tests() {
         actual_output="$(echo "${actual_output}" | sed -E "${3}")"
     fi
 
-    test "${expected_output}" == "${actual_output}" || ( show_output && false )
-    test "${expected_status}" == "${actual_status}" || ( show_output && false )
-}
-
-show_output() {
-    printf '\nEXPECTED:\n--------\n%s\n$?: %i\n' \
-        "${expected_output}" ${expected_status} >&3
-
-    printf '\nACTUAL:\n------\n%s\n$?: %i\n\n' \
-        "${actual_output}" ${actual_status} >&3
+    expect "${expected_output}" == "${actual_output}"
+    expect "${expected_status}" == "${actual_status}"
 }
