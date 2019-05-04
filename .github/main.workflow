@@ -1,6 +1,6 @@
 workflow "New workflow" {
   on = "push"
-  resolves = ["docker.push"]
+  resolves = ["getopts_long.test"]
 }
 
 action "docker.login" {
@@ -23,4 +23,10 @@ action "docker.push" {
   uses = "actions/docker/cli@master"
   needs = ["docker.tag", "docker.login"]
   args = ["image", "push", "$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')"]
+}
+
+action "getopts_long.test" {
+  uses = "docker://$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]'):$(echo ${GITHUB_SHA} | hear -c7)"
+  needs = ["docker.push"]
+  runs = ["/bin/bash", "-l", "-c", "cd /home && ./bin/test"]
 }
