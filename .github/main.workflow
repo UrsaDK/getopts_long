@@ -1,5 +1,5 @@
-workflow "New workflow" {
-  resolves = ["local.test", "docker.push"]
+workflow "test" {
+  resolves = ["local.test"]
   on = "push"
 }
 
@@ -7,6 +7,11 @@ action "local.test" {
   uses = "./."
   runs = "/etc/entrypoint.d/login_shell"
   args = "cd /home && ./bin/test"
+}
+
+workflow "publish" {
+  resolves = ["docker.push"]
+  on = "push"
 }
 
 action "github.filter" {
