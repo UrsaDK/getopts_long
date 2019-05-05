@@ -32,12 +32,6 @@ action "docker.image" {
   args = "image build --tag ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}:${GITHUB_SHA:0:7} --tag ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/} ."
 }
 
-action "docker.image" {
-  uses = "actions/docker/cli@master"
-  secrets = ["DOCKER_USERNAME"]
-  args = "image build --tag ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}:latest https://github.com/${GITHUB_REPOSITORY}"
-}
-
 action "docker.push" {
   uses = "actions/docker/cli@master"
   secrets = ["DOCKER_USERNAME"]
