@@ -6,7 +6,10 @@ workflow "test" {
 action "local.test" {
   uses = "./."
   runs = "/etc/entrypoint.d/login_shell"
-  args = "cd /home && echo GITHUB_ACTION=${GITHUB_ACTION} && echo GITHUB_ACTOR=${GITHUB_ACTOR} && echo GITHUB_EVENT_NAME=${GITHUB_EVENT_NAME} && echo GITHUB_REF=${GITHUB_REF} && ./bin/test"
+  env = {
+    DEF_BR = "$(date)"
+  }
+  args = "cd /home && echo DEF_BR=${DEF_BR} && ./bin/test"
 }
 
 
@@ -26,7 +29,13 @@ action "docker.login" {
 action "docker.image" {
   uses = "actions/docker/cli@master"
   secrets = ["DOCKER_USERNAME"]
-  args = "image build --tag ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}:${GITHUB_SHA:0:7} --tag ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/} --tag ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}:latest ."
+  args = "image build --tag ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}:${GITHUB_SHA:0:7} --tag ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}:${GITHUB_REF##*/} ."
+}
+
+action "docker.image" {
+  uses = "actions/docker/cli@master"
+  secrets = ["DOCKER_USERNAME"]
+  args = "image build --tag ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}:latest https://github.com/${GITHUB_REPOSITORY}"
 }
 
 action "docker.push" {
