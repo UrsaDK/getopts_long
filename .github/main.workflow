@@ -1,6 +1,17 @@
 workflow "New workflow" {
+  resolves = ["local.test", "docker.push"]
   on = "push"
-  resolves = ["getopts_long.test"]
+}
+
+action "local.test" {
+  uses = "./."
+  runs = "/etc/entrypoint.d/login_shell"
+  args = "cd /home && ./bin/test"
+}
+
+action "github.filter" {
+  uses = "actions/bin/filter@master"
+  args = "branch master"
 }
 
 action "docker.login" {
@@ -10,23 +21,13 @@ action "docker.login" {
 
 action "docker.image" {
   uses = "actions/docker/cli@master"
-  args = ["image", "build", "--tag", "${GITHUB_SHA}", "."]
-}
-
-action "docker.tag" {
-  uses = "actions/docker/tag@master"
-  needs = ["docker.image"]
-  args = ["${GITHUB_SHA}", "$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')"]
+  secrets = ["DOCKER_USERNAME"]
+  args = "image build --tag ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}:latest ."
 }
 
 action "docker.push" {
   uses = "actions/docker/cli@master"
-  needs = ["docker.tag", "docker.login"]
-  args = ["image", "push", "$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]')"]
-}
-
-action "getopts_long.test" {
-  uses = "docker://$(echo ${GITHUB_REPOSITORY} | tr '[:upper:]' '[:lower:]'):$(echo ${GITHUB_SHA} | hear -c7)"
-  needs = ["docker.push"]
-  runs = ["/bin/bash", "-l", "-c", "cd /home && ./bin/test"]
+  secrets = ["DOCKER_USERNAME"]
+  needs = ["docker.login", "docker.image"]
+  args = "image push ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}"
 }
