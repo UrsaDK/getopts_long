@@ -9,7 +9,7 @@ action "local.test" {
   env = {
     DEF_BR = "$(date)"
   }
-  args = "cd /home && echo ls -ld ${GITHUB_WORKSPACE} && ls -l ${GITHUB_WORKSPACE} && ./bin/test"
+  args = "cd /home && echo ls -ld ${GITHUB_WORKSPACE} && ls -la ${GITHUB_WORKSPACE} && ./bin/test"
 }
 
 
