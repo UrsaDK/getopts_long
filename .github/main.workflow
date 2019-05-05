@@ -9,6 +9,11 @@ action "local.test" {
   args = "cd /home && ./bin/test"
 }
 
+action "github.filter" {
+  uses = "actions/bin/filter@master"
+  args = "branch master"
+}
+
 action "docker.login" {
   uses = "actions/docker/login@master"
   secrets = ["DOCKER_USERNAME", "DOCKER_PASSWORD"]
@@ -23,6 +28,6 @@ action "docker.image" {
 action "docker.push" {
   uses = "actions/docker/cli@master"
   secrets = ["DOCKER_USERNAME"]
-  needs = ["docker.login", "docker.image"]
+  needs = ["github.filter", "docker.login", "docker.image"]
   args = "image push ${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}"
 }
