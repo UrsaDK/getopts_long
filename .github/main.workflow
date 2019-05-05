@@ -9,11 +9,6 @@ action "local.test" {
   args = "cd /home && ./bin/test"
 }
 
-action "github.filter" {
-  uses = "actions/bin/filter@master"
-  args = "branch master"
-}
-
 action "docker.login" {
   uses = "actions/docker/login@master"
   secrets = ["DOCKER_USERNAME", "DOCKER_PASSWORD"]
