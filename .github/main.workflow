@@ -6,7 +6,7 @@ workflow "test" {
 action "local.test" {
   uses = "./."
   runs = "/etc/entrypoint.d/login_shell"
-  args = "cd /home && echo GITHUB_ACTION=${GITHUB_ACTION} && echo GITHUB_ACTOR=${GITHUB_ACTOR} && echo GITHUB_EVENT_NAME=${GITHUB_EVENT_NAME} && echo ${} && ./bin/test"
+  args = "cd /home && echo GITHUB_ACTION=${GITHUB_ACTION} && echo GITHUB_ACTOR=${GITHUB_ACTOR} && echo GITHUB_EVENT_NAME=${GITHUB_EVENT_NAME} && cat ${GITHUB_EVENT_PATH} && ./bin/test"
 }
 
 
