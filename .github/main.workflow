@@ -1,4 +1,4 @@
-workflow "Continuous Integration" {
+workflow "Continuous Deployment" {
   on = "push"
   resolves = [
     "Test and publish coverage report",
