@@ -44,6 +44,10 @@ action "Build and tag latest image" {
   secrets = [
     "DOCKER_USERNAME"
   ]
+  needs = [
+    "Branch is master",
+    "Test and publish coverage report"
+  ]
   args = [
     "image", "build",
     "--tag", "${DOCKER_USERNAME}/${GITHUB_REPOSITORY#*/}:latest",
@@ -57,7 +61,6 @@ action "Push latest image to Docker Hub" {
     "DOCKER_USERNAME"
   ]
   needs = [
-    "Branch is master",
     "Login to Docker Hub",
     "Build and tag latest image"
   ]
