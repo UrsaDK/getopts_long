@@ -1,10 +1,11 @@
 <div align="center">
 
-  ![getopts_long logo](./images/logo.png)<br>
+  [![getopts_long logo](https://raw.githubusercontent.com/UmkaDK/getopts_long/master/images/logo.png)](#)<br>
 
-  ![release branch: master](https://img.shields.io/badge/dynamic/json.svg?color=blue&label=release%20branch&query=%24.default_branch&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long)
-  ![test coverage: 100%](https://img.shields.io/badge/test_coverage-100%25-brightgreen.svg)
-  [![donate via coinbase](https://img.shields.io/badge/donate-coinbase-gold.svg?colorB=ff8e00&logo=bitcoin)](https://commerce.coinbase.com/checkout/17ae30c2-9c3f-45fb-a911-36d01a3c81b6)
+  [![stable branch](https://img.shields.io/badge/dynamic/json.svg?color=lightgrey&label=stable&query=%24.default_branch&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long&logo=github)](https://github.com/UmkaDK/getopts_long/tree/master)
+  [![latest release](https://img.shields.io/badge/dynamic/json.svg?color=blue&label=release&query=%24.name&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long%2Freleases%2Flatest&logo=docker)](https://cloud.docker.com/repository/docker/umkadk/getopts_long)
+  [![test coverage](https://codecov.io/gh/UmkaDK/getopts_long/graph/badge.svg)](https://codecov.io/gh/UmkaDK/getopts_long)
+  [![donate link](https://img.shields.io/badge/donate-coinbase-gold.svg?colorB=ff8e00&logo=bitcoin)](https://commerce.coinbase.com/checkout/17ae30c2-9c3f-45fb-a911-36d01a3c81b6)
 
 </div>
 
@@ -23,6 +24,7 @@ This function is 100% compatible with the built-in `getopts`. It is implemented 
 - [Installation](#installation)
   - [Source the library](#source-the-library)
   - [Paste the content](#paste-the-content)
+  - [Run in docker](#run-in-docker)
 - [Usage](#usage)
   - [Extended OPTSPEC](#extended-optspec)
   - [Example script](#example-script)
@@ -65,6 +67,16 @@ This method allows you to receive any future updates and all fixes to the functi
 An alternative method of installation is to simply copy-n-paste the content of `lib/getopts_long.bash` into your script.
 
 This will make the function available to a single script and you will easily be able to customise it for your own needs. However, you will need to keep an eye on this repository and manually upgrade the function whenever an update is released.
+
+### Run in docker
+
+A more advanced way to run your script with getopts_long is to mount its directory into the getopts_long docker container:
+
+```
+docker container run --rm --init -it -v ${YOUR_SCRIPT_DIR}:/mnt umkadk/getopts_long -l
+```
+
+Your script will be available in `/mnt` directory, and getopts_long function can be sourced from `/home/lib/getopts_long.bash`.
 
 ## Usage
 
@@ -201,25 +213,25 @@ Even though I consider this function feature complete, contributions are always 
 
 ### Test suite
 
-Tests for this function live in the `./test` subdirectory of the project root. They are implemented using [BATS](https://github.com/bats-core/bats-core) (Unit Tests), and [Kcov](https://github.com/SimonKagstrom/kcov) (coverage report), and all the tools are provided by the included Dockerfile.
+Tests for this function live in the `./test` subdirectory of the project root. They are implemented using [BATS](https://github.com/bats-core/bats-core) (unit tests), and [Kcov](https://github.com/SimonKagstrom/kcov) (coverage report), which are provided by the included Dockerfile.
 
-A local docker image is built using the following command:
-
-```
-docker image build --tag getopts_long .
-```
-
-After that, executing the container with no arguments will run all tests and generate a coverage report in the `coverage` subdirectory of the projects root:
+If required, a local docker image can be built using the following command:
 
 ```
-docker container run --rm --init -it -v ${PWD}:/mnt getopts_long
-open ./coverage/index.html
+docker image build --tag umkadk/getopts_long .
+```
+
+Executing the container with no arguments will run all tests and generate a coverage report in the `coverage` subdirectory of the projects root:
+
+```
+docker container run --rm --init -it -v ${PWD}:/mnt umkadk/getopts_long
+ls -l ./coverage/index.html
 ```
 
 Individual tests could be run by passing a relative path of the BATS test file as an argument to `docker run` command:
 
 ```
-docker container run --rm --init -it -v ${PWD}:/mnt getopts_long ./test/no_arguments.bats
+docker container run --rm --init -it -v ${PWD}:/mnt umkadk/getopts_long ./test/no_arguments.bats
 ```
 
 
