@@ -1,4 +1,4 @@
-workflow "Continuous Deployment" {
+workflow "Codecov" {
   on = "push"
   resolves = [
     "Publish coverage report"
