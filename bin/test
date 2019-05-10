@@ -36,9 +36,9 @@ ensure_dir_exists "${GETOPTS_LONG_LIB}"
 ensure_dir_exists "${GETOPTS_LONG_TEST}"
 
 # Run bats
-UNIT_TEST="${*:-${GETOPTS_LONG_TEST}}"
-echo "Running tests: ${UNIT_TEST} "
-bats --tap --recursive "${UNIT_TEST}"
+TEST_DIR="${*:-${GETOPTS_LONG_TEST}}"
+echo "Running tests: ${TEST_DIR} "
+bats --tap --recursive "${TEST_DIR}"
 [ -n "${*}" ] && exit
 
 # Setup exit trap
