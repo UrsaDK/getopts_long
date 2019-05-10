@@ -1,7 +1,20 @@
 FROM debian:stable-slim AS base
 LABEL maintainer="UmkaDK <umka.dk@icloud.com>"
 COPY ./docker-fs /
-RUN cp /etc/skel/.??* /root \
+RUN apt-get -y update \
+    && apt-get -y install \
+        bash \
+        bc \
+        binutils \
+        jq \
+        libcurl4-openssl-dev \
+        libdw1 \
+        libiberty-dev \
+        python \
+        zlib1g \
+    && apt-get --purge autoremove \
+    && apt-get clean \
+    && cp /etc/skel/.??* /root \
     && adduser \
         --quiet \
         --disabled-password \
@@ -12,18 +25,7 @@ RUN cp /etc/skel/.??* /root \
         --gecos "" \
         payload \
     && cp /etc/skel/.??* /home \
-    && chown -R payload:payload /home \
-    && apt-get -y update \
-    && apt-get -y install \
-        bash \
-        binutils \
-        libcurl4-openssl-dev \
-        libdw1 \
-        libiberty-dev \
-        python \
-        zlib1g \
-    && apt-get --purge autoremove \
-    && apt-get clean
+    && chown -R payload:payload /home /mnt
 ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
 
 FROM base AS build
@@ -31,6 +33,7 @@ RUN apt-get -y update \
     && apt-get -y install \
         binutils-dev \
         cmake \
+        curl \
         gcc \
         g++ \
         git \
@@ -52,11 +55,27 @@ RUN git clone --depth 1 --branch v36 https://github.com/SimonKagstrom/kcov.git \
     && make install
 ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
 
-FROM base AS latest
-COPY --from=build /usr/local /usr/local
-COPY --chown=payload . /home
-RUN rm -Rf /home/docker-fs \
-    && chown -R payload:payload /mnt
+FROM build AS clean
+WORKDIR /home
+COPY --chown=payload . .
+RUN rm -Rf \
+        ./docker-fs \
+        ./bats-core \
+        ./kcov
+USER payload
+RUN ./bin/test \
+    && TZ=UTC git show \
+        --pretty=tformat:"%H%+D%+ad%n%+s" \
+        --date=format-local:"%c %Z" \
+        | head -5 > ./VERSION \
+    && rm -Rf ./.git
+VOLUME ["/mnt"]
+ENTRYPOINT ["/etc/entrypoint.d/test_getopts_long"]
+
+FROM clean AS final
+USER root
+COPY --from=build --chown=root /usr/local /usr/local
+COPY --from=clean --chown=payload /home /home
 USER payload
 WORKDIR /mnt
 VOLUME ["/mnt"]
