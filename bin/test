@@ -11,9 +11,9 @@ __exit() {
   exit "${2:-1}"
 }
 
-ensure_dir_exists() {
+path_exists?() {
   : "${1:?Missing required argument -- directory path}"
-  [[ -d "${1}" ]] || __exit "Directory not found -- ${1}"
+  [[ -e "${1}" ]] || __exit "Path not found -- ${1}"
 }
 
 print_coverage_diff() {
@@ -32,8 +32,8 @@ print_coverage_diff() {
   else printf "${label}" "${diff}"; fi
 }
 
-ensure_dir_exists "${GETOPTS_LONG_LIB}"
-ensure_dir_exists "${GETOPTS_LONG_TEST}"
+path_exists? "${GETOPTS_LONG_LIB}"
+path_exists? "${GETOPTS_LONG_TEST}"
 
 # Run bats
 TEST_DIR="${*:-${GETOPTS_LONG_TEST}}"
