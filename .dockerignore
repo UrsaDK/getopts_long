@@ -1,5 +1,6 @@
 .dockerignore
-.git*
+.git?*
+bin/docker
 coverage
 Dockerfile
 

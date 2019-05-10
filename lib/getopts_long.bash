@@ -1,6 +1,6 @@
 getopts_long() {
-    : ${1:?Missing required parameter -- long optspec}
-    : ${2:?Missing required parameter -- variable name}
+    : "${1:?Missing required parameter -- long optspec}"
+    : "${2:?Missing required parameter -- variable name}"
 
     local optspec_short="${1%% *}-:"
     local optspec_long="${1#* }"
@@ -49,6 +49,6 @@ getopts_long() {
             [[ "${OPTERR}" == 0 ]] || echo "${0}: illegal option -- ${!optvar}" >&2
             unset OPTARG
         fi
-        printf -v ${optvar} '?'
+        printf -v "${optvar}" '?'
     fi
 }

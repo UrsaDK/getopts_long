@@ -1,18 +1,72 @@
 #!/usr/bin/env bash
 
 set -e
-TEMP_DIR="$(mktemp -d -t kcov.XXXXXXXXX)"
-trap "rm -Rf ${TEMP_DIR}" EXIT
 
-bats --tap --recursive "${@:-./test}"
+: "${GETOPTS_LONG_LIB:=./lib}"
+: "${GETOPTS_LONG_TEST:=./test}"
+: "${GETOPTS_LONG_COVERAGE:=./coverage}"
+
+__exit() {
+  echo "${0}: ${1:?Missing required parameter -- error message}" >&2
+  exit "${2:-1}"
+}
+
+path_exists?() {
+  : "${1:?Missing required argument -- directory path}"
+  [[ -e "${1}" ]] || __exit "Path not found -- ${1}"
+}
+
+print_coverage_diff() {
+  : "${1:?Missing required argument -- new code coverage}"
+
+  local commit="$(head -c7 /home/VERSION)"
+  local coverage="$(jq -r .percent_covered "/home/coverage/coverage.json")"
+  local diff=$(echo "${coverage} - ${1}" | bc -l)
+
+  local label="%+.2f%% compared to ${commit}"
+  local color_label="\e[01;%sm%+.2f%%\e[00m compared to ${commit}"
+
+  if tty -s && [[ "${diff}" -gt '0' ]]; then printf "${color_label}" 32 "${diff}"
+  elif tty -s && [[ "${diff}" -lt '0' ]]; then printf "${color_label}" 31 "${diff}"
+  elif [[ "${diff}" == '0' ]]; then printf "unchanged compared to ${commit}"
+  else printf "${label}" "${diff}"; fi
+}
+
+path_exists? "${GETOPTS_LONG_LIB}"
+path_exists? "${GETOPTS_LONG_TEST}"
+
+# Run bats
+TEST_DIR="${*:-${GETOPTS_LONG_TEST}}"
+echo "Running tests: ${TEST_DIR} "
+bats --tap --recursive "${TEST_DIR}"
 [ -n "${*}" ] && exit
 
-echo "Generating coverage report: ./coverage/index.html"
-kcov --clean --include-path=./lib ${TEMP_DIR} bats --recursive ./test
+# Setup exit trap
+TEMP_DIR="$(mktemp -d -t kcov.XXXXXXXXX)"
+trap 'rm -Rf ${TEMP_DIR}' EXIT
+
+# Run kcov
+echo "Generating coverage report: ${GETOPTS_LONG_COVERAGE}/index.html"
+kcov --clean --include-path="${GETOPTS_LONG_LIB}" \
+  "${TEMP_DIR}" \
+  bats --recursive "${GETOPTS_LONG_TEST}"
 
 # Clean up kcov report
-rm ${TEMP_DIR}/bats/{bcov.css,amber.png,glass.png}
-sed -i 's#"../data/bcov.css"#"data/bcov.css"#g' ${TEMP_DIR}/bats/*.html
+rm "${TEMP_DIR}"/bats/{bcov.css,amber.png,glass.png}
+sed -i 's#"../data/bcov.css"#"data/bcov.css"#g' "${TEMP_DIR}"/bats/*.html
 
 # Present kcov report
-cp -LR ${TEMP_DIR}/bats ./coverage
+rm -Rf "${GETOPTS_LONG_COVERAGE}"
+cp -LR "${TEMP_DIR}/bats" "${GETOPTS_LONG_COVERAGE}"
+
+# Total code coverage
+COVERAGE="$(jq -r .percent_covered "${GETOPTS_LONG_COVERAGE}/coverage.json")"
+printf "Code covered: %s%% " "${COVERAGE}"
+
+# Code coverage diff
+if [[ -e "/.dockerenv" && "${PWD}" != "/home" ]]; then
+  printf "(%s)" "$(print_coverage_diff "${COVERAGE}")"
+fi
+
+# Finish code coverage stats with a new line
+echo
