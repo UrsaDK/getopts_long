@@ -12,7 +12,6 @@ action "Publish coverage report" {
   ]
   runs = "/etc/entrypoint.d/login_shell"
   args = [
-    "cd /home/coverage",
-    "&& bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN}"
+    "bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -R ${GITHUB_WORKSPACE} -s /home/coverage -Z"
   ]
 }
