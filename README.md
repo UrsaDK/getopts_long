@@ -3,7 +3,7 @@
   [![getopts_long logo](https://raw.githubusercontent.com/UmkaDK/getopts_long/master/images/logo.png)](#)<br>
 
   [![stable branch](https://img.shields.io/badge/dynamic/json.svg?color=lightgrey&label=stable&query=%24.default_branch&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long&logo=github)](https://github.com/UmkaDK/getopts_long/tree/master)
-  [![latest release](https://img.shields.io/badge/dynamic/json.svg?color=blue&label=release&query=%24.name&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long%2Freleases%2Flatest&logo=docker)](https://cloud.docker.com/repository/docker/umkadk/getopts_long)
+  [![latest release](https://img.shields.io/badge/dynamic/json.svg?color=blue&label=release&query=%24.name&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long%2Freleases%2Flatest&logo=docker)](https://hub.docker.com/r/umkadk/getopts_long)
   [![test coverage](https://codecov.io/gh/UmkaDK/getopts_long/graph/badge.svg)](https://codecov.io/gh/UmkaDK/getopts_long)
   [![donate link](https://img.shields.io/badge/donate-coinbase-gold.svg?colorB=ff8e00&logo=bitcoin)](https://commerce.coinbase.com/checkout/17ae30c2-9c3f-45fb-a911-36d01a3c81b6)
 
