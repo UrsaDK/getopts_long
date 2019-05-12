@@ -2,6 +2,7 @@
 
 set -e
 
+: "${GETOPTS_LONG_BIN:=./bin}"
 : "${GETOPTS_LONG_LIB:=./lib}"
 : "${GETOPTS_LONG_TEST:=./test}"
 : "${GETOPTS_LONG_COVERAGE:=./coverage}"
@@ -11,29 +12,40 @@ __exit() {
   exit "${2:-1}"
 }
 
-path_exists?() {
+path_exists() {
   : "${1:?Missing required argument -- directory path}"
   [[ -e "${1}" ]] || __exit "Path not found -- ${1}"
+}
+
+color_diff() {
+  : "${1:?Missing required argument -- label color}"
+  : "${2:?Missing required argument -- coverage diff}"
+  : "${3:?Missing required argument -- version sha}"
+  printf "\e[01;%sm%+.2f%%\e[00m compared to %s" "${1}" "${2}" "${3}"
 }
 
 print_coverage_diff() {
   : "${1:?Missing required argument -- new code coverage}"
 
-  local commit="$(head -c7 /home/VERSION)"
-  local coverage="$(jq -r .percent_covered "/home/coverage/coverage.json")"
-  local diff=$(echo "${coverage} - ${1}" | bc -l)
+  local sha
+  sha="$(head -c7 /home/VERSION)"
+  local coverage
+  coverage="$(jq -r .percent_covered "/home/coverage/coverage.json")"
+  local diff
+  diff=$(echo "${coverage} - ${1}" | bc -l)
 
-  local label="%+.2f%% compared to ${commit}"
-  local color_label="\e[01;%sm%+.2f%%\e[00m compared to ${commit}"
-
-  if tty -s && [[ "${diff}" -gt '0' ]]; then printf "${color_label}" 32 "${diff}"
-  elif tty -s && [[ "${diff}" -lt '0' ]]; then printf "${color_label}" 31 "${diff}"
-  elif [[ "${diff}" == '0' ]]; then printf "unchanged compared to ${commit}"
-  else printf "${label}" "${diff}"; fi
+  if tty -s && [[ "${diff}" -gt '0' ]]; then color_diff 32 "${diff}" "${sha}"
+  elif tty -s && [[ "${diff}" -lt '0' ]]; then color_diff 31 "${diff}" "${sha}"
+  elif [[ "${diff}" == '0' ]]; then printf "unchanged compared to %s" "${sha}"
+  else printf "%+.2f%% compared to %s" "${diff}" "${sha}"; fi
 }
 
-path_exists? "${GETOPTS_LONG_LIB}"
-path_exists? "${GETOPTS_LONG_TEST}"
+path_exists "${GETOPTS_LONG_LIB}"
+path_exists "${GETOPTS_LONG_TEST}"
+
+# Run shellcheck
+echo "Checking code style: ${GETOPTS_LONG_BIN}/* ${GETOPTS_LONG_LIB}/*"
+shellcheck -f tty -s bash -a "${GETOPTS_LONG_BIN}"/* "${GETOPTS_LONG_LIB}"/*
 
 # Run bats
 TEST_DIR="${*:-${GETOPTS_LONG_TEST}}"

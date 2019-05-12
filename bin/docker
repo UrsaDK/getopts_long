@@ -8,13 +8,13 @@ CMD="${1}" && shift
 case "${CMD}" in
   'b'|'build')
     if [[ -z "${*}" ]]; then docker image build --tag "${CONTAINER}" "${PWD}"
-    else docker image build ${@} --tag "${CONTAINER}" "${PWD}"; fi
+    else docker image build "${@}" --tag "${CONTAINER}" "${PWD}"; fi
     ;;
   'r'|'run')
     docker container run --rm --init -it -v "${PWD}:/mnt" "${CONTAINER}" "${@}"
     ;;
   *)
-    echo "${0}: Unknown command -- ${cmd}" >&2
+    echo "${0}: Unknown command -- ${CMD}" >&2
     exit 1
     ;;
 esac

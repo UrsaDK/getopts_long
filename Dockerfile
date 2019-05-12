@@ -32,6 +32,7 @@ FROM base AS build
 RUN apt-get -y update \
     && apt-get -y install \
         binutils-dev \
+        cabal-install \
         cmake \
         curl \
         gcc \
@@ -44,6 +45,10 @@ RUN apt-get -y update \
     && apt-get --purge autoremove \
     && apt-get clean
 WORKDIR /home
+RUN git clone --depth 1 --branch v0.6.0 https://github.com/koalaman/shellcheck.git \
+    && cd shellcheck \
+    && cabal update \
+    && cabal install --global
 RUN git clone --depth 1 --branch v1.1.0 https://github.com/bats-core/bats-core.git \
     && cd bats-core \
     && ./install.sh /usr/local
@@ -55,28 +60,19 @@ RUN git clone --depth 1 --branch v36 https://github.com/SimonKagstrom/kcov.git \
     && make install
 ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
 
-FROM build AS clean
+FROM build AS final
 WORKDIR /home
+COPY --from=build --chown=root /usr/local /usr/local
 COPY --chown=payload . .
-RUN rm -Rf \
-        ./docker-fs \
-        ./bats-core \
-        ./kcov
 USER payload
 RUN ./bin/test \
     && TZ=UTC git show \
         --pretty=tformat:"%H%+D%+ad%n%+s" \
         --date=format-local:"%c %Z" \
         | head -5 > ./VERSION \
-    && rm -Rf ./.git
-VOLUME ["/mnt"]
-ENTRYPOINT ["/etc/entrypoint.d/test_getopts_long"]
-
-FROM clean AS final
-USER root
-COPY --from=build --chown=root /usr/local /usr/local
-COPY --from=clean --chown=payload /home /home
-USER payload
+    && rm -Rf \
+        ./.git \
+        ./docker-fs
 WORKDIR /mnt
 VOLUME ["/mnt"]
 ENTRYPOINT ["/etc/entrypoint.d/test_getopts_long"]
