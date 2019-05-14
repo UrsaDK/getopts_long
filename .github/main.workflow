@@ -14,6 +14,6 @@ action "Publish coverage report" {
   args = [
     "cd /home",
     "&& ln -vsf ${GITHUB_WORKSPACE}/.git",
-    "&& bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -n ${GITHUB_REF##*/}:${GITHUB_SHA:0:7} -Z -d"
+    "&& bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -n ${GITHUB_REF##*/}:${GITHUB_SHA:0:7} -Z"
   ]
 }
