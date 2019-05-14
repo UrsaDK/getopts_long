@@ -34,7 +34,6 @@ FROM base AS build
 RUN apt-get -y update \
     && apt-get -y install \
         binutils-dev \
-        cabal-install \
         cmake \
         gcc \
         g++ \
