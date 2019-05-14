@@ -41,14 +41,16 @@ RUN apt-get -y update \
         libcurl4-openssl-dev \
         libdw-dev \
         libiberty-dev \
+        xz-utils \
         zlib1g-dev \
     && apt-get --purge autoremove \
     && apt-get clean
 WORKDIR /home
-RUN git clone --depth 1 --branch v0.6.0 https://github.com/koalaman/shellcheck.git \
-    && cd shellcheck \
-    && cabal update \
-    && cabal install --global
+RUN SHELLCHECK_VERSION='v0.6.0' \
+    && SHELLCHECK_DIR="shellcheck-${SHELLCHECK_VERSION}" \
+    && SHELLCHECK_URL="https://storage.googleapis.com/shellcheck/${SHELLCHECK_DIR}.linux.x86_64.tar.xz" \
+    && curl -s "${SHELLCHECK_URL}" | tar -xJv \
+    && install "${SHELLCHECK_DIR}/shellcheck" /usr/local/bin
 RUN git clone --depth 1 --branch v1.1.0 https://github.com/bats-core/bats-core.git \
     && cd bats-core \
     && ./install.sh /usr/local
@@ -58,21 +60,23 @@ RUN git clone --depth 1 --branch v36 https://github.com/SimonKagstrom/kcov.git \
     && cmake .. \
     && make \
     && make install
-ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
-
-FROM build AS final
-WORKDIR /home
-COPY --from=build --chown=root /usr/local /usr/local
-COPY --chown=payload . .
-USER payload
-RUN ./bin/test \
+COPY --chown=payload . ./getopts_long
+RUN cd ./getopts_long \
     && TZ=UTC git show \
         --pretty=tformat:"%H%+D%+ad%n%+s" \
         --date=format-local:"%c %Z" \
         | head -5 > ./VERSION \
     && rm -Rf \
         ./.git \
-        ./docker-fs
+        ./docker-fs \
+ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
+
+FROM base AS final
+WORKDIR /home
+COPY --from=build --chown=root /usr/local /usr/local
+COPY --from=build --chown=payload /home/getopts_long /home
+USER payload
+RUN ./bin/test
 WORKDIR /mnt
 VOLUME ["/mnt"]
 ENTRYPOINT ["/etc/entrypoint.d/test_getopts_long"]
