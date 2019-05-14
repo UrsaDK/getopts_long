@@ -59,7 +59,7 @@ trap 'rm -Rf ${TEMP_DIR}' EXIT
 
 # Run kcov
 echo "Generating coverage report: ${GETOPTS_LONG_COVERAGE}/index.html"
-kcov --clean --include-path="${GETOPTS_LONG_LIB}" --strip-path="${PWD}" \
+kcov --clean --include-path="${GETOPTS_LONG_LIB}" \
   "${TEMP_DIR}" \
   bats --recursive "${GETOPTS_LONG_TEST}"
 
