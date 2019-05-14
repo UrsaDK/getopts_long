@@ -7,6 +7,7 @@ RUN apt-get -y update \
         bc \
         binutils \
         curl \
+        git \
         jq \
         libcurl4-openssl-dev \
         libdw1 \
@@ -37,7 +38,6 @@ RUN apt-get -y update \
         cmake \
         gcc \
         g++ \
-        git \
         libcurl4-openssl-dev \
         libdw-dev \
         libiberty-dev \
