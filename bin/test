@@ -44,8 +44,11 @@ path_exists "${GETOPTS_LONG_LIB}"
 path_exists "${GETOPTS_LONG_TEST}"
 
 # Run shellcheck
-echo "Checking code style: ${GETOPTS_LONG_BIN}/* ${GETOPTS_LONG_LIB}/*"
-shellcheck -f tty -s bash -a "${GETOPTS_LONG_BIN}"/* "${GETOPTS_LONG_LIB}"/*
+echo "Checking shell code: ${GETOPTS_LONG_LIB} ${GETOPTS_LONG_TEST} ${GETOPTS_LONG_BIN}"
+shellcheck -f tty -s bash -a \
+  "${GETOPTS_LONG_LIB}"/* \
+  "${GETOPTS_LONG_TEST}"/*.bash "${GETOPTS_LONG_TEST}"/bin/*  \
+  "${GETOPTS_LONG_BIN}"/*
 
 # Run bats
 TEST_DIR="${*:-${GETOPTS_LONG_TEST}}"
@@ -66,6 +69,8 @@ kcov --clean --include-path="${GETOPTS_LONG_LIB}" \
 # Clean up kcov report
 rm "${TEMP_DIR}"/bats/{bcov.css,amber.png,glass.png}
 sed -i 's#"../data/bcov.css"#"data/bcov.css"#g' "${TEMP_DIR}"/bats/*.html
+sed -i -E 's#/(home|mnt)/##g' \
+  "${TEMP_DIR}"/bats/*.{json,xml} "${TEMP_DIR}"/bats/metadata/*
 
 # Present kcov report
 rm -Rf "${GETOPTS_LONG_COVERAGE}"

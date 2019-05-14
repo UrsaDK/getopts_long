@@ -1,17 +1,19 @@
 workflow "Codecov" {
   on = "push"
   resolves = [
-    "Publish coverage report"
+    "docker/build"
   ]
 }
 
-action "Publish coverage report" {
+action "docker/build" {
   uses = "./."
   secrets = [
     "CODECOV_TOKEN"
   ]
   runs = "/etc/entrypoint.d/login_shell"
   args = [
-    "bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -R ${GITHUB_WORKSPACE} -s /home/coverage -Z"
+    "cd /home",
+    "&& ln -vsf ${GITHUB_WORKSPACE}/.git",
+    "&& bash <(curl -s https://codecov.io/bash) -t ${CODECOV_TOKEN} -n ${GITHUB_REF##*/}:${GITHUB_SHA:0:7} -R ${PWD} -Z"
   ]
 }

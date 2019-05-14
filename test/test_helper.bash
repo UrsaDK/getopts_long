@@ -1,6 +1,10 @@
-TOPDIR="$(cd ${BATS_TEST_DIRNAME}/.. && pwd)"
-PATH="${TOPDIR}/bin:${PATH}"
+# shellcheck disable=SC2086
+# shellcheck disable=SC2154
+
+TOPDIR="$(cd "${BATS_TEST_DIRNAME}"/.. && pwd)"
+# shellcheck disable=SC2034
 FEATURE="$(basename "${BATS_TEST_FILENAME}" '.bats' | tr '_' ' ')"
+PATH="${TOPDIR}/bin:${PATH}"
 
 debug() {
     printf '\nACTUAL:\n––––––––\n%s\n' "${2}" >&3
@@ -22,18 +26,20 @@ expect() {
 }
 
 compare() {
-    : ${1?Missing required parameter -- getopts arguments}
-    : ${2?Missing required parameter -- getopts_long arguments}
+    : "${1?Missing required parameter -- getopts arguments}"
+    : "${2?Missing required parameter -- getopts_long arguments}"
 
-    run getopts-${BATS_TEST_DESCRIPTION##* } ${1}
+    run "getopts-${BATS_TEST_DESCRIPTION##* }" ${1}
     expected_output="${output}"
     expected_lines=( "${lines[@]}" )
     expected_status=${status}
+    export expected_output expected_lines expected_status
 
-    run getopts_long-${BATS_TEST_DESCRIPTION##* } ${2}
+    run "getopts_long-${BATS_TEST_DESCRIPTION##* }" ${2}
     actual_output="${output}"
     actual_lines=( "${lines[@]}" )
     actual_status=${status}
+    export actual_output actual_lines actual_status
 
     if [[ -n "${3+SET}" ]]; then
         expected_output="$(echo "${expected_output}" | sed -E "${3}")"
