@@ -6,6 +6,7 @@ RUN apt-get -y update \
         bash \
         bc \
         binutils \
+        curl \
         jq \
         libcurl4-openssl-dev \
         libdw1 \
@@ -34,7 +35,6 @@ RUN apt-get -y update \
         binutils-dev \
         cabal-install \
         cmake \
-        curl \
         gcc \
         g++ \
         git \
