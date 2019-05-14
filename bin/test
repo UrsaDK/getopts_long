@@ -66,8 +66,6 @@ kcov --clean --include-path="${GETOPTS_LONG_LIB}" --strip-path="${PWD}" \
 # Clean up kcov report
 rm "${TEMP_DIR}"/bats/{bcov.css,amber.png,glass.png}
 sed -i 's#"../data/bcov.css"#"data/bcov.css"#g' "${TEMP_DIR}"/bats/*.html
-sed -i -E 's#/(home|mnt)/#/#g' \
-  "${TEMP_DIR}"/bats/*.{json,xml} "${TEMP_DIR}"/bats/metadata/*
 
 # Present kcov report
 rm -Rf "${GETOPTS_LONG_COVERAGE}"
