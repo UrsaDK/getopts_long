@@ -10,5 +10,5 @@ should_open_shell() {
 if should_open_shell "${*}"; then
   exec /etc/entrypoint.d/login_shell
 else
-  exec /etc/entrypoint.d/login_shell "/home/bin/test ${@}"
+  exec /etc/entrypoint.d/login_shell "/home/bin/test" "${@}"
 fi

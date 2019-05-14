@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-TOPDIR="$(cd $(dirname ${0})/../.. && pwd)"
+TOPDIR="$(cd "$(dirname "${0}")"/../.. && pwd)"
+# shellcheck disable=SC1090
 source "${TOPDIR}/lib/getopts_long.bash"
 
 while getopts_long ':to:v: toggle option: variable:' OPTKEY; do
@@ -35,4 +36,4 @@ echo "OPTERR: ${OPTERR}"
 echo "OPTKEY: ${OPTKEY}"
 echo "OPTARG: ${OPTARG}"
 echo "OPTIND: ${OPTIND}"
-echo "\$@: ${@}"
+echo "\$@: ${*}"
