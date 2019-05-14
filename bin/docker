@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
-set -e
+GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
+: "${GIT_BRANCH:=unknown}"
 
-CONTAINER='umkadk/getopts_long'
+[[ "${GIT_BRANCH}" == 'master' ]] && TAG='' || TAG=":${GIT_BRANCH}"
+
+CONTAINER="umkadk/getopts_long${TAG}"
 CMD="${1}" && shift
 
 case "${CMD}" in
@@ -12,6 +15,13 @@ case "${CMD}" in
     ;;
   'r'|'run')
     docker container run --rm --init -it -v "${PWD}:/mnt" "${CONTAINER}" "${@}"
+    ;;
+  '')
+    echo "Usage: ${0} <command> [options]" >&2
+    echo "where command is:" >&2
+    echo "  build  -   options are passed to 'docker image build'" >&2
+    echo "  run    -   options are passed as arguments to the container" >&2
+    exit 1
     ;;
   *)
     echo "${0}: Unknown command -- ${CMD}" >&2
