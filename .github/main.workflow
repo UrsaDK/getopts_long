@@ -1,11 +1,11 @@
 workflow "Codecov" {
   on = "push"
   resolves = [
-    "Publish coverage report"
+    "docker/build"
   ]
 }
 
-action "Publish coverage report" {
+action "docker/build" {
   uses = "./."
   secrets = [
     "CODECOV_TOKEN"
