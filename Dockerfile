@@ -68,7 +68,8 @@ RUN cd ./getopts_long \
     && rm -Rf \
         ./.git \
         ./docker-fs \
-ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
+WORKDIR /home/getopts_long
+ENTRYPOINT ["/etc/entrypoint.d/test_payload"]
 
 FROM base AS final
 WORKDIR /home
@@ -78,4 +79,4 @@ USER payload
 RUN ./bin/test
 WORKDIR /mnt
 VOLUME ["/mnt"]
-ENTRYPOINT ["/etc/entrypoint.d/test_getopts_long"]
+ENTRYPOINT ["/etc/entrypoint.d/test_payload"]
