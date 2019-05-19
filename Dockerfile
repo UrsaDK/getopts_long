@@ -69,7 +69,7 @@ RUN cd ./getopts_long \
         ./.git \
         ./docker-fs
 WORKDIR /home/getopts_long
-ENTRYPOINT ["/etc/entrypoint.d/test_payload"]
+ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
 
 FROM base AS final
 WORKDIR /home
