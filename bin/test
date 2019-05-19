@@ -51,9 +51,9 @@ shellcheck -f tty -s bash -a \
   "${GETOPTS_LONG_BIN}"/*
 
 # Run bats
-TEST_DIR="${*:-${GETOPTS_LONG_TEST}}"
-echo "Running tests: ${TEST_DIR} "
-bats --tap --recursive "${TEST_DIR}"
+TEST_DIR=( "${@:-${GETOPTS_LONG_TEST}}" )
+echo "Running tests: ${TEST_DIR[*]} "
+bats --tap --recursive "${TEST_DIR[@]}"
 [ -n "${*}" ] && exit
 
 # Setup exit trap
