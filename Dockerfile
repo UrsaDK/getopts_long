@@ -67,7 +67,7 @@ RUN cd ./getopts_long \
         | head -5 > ./VERSION \
     && rm -Rf \
         ./.git \
-        ./docker-fs \
+        ./docker-fs
 WORKDIR /home/getopts_long
 ENTRYPOINT ["/etc/entrypoint.d/test_payload"]
 
