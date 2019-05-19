@@ -45,7 +45,7 @@ path_exists "${GETOPTS_LONG_TEST}"
 
 # Run shellcheck
 echo "Checking shell code: ${GETOPTS_LONG_LIB} ${GETOPTS_LONG_TEST} ${GETOPTS_LONG_BIN}"
-shellcheck -f tty -s bash -a \
+shellcheck --format="tty" --shell="bash" --check-sourced \
   "${GETOPTS_LONG_LIB}"/* \
   "${GETOPTS_LONG_TEST}"/*.bash "${GETOPTS_LONG_TEST}"/bin/*  \
   "${GETOPTS_LONG_BIN}"/*
