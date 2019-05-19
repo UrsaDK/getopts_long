@@ -8,7 +8,7 @@ where 'commands' are one of the following:
   build  -   options are passed to 'docker image build'.
              See 'docker image build --help' for a full list of options.
 
-  run    -   appart for the following exceptions, all options are passed as
+  run    -   apart for the following exceptions, all options are passed as
              arguments to './bin/test' running inside the container:
 
              - l   run docker container and open a login shell
