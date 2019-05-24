@@ -1,0 +1,32 @@
+# https://probot.github.io/apps/settings/
+
+repository:
+  has_issues: true
+  has_projects: false
+  has_wiki: false
+  has_downloads: false
+  allow_squash_merge: true
+  allow_merge_commit: false
+  allow_rebase_merge: false
+
+labels:
+  - name: concern
+    description:
+    color: e99695
+    oldname: bug
+  - name: documentation
+    description:
+    color: bfd4f2
+    oldname: question
+  - name: enhancement
+    description:
+    color: c2e0c6
+  - name: help wanted
+    description:
+    color: fbca04
+  - name: on hold
+    description:
+    color: cccccc
+  - name: stale
+    description:
+    color: 000000

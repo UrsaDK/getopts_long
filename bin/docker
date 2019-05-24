@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
+__help() {
+cat <<END_OF_HELP
+Usage: ${0} <commands> [options]
+where 'commands' are one of the following:
+
+  build  -   options are passed to 'docker image build'.
+             See 'docker image build --help' for a full list of options.
+
+  run    -   apart for the following exceptions, all options are passed as
+             arguments to './bin/test' running inside the container:
+
+             - l   run docker container and open a login shell
+
+END_OF_HELP
+}
+
 GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
 : "${GIT_BRANCH:=unknown}"
 
@@ -17,10 +33,7 @@ case "${CMD}" in
     docker container run --rm --init -it -v "${PWD}:/mnt" "${CONTAINER}" "${@}"
     ;;
   '')
-    echo "Usage: ${0} <command> [options]" >&2
-    echo "where command is:" >&2
-    echo "  build  -   options are passed to 'docker image build'" >&2
-    echo "  run    -   options are passed as arguments to the container" >&2
+    __help >&2
     exit 1
     ;;
   *)
