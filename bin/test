@@ -27,11 +27,9 @@ color_diff() {
 print_coverage_diff() {
   : "${1:?Missing required argument -- new code coverage}"
 
-  local sha
+  local sha coverage diff
   sha="$(head -c7 /home/VERSION)"
-  local coverage
   coverage="$(jq -r .percent_covered "/home/coverage/coverage.json")"
-  local diff
   diff=$(echo "${coverage} - ${1}" | bc -l)
 
   if tty -s && [[ "${diff}" -gt '0' ]]; then color_diff 32 "${diff}" "${sha}"
