@@ -28,7 +28,7 @@ This function is 100% compatible with the built-in `getopts`. It is implemented 
 - [Usage](#usage)
   - [Extended OPTSPEC](#extended-optspec)
   - [Example script](#example-script)
-- [How it works](#how-it-works)
+- [How It Works](#how-it-works)
   - [Internal variables](#internal-variables)
   - [Error reporting](#error-reporting)
     - [Verbose mode](#verbose-mode)
@@ -151,7 +151,7 @@ shift $(( OPTIND - 1 ))
 ...
 ```
 
-## How it works
+## How It Works
 
 In general the use of `getopts_long` is identical to that of the built-in `getopts`. Just like the built-in function, you need to call `getopts_long` several times. Each time it will use the next positional parameter and a possible argument, if parsable, and provide it to you. The function will not change the set of positional parameters. If you want to shift them, it must be done manually:
 
