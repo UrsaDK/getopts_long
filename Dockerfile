@@ -61,10 +61,7 @@ RUN git clone --depth 1 --branch v36 https://github.com/SimonKagstrom/kcov.git \
     && make install
 COPY --chown=payload . ./getopts_long
 RUN cd ./getopts_long \
-    && TZ=UTC git show \
-        --pretty=tformat:"%H%+D%+ad%n%+s" \
-        --date=format-local:"%c %Z" \
-        | head -5 > ./VERSION \
+    && TZ=UTC git show --pretty="%H%+ad" | head -2 > ./VERSION \
     && rm -Rf \
         ./.git \
         ./docker-fs
