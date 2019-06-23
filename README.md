@@ -19,8 +19,10 @@ This is a pure BASH implementation of `getopts_long` function, which "upgrades" 
 
 This function is 100% compatible with the built-in `getopts`. It is implemented with no external dependencies, and relies solely on BASH built-in tools to provide all of its functionality.
 
-## Table of Content
+Table of Content
+----------------
 
+<!-- TOC START min:2 max:4 link:true asterisk:false update:true -->
 - [Installation](#installation)
   - [Source the library](#source-the-library)
   - [Paste the content](#paste-the-content)
@@ -36,6 +38,7 @@ This function is 100% compatible with the built-in `getopts`. It is implemented 
 - [Contributions](#contributions)
   - [Test suite](#test-suite)
   - [Container shell](#container-shell)
+<!-- TOC END -->
 
 ## Installation
 
@@ -240,7 +243,7 @@ docker container run --rm --init -it -v ${PWD}:/mnt umkadk/getopts_long ./test/n
 By supplying `-l` or `--login` as a parameter to `docker run` command you can start the container with the login shell.
 
 ```
-docker container run --rm --init -it -v ${PWD}:/mnt getopts_long -l
+docker container run --rm --init -it -v ${PWD}:/mnt umkadk/getopts_long -l
 ```
 
 Inside the container, `getopts_long` source code is available under `/home`, while your current working directory on the host will be mounted under `/mnt`. This setup can be used to experiment with your own script which rely on `getopts_long` functionality.
