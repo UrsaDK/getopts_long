@@ -1,43 +1,65 @@
 #!/usr/bin/env bash
 
+IMAGE="umkadk/getopts_long"
+
 __help() {
 cat <<END_OF_HELP
 Usage: ${0} <commands> [options]
-where 'commands' are one of the following:
+Where commands are:
 
-  build  -   options are passed to 'docker image build'.
-             See 'docker image build --help' for a full list of options.
+  build   - Builds a new container image using 'docker image build' command.
+            Options are passed directly to 'docker image build'.
+            See 'docker image build --help' for a list of supported options.
 
-  run    -   apart for the following exceptions, all options are passed as
-             arguments to './bin/test' running inside the container:
+  run     - Run a container based on the application image. This command will
+            download the application image if it doesn't exist locally.
+            Accepts the following options:
 
-             - l   run docker container and open a login shell
+              -l  - if given as a sole argument, opens a container login shell
+              *   - passed as arguments to 'docker container run'
+                    See 'docker container run --help' for more information.
+
+  attach  - Attaches input/output streams to an already running container.
+            Options are passed directly to 'docker container attach'.
+            See 'docker container attach --help' for more information.
+
+  exec    - Executes a given command on an already running container.
+            Options are passed as arguments to 'docker container exec'
+            See 'docker container exec --help' for more information.
+
+  attach  - Stopes all running containers based on the application's image.
+            Options are passed directly to 'docker container stop'.
+            See 'docker container stop --help' for more information.
 
 END_OF_HELP
 }
 
-GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
-: "${GIT_BRANCH:=unknown}"
-
-[[ "${GIT_BRANCH}" == 'master' ]] && TAG='' || TAG=":${GIT_BRANCH}"
-
-CONTAINER="umkadk/getopts_long${TAG}"
-CMD="${1}" && shift
-
-case "${CMD}" in
+DOCKER_CMD="${1}" && shift
+case "${DOCKER_CMD}" in
   'b'|'build')
-    if [[ -z "${*}" ]]; then docker image build --tag "${CONTAINER}" "${PWD}"
-    else docker image build "${@}" --tag "${CONTAINER}" "${PWD}"; fi
+    docker image build --tag "${IMAGE}" "${@}" "${PWD}";
     ;;
   'r'|'run')
-    docker container run --rm --init -it -v "${PWD}:/mnt" "${CONTAINER}" "${@}"
+    docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
+    ;;
+  'a'|'attach')
+    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
+    docker container attach "${@}" "${CONTAINER_ID}"
+    ;;
+  'e'|'exec')
+    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
+    docker container exec -it "${CONTAINER_ID}" "${@}"
+    ;;
+  's'|'stop')
+    CONTAINER_IDS="$(docker container ls -qf "ancestor=${IMAGE}")"
+    [[ -n "${CONTAINER_IDS}" ]] && docker container stop "${@}" "${CONTAINER_IDS}"
     ;;
   '')
     __help >&2
     exit 1
     ;;
   *)
-    echo "${0}: Unknown command -- ${CMD}" >&2
+    echo "${0}: Unknown command -- ${DOCKER_CMD}" >&2
     exit 1
     ;;
 esac
