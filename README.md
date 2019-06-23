@@ -1,6 +1,6 @@
 <div align="center">
 
-  [![getopts_long logo](https://raw.githubusercontent.com/UmkaDK/getopts_long/master/images/logo.png)](#)<br>
+  [![getopts_long logo](https://umka.dk/getopts_long/logo.png)](#)<br>
 
   [![stable branch](https://img.shields.io/badge/dynamic/json.svg?color=lightgrey&label=stable&query=%24.default_branch&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long&logo=github)](https://github.com/UmkaDK/getopts_long/tree/master)
   [![latest release](https://img.shields.io/badge/dynamic/json.svg?color=blue&label=release&query=%24.name&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long%2Freleases%2Flatest&logo=docker)](https://hub.docker.com/r/umkadk/getopts_long)
