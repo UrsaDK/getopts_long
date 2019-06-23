@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+
+case "${*}" in
+    -l|--login|-s|--shell) ARGS=() ;;
+    *) ARGS=( "/home/bin/test" "${@}" ) ;;
+esac
+
+exec /etc/entrypoint.d/login_shell "${ARGS[@]}"

@@ -1,6 +1,6 @@
 FROM debian:stable-slim AS base
 LABEL maintainer="UmkaDK <umka.dk@icloud.com>"
-COPY ./docker-fs /
+COPY ./dockerfs /
 RUN apt-get -y update \
     && apt-get -y install \
         bash \
@@ -64,7 +64,7 @@ RUN cd ./getopts_long \
     && TZ=UTC git show --pretty="%H%+ad" | head -2 > ./VERSION \
     && rm -Rf \
         ./.git \
-        ./docker-fs
+        ./dockerfs
 WORKDIR /home/getopts_long
 ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
 
