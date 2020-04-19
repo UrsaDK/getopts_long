@@ -26,18 +26,18 @@ All tools required to build and run the test for the project are provided by the
   # ./bin/docker build tools
   ```
 
-- Run the entire test suit, or a specific test:
-
-  ``` bash
-  ./bin/docker bats
-  # ./bin/docker bats test/bats/invalid_arguments.bats
-  ```
-
-- Launch a shell container, or run a specific command:
+- Launch 'latest' shell container, or run a specific Dockerfile stage:
 
   ``` bash
   ./bin/docker run
-  # ./bin/docker run hostname
+  # ./bin/docker run tools
+  ```
+
+- Run the entire test suit, or a specific test:
+
+  ``` bash
+  ./bin/docker run latest bats
+  # ./bin/docker run latest bats test/bats/invalid_arguments.bats
   ```
 
 
