@@ -1,8 +1,0 @@
-#!/usr/bin/env sh
-
-SHELL='bash'
-
-case "${*}" in
-  ''|-l|--login|-s|--shell) exec "${SHELL}" -l;;
-  *) exec "${SHELL}" -l -c "${*}";;
-esac

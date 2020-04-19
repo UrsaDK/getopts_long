@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+if [[ "${0}" != "${BASH_SOURCE}" ]]; then
+  # Replace interactive non-login shell with a login one.
+  # Executed when this file is sourced via `~/.bashrc`
+  # NOTE: This code is sourced! Shebang has no effect!!
+  exec "${0}" -l
+elif test -z "${*}"; then
+  # Start a new interactive login shell if the user calls
+  # this script with no arguments, eg: via docker ENDPOINT.
+  exec bash -l
+elif grep -Fxq "$(type -P "${1}")" /etc/shells; then
+  # Executed only if the user requests a specific shell that
+  # is available on the current system (see /etc/shells)
+  exec "${@}"
+else
+  # Replicate the behaviour of `docker exec`, delegating
+  # child reaping and signal handling to docker --init
+  exec bash -l -c "${*}"
+fi

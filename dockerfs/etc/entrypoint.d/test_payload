@@ -1,6 +1,0 @@
-#!/usr/bin/env sh
-
-case "${*}" in
-    -l|--login|-s|--shell) exec /etc/entrypoint.d/login_shell "${@}";;
-    *) exec /etc/entrypoint.d/login_shell "/home/bin/test" "${@}";;
-esac
