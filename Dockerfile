@@ -1,6 +1,11 @@
 FROM debian:stable-slim AS base
-LABEL maintainer="UmkaDK <umka.dk@icloud.com>"
+LABEL maintainer="UrsaDK <ursa.dk@icloud.com>"
 COPY ./dockerfs /
+RUN cp -a /etc/skel/.??* /root \
+    && adduser --quiet --uid 1000 --disabled-password --disabled-login \
+        --no-create-home --home /home --shell /bin/bash --gecos "" guest \
+    && cp /etc/skel/.??* /home \
+    && chown -R guest:guest /home /mnt
 RUN apt-get -y update \
     && apt-get -y install \
         bash \
@@ -12,27 +17,18 @@ RUN apt-get -y update \
         libcurl4-openssl-dev \
         libdw1 \
         libiberty-dev \
-        python \
+        python3 \
         zlib1g \
     && apt-get --purge autoremove \
-    && apt-get clean \
-    && cp /etc/skel/.??* /root \
-    && adduser \
-        --quiet \
-        --disabled-password \
-        --disabled-login \
-        --no-create-home \
-        --home /home \
-        --shell /bin/bash \
-        --gecos "" \
-        payload \
-    && cp /etc/skel/.??* /home \
-    && chown -R payload:payload /home /mnt
-ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
+    && apt-get clean
+VOLUME ["/mnt"]
+ENV ENV="/etc/init.d/login_shell"
+ENTRYPOINT ["/etc/init.d/login_shell"]
 
-FROM base AS build
+FROM base AS tools
 RUN apt-get -y update \
     && apt-get -y install \
+        apt-utils \
         binutils-dev \
         cmake \
         gcc \
@@ -45,35 +41,51 @@ RUN apt-get -y update \
     && apt-get --purge autoremove \
     && apt-get clean
 WORKDIR /home
-RUN SHELLCHECK_VERSION='v0.6.0' \
-    && SHELLCHECK_DIR="shellcheck-${SHELLCHECK_VERSION}" \
-    && SHELLCHECK_URL="https://storage.googleapis.com/shellcheck/${SHELLCHECK_DIR}.linux.x86_64.tar.xz" \
-    && curl -s "${SHELLCHECK_URL}" | tar -xJv \
-    && install "${SHELLCHECK_DIR}/shellcheck" /usr/local/bin
-RUN git clone --depth 1 --branch v1.1.0 https://github.com/bats-core/bats-core.git \
-    && cd bats-core \
-    && ./install.sh /usr/local
-RUN git clone --depth 1 --branch v36 https://github.com/SimonKagstrom/kcov.git \
-    && mkdir -p kcov/build \
-    && cd kcov/build \
+ADD --chown=guest \
+    https://api.github.com/repos/koalaman/shellcheck/releases/latest \
+    shellcheck-latest.json
+RUN JQ_FILTER='.assets[]|select( \
+                   .name|endswith(".linux.x86_64.tar.xz") \
+               ).browser_download_url' \
+    TXZ_URL="$(jq -r "${JQ_FILTER}" shellcheck-latest.json)" \
+    SRC_DIR="shellcheck-$(jq -r '.tag_name' shellcheck-latest.json)" \
+    && mkdir -p "${SRC_DIR}" \
+    && curl -sL "${TXZ_URL}" | tar -C "${SRC_DIR}" --strip-components=1 -xJ \
+    && install -m 0755 -o root -g root "${SRC_DIR}/shellcheck" /usr/local/bin
+ADD --chown=guest \
+    https://api.github.com/repos/SimonKagstrom/kcov/releases/latest \
+    kcov-latest.json
+RUN TGZ_URL="$(jq -r '.tarball_url' kcov-latest.json)" \
+    SRC_DIR="kcov-$(jq -r '.tag_name' kcov-latest.json)" \
+    && mkdir -p "${SRC_DIR}/build" \
+    && curl -sL "${TGZ_URL}" | tar -C "${SRC_DIR}" --strip-components=1 -xz \
+    && cd "${SRC_DIR}/build" \
     && cmake .. \
     && make \
     && make install
-COPY --chown=payload . ./getopts_long
-RUN cd ./getopts_long \
-    && TZ=UTC git show --pretty="%H%+ad" | head -2 > ./VERSION \
+ADD --chown=guest \
+    https://api.github.com/repos/bats-core/bats-core/releases/latest \
+    bats-core-latest.json
+RUN TGZ_URL="$(jq -r '.tarball_url' bats-core-latest.json)" \
+    SRC_DIR="bats-core-$(jq -r '.tag_name' bats-core-latest.json)" \
+    && mkdir -p "${SRC_DIR}" \
+    && curl -sL "${TGZ_URL}" | tar -C "${SRC_DIR}" --strip-components=1 -xz \
+    && cd "${SRC_DIR}" \
+    && ./install.sh /usr/local
+RUN ln -sf /mnt getopts_long
+VOLUME ["/mnt"]
+ENTRYPOINT ["/etc/init.d/login_shell"]
+
+FROM base AS latest
+WORKDIR /home
+COPY --from=tools --chown=root /usr/local /usr/local
+COPY --chown=guest . .
+USER guest
+RUN TZ=UTC git show --pretty="%H%+ad" | head -2 > ./VERSION \
     && rm -Rf \
         ./.git \
-        ./dockerfs
-WORKDIR /home/getopts_long
-ENTRYPOINT ["/etc/entrypoint.d/login_shell"]
-
-FROM base AS final
-WORKDIR /home
-COPY --from=build --chown=root /usr/local /usr/local
-COPY --from=build --chown=payload /home/getopts_long /home
-USER payload
-RUN ./bin/test
+        ./dockerfs \
+    && ./bin/kcov
 WORKDIR /mnt
 VOLUME ["/mnt"]
-ENTRYPOINT ["/etc/entrypoint.d/test_payload"]
+ENTRYPOINT ["/etc/init.d/login_shell"]
