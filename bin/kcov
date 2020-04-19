@@ -2,10 +2,9 @@
 
 set -e
 
-: "${GETOPTS_LONG_BIN:=./bin}"
-: "${GETOPTS_LONG_LIB:=./lib}"
-: "${GETOPTS_LONG_TEST:=./test}"
-: "${GETOPTS_LONG_COVERAGE:=./coverage}"
+: "${LIB_DIR:="./lib"}"
+: "${TEST_DIR:="./test"}"
+: "${COVERAGE_DIR:="./coverage"}"
 
 __exit() {
   echo "${0}: ${1:?Missing required parameter -- error message}" >&2
@@ -38,31 +37,18 @@ print_coverage_diff() {
   else printf "%+.2f%% compared to %s" "${diff}" "${sha}"; fi
 }
 
-path_exists "${GETOPTS_LONG_LIB}"
-path_exists "${GETOPTS_LONG_TEST}"
-
-# Run shellcheck
-echo "Checking shell code: ${GETOPTS_LONG_LIB} ${GETOPTS_LONG_TEST} ${GETOPTS_LONG_BIN}"
-shellcheck --format="tty" --shell="bash" --check-sourced \
-  "${GETOPTS_LONG_LIB}"/* \
-  "${GETOPTS_LONG_TEST}"/*.bash "${GETOPTS_LONG_TEST}"/bin/*  \
-  "${GETOPTS_LONG_BIN}"/*
-
-# Run bats
-TEST_DIR=( "${@:-${GETOPTS_LONG_TEST}}" )
-echo "Running tests: ${TEST_DIR[*]} "
-bats --tap --recursive "${TEST_DIR[@]}"
-[ -n "${*}" ] && exit
+path_exists "${LIB_DIR}"
+path_exists "${TEST_DIR}"
 
 # Setup exit trap
 TEMP_DIR="$(mktemp -d -t kcov.XXXXXXXXX)"
 trap 'rm -Rf ${TEMP_DIR}' EXIT
 
 # Run kcov
-echo "Generating coverage report: ${GETOPTS_LONG_COVERAGE}/index.html"
-kcov --clean --include-path="${GETOPTS_LONG_LIB}" \
+echo "Generating coverage report: ${COVERAGE_DIR}/index.html"
+/usr/local/bin/kcov --clean --include-path="${LIB_DIR}" \
   "${TEMP_DIR}" \
-  bats --recursive "${GETOPTS_LONG_TEST}"
+  /usr/local/bin/bats --recursive "${TEST_DIR}"
 
 # Clean up kcov report
 rm "${TEMP_DIR}"/bats/{bcov.css,amber.png,glass.png}
@@ -71,11 +57,11 @@ sed -i -E 's#/(home|mnt)/##g' \
   "${TEMP_DIR}"/bats/*.{json,xml} "${TEMP_DIR}"/bats/metadata/*
 
 # Present kcov report
-rm -Rf "${GETOPTS_LONG_COVERAGE}"
-cp -LR "${TEMP_DIR}/bats" "${GETOPTS_LONG_COVERAGE}"
+rm -Rf "${COVERAGE_DIR}"
+cp -LR "${TEMP_DIR}/bats" "${COVERAGE_DIR}"
 
 # Total code coverage
-COVERAGE="$(jq -r .percent_covered "${GETOPTS_LONG_COVERAGE}/coverage.json")"
+COVERAGE="$(jq -r .percent_covered "${COVERAGE_DIR}/coverage.json")"
 printf "Code covered: %s%% " "${COVERAGE}"
 
 # Code coverage diff

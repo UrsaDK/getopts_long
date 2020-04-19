@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+set -e
+
+: "${BIN_DIR:="./bin"}"
+: "${LIB_DIR:="./lib"}"
+: "${TEST_DIR:="./test"}"
+: "${COVERAGE_DIR:="./coverage"}"
+
+__exit() {
+  echo "${0}: ${1:?Missing required parameter -- error message}" >&2
+  exit "${2:-1}"
+}
+
+path_exists() {
+  : "${1:?Missing required argument -- directory path}"
+  [[ -e "${1}" ]] || __exit "Path not found -- ${1}"
+}
+
+path_exists "${LIB_DIR}"
+path_exists "${TEST_DIR}"
+
+# Run shellcheck
+echo "Checking shell code: ${BIN_DIR} ${LIB_DIR} ${TEST_DIR}"
+shellcheck --format="tty" --shell="bash" --check-sourced \
+  "${LIB_DIR}"/* \
+  "${TEST_DIR}"/*.bash "${TEST_DIR}"/bin/*  \
+  "${BIN_DIR}"/*
+
+# Run bats without generating code coverage
+echo "Running tests: ${*:-"${TEST_DIR}"}"
+/usr/local/bin/bats ${*:+'--tap'} --recursive "${@:-"${TEST_DIR}"}"
+[[ -z "${*}" ]] && "$(dirname "${0}")/kcov"

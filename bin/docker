@@ -1,60 +1,56 @@
 #!/usr/bin/env bash
 
-IMAGE="umkadk/getopts_long"
-
 __help() {
 cat <<END_OF_HELP
-Usage: ${0} <commands> [options]
-Where commands are:
+Usage: ${0} <commands> [options]                  <> - required parameters
+Where commands are:                               [] - optional parameters
 
-  build   - Builds a new container image using 'docker image build' command.
-            Options are passed directly to 'docker image build'.
+  build <image-tag> [docker-build-options]
+            Builds a new container image using 'docker image build' command.
             See 'docker image build --help' for a list of supported options.
 
-  run     - Run a container based on the application image. This command will
-            download the application image if it doesn't exist locally.
-            Accepts the following options:
+  run <image-tag> [shell-command-and-options]
+            Run a command in a new container with 'docker container run'.
+            Container-run options are preconfigured, user input is executed.
 
-              -l  - if given as a sole argument, opens a container login shell
-              *   - passed as arguments to 'docker container run'
-                    See 'docker container run --help' for more information.
+  attach <image-tag> [docker-attach-options]
+            Attaches input/output streams to an already running container.
+            See 'docker container attach --help' for all supported options.
 
-  attach  - Attaches input/output streams to an already running container.
-            Options are passed directly to 'docker container attach'.
-            See 'docker container attach --help' for more information.
-
-  exec    - Executes a given command on an already running container.
-            Options are passed as arguments to 'docker container exec'
+  exec <image-tag> [shell-command-and-options]
+            Executes a command in a container which launched from the image.
             See 'docker container exec --help' for more information.
 
-  attach  - Stopes all running containers based on the application's image.
-            Options are passed directly to 'docker container stop'.
+  stop <image-tag> [docker-stop-options]
+            Stops all running containers based on the application's image.
             See 'docker container stop --help' for more information.
 
 END_OF_HELP
 }
 
+IMAGE="ursadk/getopts_long"
 DOCKER_CMD="${1}" && shift
+TAG="${1:-latest}" && shift
 case "${DOCKER_CMD}" in
   'b'|'build')
-    docker image build --tag "${IMAGE}" "${@}" "${PWD}";
+    docker image build --tag "${IMAGE}:${TAG}" --target "${TAG}" "${@}" "${PWD}";
     ;;
   'r'|'run')
-    docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
+    docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}:${TAG}" "${@}"
     ;;
   'a'|'attach')
-    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
+    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}:${TAG}")"
     docker container attach "${@}" "${CONTAINER_ID}"
     ;;
   'e'|'exec')
-    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
+    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}:${TAG}")"
     docker container exec -it "${CONTAINER_ID}" "${@}"
     ;;
   's'|'stop')
-    CONTAINER_IDS="$(docker container ls -qf "ancestor=${IMAGE}")"
+    CONTAINER_IDS="$(docker container ls -qf "ancestor=${IMAGE}:${TAG}")"
     [[ -n "${CONTAINER_IDS}" ]] && docker container stop "${@}" "${CONTAINER_IDS}"
     ;;
-  '')
+  ''|'help'|'-?'|'--help')
     __help >&2
     exit 1
     ;;
