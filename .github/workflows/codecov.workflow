@@ -10,7 +10,7 @@ action "docker/build" {
   secrets = [
     "CODECOV_TOKEN"
   ]
-  runs = "/etc/entrypoint.d/login_shell"
+  runs = "/etc/init.d/login_shell"
   args = [
     "cd /home",
     "&& ln -vsf ${GITHUB_WORKSPACE}/.git",
