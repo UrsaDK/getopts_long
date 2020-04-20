@@ -23,14 +23,14 @@ All tools required to build and run the test for the project are provided by the
 
   ``` bash
   ./bin/docker build
-  # ./bin/docker build tools
+  # ./bin/docker build latest
   ```
 
 - Launch 'latest' shell container, or run a specific Dockerfile stage:
 
   ``` bash
   ./bin/docker run
-  # ./bin/docker run tools
+  # ./bin/docker run latest
   ```
 
 - Run the entire test suit, or a specific test:

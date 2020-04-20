@@ -28,29 +28,30 @@ Where commands are:                               [] - optional parameters
 END_OF_HELP
 }
 
-IMAGE="ursadk/getopts_long"
-DOCKER_CMD="${1}" && shift
+DOCKER_CMD="${1:-help}" && shift
 TAG="${1:-latest}" && shift
+IMAGE="ursadk/getopts_long:${TAG}"
+
 case "${DOCKER_CMD}" in
   'b'|'build')
-    docker image build --tag "${IMAGE}:${TAG}" --target "${TAG}" "${@}" "${PWD}";
+    docker image build --tag "${IMAGE}" --target "${TAG}" "${@}" "${PWD}";
     ;;
   'r'|'run')
-    docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}:${TAG}" "${@}"
+    docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
     ;;
   'a'|'attach')
-    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}:${TAG}")"
+    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
     docker container attach "${@}" "${CONTAINER_ID}"
     ;;
   'e'|'exec')
-    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}:${TAG}")"
+    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
     docker container exec -it "${CONTAINER_ID}" "${@}"
     ;;
   's'|'stop')
-    CONTAINER_IDS="$(docker container ls -qf "ancestor=${IMAGE}:${TAG}")"
+    CONTAINER_IDS="$(docker container ls -qf "ancestor=${IMAGE}")"
     [[ -n "${CONTAINER_IDS}" ]] && docker container stop "${@}" "${CONTAINER_IDS}"
     ;;
-  ''|'help'|'-?'|'--help')
+  '-?'|'--help'|'help')
     __help >&2
     exit 1
     ;;

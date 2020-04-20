@@ -41,8 +41,13 @@ RUN apt-get -y update \
     && apt-get --purge autoremove \
     && apt-get clean
 WORKDIR /home
-ADD --chown=guest \
-    https://api.github.com/repos/koalaman/shellcheck/releases/latest \
+RUN ln -sf /mnt getopts_long
+VOLUME ["/mnt"]
+ENTRYPOINT ["/etc/init.d/login_shell"]
+
+FROM tools AS shellcheck
+WORKDIR /home
+ADD https://api.github.com/repos/koalaman/shellcheck/releases/latest \
     shellcheck-latest.json
 RUN JQ_FILTER='.assets[]|select( \
                    .name|endswith(".linux.x86_64.tar.xz") \
@@ -50,35 +55,44 @@ RUN JQ_FILTER='.assets[]|select( \
     TXZ_URL="$(jq -r "${JQ_FILTER}" shellcheck-latest.json)" \
     SRC_DIR="shellcheck-$(jq -r '.tag_name' shellcheck-latest.json)" \
     && mkdir -p "${SRC_DIR}" \
-    && curl -sL "${TXZ_URL}" | tar -C "${SRC_DIR}" --strip-components=1 -xJ \
+    && curl -L "${TXZ_URL}" | tar -C "${SRC_DIR}" --strip-components=1 -xJ \
     && install -m 0755 -o root -g root "${SRC_DIR}/shellcheck" /usr/local/bin
-ADD --chown=guest \
-    https://api.github.com/repos/SimonKagstrom/kcov/releases/latest \
-    kcov-latest.json
-RUN TGZ_URL="$(jq -r '.tarball_url' kcov-latest.json)" \
-    SRC_DIR="kcov-$(jq -r '.tag_name' kcov-latest.json)" \
-    && mkdir -p "${SRC_DIR}/build" \
-    && curl -sL "${TGZ_URL}" | tar -C "${SRC_DIR}" --strip-components=1 -xz \
-    && cd "${SRC_DIR}/build" \
-    && cmake .. \
-    && make \
-    && make install
-ADD --chown=guest \
-    https://api.github.com/repos/bats-core/bats-core/releases/latest \
+VOLUME ["/mnt"]
+ENTRYPOINT ["/etc/init.d/login_shell"]
+
+FROM tools AS bats-core
+WORKDIR /home
+ADD https://api.github.com/repos/bats-core/bats-core/releases/latest \
     bats-core-latest.json
 RUN TGZ_URL="$(jq -r '.tarball_url' bats-core-latest.json)" \
     SRC_DIR="bats-core-$(jq -r '.tag_name' bats-core-latest.json)" \
     && mkdir -p "${SRC_DIR}" \
-    && curl -sL "${TGZ_URL}" | tar -C "${SRC_DIR}" --strip-components=1 -xz \
+    && curl -L "${TGZ_URL}" | tar -C "${SRC_DIR}" --strip-components=1 -xz \
     && cd "${SRC_DIR}" \
     && ./install.sh /usr/local
-RUN ln -sf /mnt getopts_long
+VOLUME ["/mnt"]
+ENTRYPOINT ["/etc/init.d/login_shell"]
+
+FROM tools AS kcov
+WORKDIR /home
+ADD https://api.github.com/repos/SimonKagstrom/kcov/releases/latest \
+    kcov-latest.json
+RUN TGZ_URL="$(jq -r '.tarball_url' kcov-latest.json)" \
+    SRC_DIR="kcov-$(jq -r '.tag_name' kcov-latest.json)" \
+    && mkdir -p "${SRC_DIR}/build" \
+    && curl -L "${TGZ_URL}" | tar -C "${SRC_DIR}" --strip-components=1 -xz \
+    && cd "${SRC_DIR}/build" \
+    && cmake .. \
+    && make \
+    && make install
 VOLUME ["/mnt"]
 ENTRYPOINT ["/etc/init.d/login_shell"]
 
 FROM base AS latest
 WORKDIR /home
-COPY --from=tools --chown=root /usr/local /usr/local
+COPY --from=shellcheck --chown=root /usr/local /usr/local
+COPY --from=bats-core --chown=root /usr/local /usr/local
+COPY --from=kcov --chown=root /usr/local /usr/local
 COPY --chown=guest . .
 USER guest
 RUN TZ=UTC git show --pretty="%H%+ad" | head -2 > ./VERSION \
