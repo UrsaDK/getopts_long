@@ -13,6 +13,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
+          echo "REGISTRY_ENDPOINT: ${REGISTRY_ENDPOINT}"
           ./bin/docker build latest
           ./bin/docker run latest kcov
       - uses: codecov/codecov-action@v1
