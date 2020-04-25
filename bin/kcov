@@ -56,6 +56,19 @@ sed -i 's#"../data/bcov.css"#"data/bcov.css"#g' "${TEMP_DIR}"/bats/*.html
 sed -i -E 's#/(home|mnt)/##g' \
   "${TEMP_DIR}"/bats/*.{json,xml} "${TEMP_DIR}"/bats/metadata/*
 
+
+
+
+echo "$(id -un):$(id -gn)"
+pwd
+ls -la
+touch monkey.txt
+ls -l monkey.txt
+exit
+
+
+
+
 # Present kcov report
 rm -Rf "${COVERAGE_DIR}"
 cp -LR "${TEMP_DIR}/bats" "${COVERAGE_DIR}"
