@@ -15,5 +15,6 @@ jobs:
       - run: |
           echo "REGISTRY_ENDPOINT: ${REGISTRY_ENDPOINT}"
           ./bin/docker build latest
+          docker image ls
           ./bin/docker run latest kcov
       - uses: codecov/codecov-action@v1
