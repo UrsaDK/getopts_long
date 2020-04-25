@@ -39,13 +39,15 @@ case "${DOCKER_CMD}" in
     docker image build --tag "${IMAGE}" --target "${TAG}" "${@}" "${PWD}";
     ;;
   'r'|'run')
-    if [ -t 1 ]; then
-      # Runs when the script is executed interactively
-      docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
-    else
-      # Runs when the script is executed by GitHub Actions
-      docker container run --rm --init -u root -v "${PWD}:/mnt" "${IMAGE}" "${@}"
-    fi
+    [[ -t 1 ]] && IT='-it' # Check if output is attached to a TTY
+    docker container run --rm --init ${IT} -v "${PWD}:/mnt" "${IMAGE}" "${@}"
+    # if [ -t 1 ]; then
+    #   # Runs when the script is executed interactively
+    #   docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
+    # else
+    #   # Runs when the script is executed by GitHub Actions
+    #   docker container run --rm --init -u root -v "${PWD}:/mnt" "${IMAGE}" "${@}"
+    # fi
     ;;
   'a'|'attach')
     CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
