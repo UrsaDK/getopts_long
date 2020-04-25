@@ -41,6 +41,7 @@ case "${DOCKER_CMD}" in
   'r'|'run')
     # docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
     [ -t 1 ] && IT='-it' || IT=''
+    echo docker container run --rm --init "${IT}" -v "${PWD}:/mnt" "${IMAGE}" "${@}"
     docker container run --rm --init "${IT}" -v "${PWD}:/mnt" "${IMAGE}" "${@}"
     ;;
   'a'|'attach')
