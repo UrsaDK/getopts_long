@@ -39,10 +39,14 @@ case "${DOCKER_CMD}" in
     docker image build --tag "${IMAGE}" --target "${TAG}" "${@}" "${PWD}";
     ;;
   'r'|'run')
-    # docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
-    [ -t 1 ] && IT='-it' || IT=''
-    echo docker container run --rm --init "${IT}" -v "${PWD}:/mnt" "${IMAGE}" "${@}"
-    docker container run --rm --init "${IT}" -v "${PWD}:/mnt" "${IMAGE}" "${@}"
+    if [ -t 1 ]; then
+      # Runs when the script is executed interactively
+      docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
+    else
+      # Runs when the script is executed by GitHub Actions
+      echo docker container run --rm --init -v "${PWD}:/mnt" "${IMAGE}" "${@}"
+      docker container run --rm --init -v "${PWD}:/mnt" "${IMAGE}" "${@}"
+    fi
     ;;
   'a'|'attach')
     CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
@@ -50,8 +54,13 @@ case "${DOCKER_CMD}" in
     ;;
   'e'|'exec')
     CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
-    [ -t 1 ] && IT='-it' || IT=''
-    docker container exec "${IT}" "${CONTAINER_ID}" "${@}"
+    if [ -t 1 ]; then
+      # Runs when the script is executed interactively
+      docker container exec -it "${CONTAINER_ID}" "${@}"
+    else
+      # Runs when the script is executed by GitHub Actions
+      docker container exec "${CONTAINER_ID}" "${@}"
+    fi
     ;;
   's'|'stop')
     CONTAINER_IDS="$(docker container ls -qf "ancestor=${IMAGE}")"
