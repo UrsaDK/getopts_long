@@ -1,0 +1,17 @@
+name: codecov
+
+on:
+  push:
+    branches: [master]
+    paths-ignore: ['**.md']
+  pull_request:
+    paths-ignore: ['**.md']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: ./bin/docker build latest
+      - run: ./bin/docker run latest bats
+      - uses: codecov-action@v1.0.6
