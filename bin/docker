@@ -44,7 +44,6 @@ case "${DOCKER_CMD}" in
       docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
     else
       # Runs when the script is executed by GitHub Actions
-      echo docker container run --rm --init -v "${PWD}:/mnt" "${IMAGE}" "${@}"
       docker container run --rm --init -v "${PWD}:/mnt" "${IMAGE}" "${@}"
     fi
     ;;
