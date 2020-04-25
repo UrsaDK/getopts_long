@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+echo "$(id -un):$(id -gn)"
+pwd
+ls -la
+touch monkey.txt
+ls -l monkey.txt
