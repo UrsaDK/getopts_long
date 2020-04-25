@@ -13,6 +13,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          # ./bin/docker build latest
+          ./bin/docker build latest
           ./bin/docker run latest kcov
       - uses: codecov/codecov-action@v1
