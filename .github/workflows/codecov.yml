@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: ./bin/docker build latest
-      - run: ./bin/docker run latest kcov
+      - run: |
+        ./bin/docker build latest
+        ./bin/docker run latest kcov
       - uses: codecov/codecov-action@v1
