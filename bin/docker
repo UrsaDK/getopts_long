@@ -28,16 +28,20 @@ Where commands are:                               [] - optional parameters
 END_OF_HELP
 }
 
+
 DOCKER_CMD="${1:-help}" && shift
 TAG="${1:-latest}" && shift
 IMAGE="ursadk/getopts_long:${TAG}"
 
 case "${DOCKER_CMD}" in
   'b'|'build')
+    export DOCKER_BUILDKIT=1
     docker image build --tag "${IMAGE}" --target "${TAG}" "${@}" "${PWD}";
     ;;
   'r'|'run')
-    docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
+    # docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
+    [ -t 1 ] && IT='-it' || IT=''
+    docker container run --rm --init "${IT}" -v "${PWD}:/mnt" "${IMAGE}" "${@}"
     ;;
   'a'|'attach')
     CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
@@ -45,7 +49,8 @@ case "${DOCKER_CMD}" in
     ;;
   'e'|'exec')
     CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
-    docker container exec -it "${CONTAINER_ID}" "${@}"
+    [ -t 1 ] && IT='-it' || IT=''
+    docker container exec "${IT}" "${CONTAINER_ID}" "${@}"
     ;;
   's'|'stop')
     CONTAINER_IDS="$(docker container ls -qf "ancestor=${IMAGE}")"

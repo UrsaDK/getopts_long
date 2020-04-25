@@ -13,5 +13,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: ./bin/docker build latest
-      - run: ./bin/docker run latest bats
+      - run: ./bin/docker run latest kcov
       - uses: codecov/codecov-action@v1
