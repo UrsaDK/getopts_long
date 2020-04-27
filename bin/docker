@@ -40,28 +40,17 @@ case "${DOCKER_CMD}" in
     ;;
   'r'|'run')
     [[ -t 1 ]] && IT='-it' # Check if output is attached to a TTY
-    docker container run --rm --init ${IT} -v "${PWD}:/mnt" "${IMAGE}" "${@}"
-    # if [ -t 1 ]; then
-    #   # Runs when the script is executed interactively
-    #   docker container run --rm --init -it -v "${PWD}:/mnt" "${IMAGE}" "${@}"
-    # else
-    #   # Runs when the script is executed by GitHub Actions
-    #   docker container run --rm --init -u root -v "${PWD}:/mnt" "${IMAGE}" "${@}"
-    # fi
+    docker container run ${GITHUB_WORKSPACE:+-u root} \
+      --rm --init ${IT} -v "${PWD}:/mnt" "${IMAGE}" "${@}"
     ;;
   'a'|'attach')
     CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
     docker container attach "${@}" "${CONTAINER_ID}"
     ;;
   'e'|'exec')
+    [[ -t 1 ]] && IT='-it' # Check if output is attached to a TTY
     CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
-    if [ -t 1 ]; then
-      # Runs when the script is executed interactively
-      docker container exec -it "${CONTAINER_ID}" "${@}"
-    else
-      # Runs when the script is executed by GitHub Actions
-      docker container exec "${CONTAINER_ID}" "${@}"
-    fi
+    docker container exec ${IT} "${CONTAINER_ID}" "${@}"
     ;;
   's'|'stop')
     CONTAINER_IDS="$(docker container ls -qf "ancestor=${IMAGE}")"
