@@ -37,6 +37,24 @@ print_coverage_diff() {
   else printf "%+.2f%% compared to %s" "${diff}" "${sha}"; fi
 }
 
+die_with_kcov_user_error() {
+cat <<EOS >&2 && exit 1
+ERROR: kcov can't be run as root -- all fallback strategies failed:
+
+         - running as current user -- failed
+         - running as $0 owner -- failed
+
+    Q: Why am I seeing this?
+    A: kcov collets coverage data by setting PS4 to a custom string.
+       But bash-4.3.42+ disables updating PS4 when running as root:
+
+         - https://bugzilla.redhat.com/show_bug.cgi?id=1379634
+
+       Try either running the script as non-privileged user, or set
+       the owner of $0 to non-root.
+EOS
+}
+
 path_exists "${LIB_DIR}"
 path_exists "${TEST_DIR}"
 
@@ -46,9 +64,17 @@ trap 'rm -Rf ${TEMP_DIR}' EXIT
 
 # Run kcov
 echo "Generating coverage report: ${COVERAGE_DIR}/index.html"
-/usr/local/bin/kcov --clean --include-path="${LIB_DIR}" \
-  "${TEMP_DIR}" \
-  /usr/local/bin/bats --recursive "${TEST_DIR}"
+KCOV_CMD="/usr/local/bin/kcov --clean --include-path=${LIB_DIR} ${@} \
+  ${TEMP_DIR} /usr/local/bin/bats --recursive ${TEST_DIR}"
+if [[ ${EUID} -eq 0 ]]; then
+  KCOV_USER="$(ls -l "${0}" | awk '{print $3}')"
+  [[ "${KCOV_USER}" == "root" ]] && die_with_kcov_user_error
+
+  chown -R "${KCOV_USER}" "${TEMP_DIR}"
+  su -p "${KCOV_USER}" -c "${KCOV_CMD}"
+else
+  ${KCOV_CMD}
+fi
 
 # Clean up kcov report
 rm "${TEMP_DIR}"/bats/{bcov.css,amber.png,glass.png}

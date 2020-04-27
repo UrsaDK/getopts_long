@@ -94,6 +94,7 @@ COPY --from=shellcheck --chown=root /usr/local /usr/local
 COPY --from=bats-core --chown=root /usr/local /usr/local
 COPY --from=kcov --chown=root /usr/local /usr/local
 COPY --chown=guest . .
+RUN ln -sf /home/bin /root/bin
 USER guest
 RUN TZ=UTC git show --pretty="%H%+ad" | head -2 > ./VERSION \
     && rm -Rf \
