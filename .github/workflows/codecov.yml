@@ -1,4 +1,4 @@
-name: codecov
+name: CI pipeline
 
 on:
   push:
@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - run: |
+      - name: build docker image
+        run: |
           ./bin/docker build latest
-          ./bin/docker run latest "/home/bin/debug"
+      - name: prepare coverage report
+        run: ./bin/docker run latest cp -a /home/coverage /mnt/coverage
       - uses: codecov/codecov-action@v1
