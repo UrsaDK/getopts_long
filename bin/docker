@@ -40,7 +40,7 @@ case "${DOCKER_CMD}" in
     ;;
   'r'|'run')
     [[ -t 1 ]] && IT='-it' # Check if output is attached to a TTY
-    docker container run ${GITHUB_WORKSPACE:+-u root} \
+    docker container run ${GITHUB_ACTIONS:+-u root} \
       --rm --init ${IT} -v "${PWD}:/mnt" "${IMAGE}" "${@}"
     ;;
   'a'|'attach')

@@ -1,0 +1,37 @@
+name: CI pipeline
+
+on:
+  push:
+    branches: [master]
+    tags: [*]
+  pull_request:
+
+defaults:
+  runs-on: ubuntu-latest
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: Build docker image
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build docker image
+        run: |
+          ./bin/docker build latest --squash
+
+  test:
+    name: Check code coverage
+    needs: build
+    steps:
+      - name: Prepare coverage report
+        run: ./bin/docker run latest cp -a /home/coverage /mnt/coverage
+      - uses: codecov/codecov-action@v1
+
+  # publish:
+  #   name: Push to docker registry
+  #   needs: test
+  #   if: github.ref == 'ref/head/master' || startsWith(github.ref, 'refs/tags/')
+  #   steps:
+  #     - name: Squash docker container
+  #     - name: Push to docker registry
