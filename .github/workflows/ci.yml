@@ -16,8 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Build docker image
-        run: |
-          ./bin/docker build latest --squash
+        run: ./bin/docker build latest --squash
 
   test:
     name: Check code coverage
