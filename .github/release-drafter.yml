@@ -1,0 +1,18 @@
+# https://probot.github.io/apps/release-drafter/
+
+name-template:
+tag-template:
+change-template: $TITLE (#$NUMBER)
+categories:
+  - title: New features
+    label: feature
+  - title: Fixed bugs
+    label: bug
+template: |
+  ## Changes
+
+  $CHANGES
+
+  ## Contributors
+
+  $CONTRIBUTORS
