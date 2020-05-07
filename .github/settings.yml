@@ -27,7 +27,7 @@ labels:
     description: I know this is here, but I'm not working on it
     color: cccccc
   - name: stale
-    description: Used exclusively by the bots
+    description: Used exclusively by the stale and lock bots
     color: 000000
 
 branches:
