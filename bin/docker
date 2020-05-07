@@ -2,42 +2,85 @@
 
 __help() {
 cat <<END_OF_HELP
-Usage: ${0} <commands> [options]
-where 'commands' are one of the following:
+Usage: ${0} <commands> [options]                  <> - required parameters
+Where commands are:                               [] - optional parameters
 
-  build  -   options are passed to 'docker image build'.
-             See 'docker image build --help' for a full list of options.
+  build [image:]<tag> [docker-build-options]
+            Builds a new container image using 'docker image build' command.
+            See 'docker image build --help' for a list of supported options.
 
-  run    -   apart for the following exceptions, all options are passed as
-             arguments to './bin/test' running inside the container:
+  run [image:]<tag> [shell-command-and-options]
+            Run a command in a new container with 'docker container run'.
+            Container-run options are preconfigured, user input is executed.
 
-             - l   run docker container and open a login shell
+  attach [image:]<tag> [docker-attach-options]
+            Attaches input/output streams to an already running container.
+            See 'docker container attach --help' for all supported options.
+
+  exec [image:]<tag> [shell-command-and-options]
+            Executes a command in a container which launched from the image.
+            See 'docker container exec --help' for more information.
+
+  stop [image:]<tag> [docker-stop-options]
+            Stops all running containers based on the application's image.
+            See 'docker container stop --help' for more information.
 
 END_OF_HELP
 }
 
-GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD 2>/dev/null)"
-: "${GIT_BRANCH:=unknown}"
+COMMAND="${1:-help}"
+if [[ -z "${2}" || "${2}" == '-'* ]]; then
+  IMAGE="$(echo "${PWD##*/}" | tr '[:upper:] ' '[:lower:]-')"
+  TAG="latest"
+  shift 1
+elif [[ "${2}" == *':'* ]]; then
+  IMAGE="${2}"
+  TAG="${2##*:}"
+  shift 2
+elif [[ "${2}" == *'/'* ]]; then
+  IMAGE="${2}"
+  TAG="latest"
+  shift 2
+elif [[ -n "${2}" ]]; then
+  IMAGE="$(echo "${PWD##*/}" | tr '[:upper:] ' '[:lower:]-'):${2}"
+  TAG="${2}"
+  shift 2
+else
+  echo "Invalid argument -- ${2}" >&2
+  echo "  - IMAGE: ${IMAGE}" >&2
+  echo "  - TAG:   ${TAG}" >&2
+  exit 1
+fi
 
-[[ "${GIT_BRANCH}" == 'master' ]] && TAG='' || TAG=":${GIT_BRANCH}"
-
-CONTAINER="umkadk/getopts_long${TAG}"
-CMD="${1}" && shift
-
-case "${CMD}" in
+case "${COMMAND}" in
   'b'|'build')
-    if [[ -z "${*}" ]]; then docker image build --tag "${CONTAINER}" "${PWD}"
-    else docker image build "${@}" --tag "${CONTAINER}" "${PWD}"; fi
+    DOCKER_BUILDKIT=${DOCKER_BUILDKIT:-1} \
+      docker image build --tag "${IMAGE}" --target "${TAG}" "${@}" "${PWD}";
     ;;
   'r'|'run')
-    docker container run --rm --init -it -v "${PWD}:/mnt" "${CONTAINER}" "${@}"
+    [[ -t 1 ]] && IT='-it' # Check if output is attached to a TTY
+    docker container run ${GITHUB_ACTIONS:+-u root} \
+      --rm --init ${IT} -v "${PWD}:/mnt" "${IMAGE}" "${@}"
     ;;
-  '')
-    __help >&2
-    exit 1
+  'a'|'attach')
+    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
+    docker container attach "${@}" "${CONTAINER_ID}"
+    ;;
+  'e'|'exec')
+    [[ -t 1 ]] && IT='-it' # Check if output is attached to a TTY
+    CONTAINER_ID="$(docker container ls -qlf "ancestor=${IMAGE}")"
+    docker container exec ${IT} "${CONTAINER_ID}" "${@}"
+    ;;
+  's'|'stop')
+    CONTAINER_IDS="$(docker container ls -qf "ancestor=${IMAGE}")"
+    [[ -n "${CONTAINER_IDS}" ]] && docker container stop "${@}" "${CONTAINER_IDS}"
+    ;;
+  '-?'|'--help'|'help')
+    __help
+    exit
     ;;
   *)
-    echo "${0}: Unknown command -- ${CMD}" >&2
+    echo "${0}: Unknown command -- ${DOCKER_CMD}" >&2
     exit 1
     ;;
 esac

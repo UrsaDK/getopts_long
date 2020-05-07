@@ -5,28 +5,37 @@ repository:
   has_projects: false
   has_wiki: false
   has_downloads: false
-  allow_squash_merge: true
+  default_branch: master
   allow_merge_commit: false
-  allow_rebase_merge: false
+  allow_squash_merge: true
+  allow_rebase_merge: true
 
 labels:
-  - name: concern
-    description:
+  - name: bug
+    description: Confirmed issues that need to be resolved
     color: e99695
-    oldname: bug
-  - name: documentation
-    description:
+  - name: question
+    description: Questions, documentations, information, etc
     color: bfd4f2
-    oldname: question
-  - name: enhancement
-    description:
+  - name: feature
+    description: Scheduled project enhancements
     color: c2e0c6
   - name: help wanted
-    description:
+    description: Could you please help me with any of these?
     color: fbca04
   - name: on hold
-    description:
+    description: I know this is here, but I'm not working on it
     color: cccccc
   - name: stale
-    description:
+    description: Used exclusively by the bots
     color: 000000
+
+branches:
+  - name: master
+    protection:
+      required_pull_request_reviews: null
+      required_status_checks:
+        strict: true
+        contexts: ['CI pipeline', 'codecov/patch', 'codecov/project']
+      enforce_admins: true
+      restrictions: null

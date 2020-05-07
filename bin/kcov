@@ -2,10 +2,9 @@
 
 set -e
 
-: "${GETOPTS_LONG_BIN:=./bin}"
-: "${GETOPTS_LONG_LIB:=./lib}"
-: "${GETOPTS_LONG_TEST:=./test}"
-: "${GETOPTS_LONG_COVERAGE:=./coverage}"
+: "${LIB_DIR:="./lib"}"
+: "${TEST_DIR:="./test"}"
+: "${COVERAGE_DIR:="./coverage"}"
 
 __exit() {
   echo "${0}: ${1:?Missing required parameter -- error message}" >&2
@@ -27,11 +26,9 @@ color_diff() {
 print_coverage_diff() {
   : "${1:?Missing required argument -- new code coverage}"
 
-  local sha
+  local sha coverage diff
   sha="$(head -c7 /home/VERSION)"
-  local coverage
   coverage="$(jq -r .percent_covered "/home/coverage/coverage.json")"
-  local diff
   diff=$(echo "${coverage} - ${1}" | bc -l)
 
   if tty -s && [[ "${diff}" -gt '0' ]]; then color_diff 32 "${diff}" "${sha}"
@@ -40,31 +37,44 @@ print_coverage_diff() {
   else printf "%+.2f%% compared to %s" "${diff}" "${sha}"; fi
 }
 
-path_exists "${GETOPTS_LONG_LIB}"
-path_exists "${GETOPTS_LONG_TEST}"
+die_with_kcov_user_error() {
+cat <<EOS >&2 && exit 1
+ERROR: kcov can't be run as root -- all fallback strategies failed:
 
-# Run shellcheck
-echo "Checking shell code: ${GETOPTS_LONG_LIB} ${GETOPTS_LONG_TEST} ${GETOPTS_LONG_BIN}"
-shellcheck -f tty -s bash -a \
-  "${GETOPTS_LONG_LIB}"/* \
-  "${GETOPTS_LONG_TEST}"/*.bash "${GETOPTS_LONG_TEST}"/bin/*  \
-  "${GETOPTS_LONG_BIN}"/*
+         - running as current user -- failed
+         - running as $0 owner -- failed
 
-# Run bats
-TEST_DIR=( "${@:-${GETOPTS_LONG_TEST}}" )
-echo "Running tests: ${TEST_DIR[*]} "
-bats --tap --recursive "${TEST_DIR[@]}"
-[ -n "${*}" ] && exit
+    Q: Why am I seeing this?
+    A: kcov collets coverage data by setting PS4 to a custom string.
+       But bash-4.3.42+ disables updating PS4 when running as root:
+
+         - https://bugzilla.redhat.com/show_bug.cgi?id=1379634
+
+       Try either running the script as non-privileged user, or set
+       the owner of $0 to non-root.
+EOS
+}
+
+path_exists "${LIB_DIR}"
+path_exists "${TEST_DIR}"
 
 # Setup exit trap
 TEMP_DIR="$(mktemp -d -t kcov.XXXXXXXXX)"
 trap 'rm -Rf ${TEMP_DIR}' EXIT
 
 # Run kcov
-echo "Generating coverage report: ${GETOPTS_LONG_COVERAGE}/index.html"
-kcov --clean --include-path="${GETOPTS_LONG_LIB}" \
-  "${TEMP_DIR}" \
-  bats --recursive "${GETOPTS_LONG_TEST}"
+echo "Generating coverage report: ${COVERAGE_DIR}/index.html"
+KCOV_CMD="/usr/local/bin/kcov --clean --include-path=${LIB_DIR} ${@} \
+  ${TEMP_DIR} /usr/local/bin/bats --recursive ${TEST_DIR}"
+if [[ ${EUID} -eq 0 ]]; then
+  KCOV_USER="$(ls -l "${0}" | awk '{print $3}')"
+  [[ "${KCOV_USER}" == "root" ]] && die_with_kcov_user_error
+
+  chown -R "${KCOV_USER}" "${TEMP_DIR}"
+  su -p "${KCOV_USER}" -c "${KCOV_CMD}"
+else
+  ${KCOV_CMD}
+fi
 
 # Clean up kcov report
 rm "${TEMP_DIR}"/bats/{bcov.css,amber.png,glass.png}
@@ -73,11 +83,11 @@ sed -i -E 's#/(home|mnt)/##g' \
   "${TEMP_DIR}"/bats/*.{json,xml} "${TEMP_DIR}"/bats/metadata/*
 
 # Present kcov report
-rm -Rf "${GETOPTS_LONG_COVERAGE}"
-cp -LR "${TEMP_DIR}/bats" "${GETOPTS_LONG_COVERAGE}"
+rm -Rf "${COVERAGE_DIR}"
+cp -LR "${TEMP_DIR}/bats" "${COVERAGE_DIR}"
 
 # Total code coverage
-COVERAGE="$(jq -r .percent_covered "${GETOPTS_LONG_COVERAGE}/coverage.json")"
+COVERAGE="$(jq -r .percent_covered "${COVERAGE_DIR}/coverage.json")"
 printf "Code covered: %s%% " "${COVERAGE}"
 
 # Code coverage diff

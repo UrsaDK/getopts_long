@@ -7,4 +7,4 @@ exemptLabels: []
 lockLabel: false
 setLockReason: false
 lockComment: >
-  Automatically **locked** because there hasn't been any activity since this was closed.
+  Automatically **locked** because there hasn't been any activity since this discussion was closed.

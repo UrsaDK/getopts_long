@@ -1,9 +1,0 @@
-#!/usr/bin/env sh
-
-SHELL=bash
-
-if [ -z "${*}" ]; then
-  exec ${SHELL} -l
-else
-  exec ${SHELL} -l -c "${*}"
-fi

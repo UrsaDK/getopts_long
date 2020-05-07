@@ -3,13 +3,13 @@
 daysUntilStale: 60
 daysUntilClose: 30
 exemptLabels:
-  - concern
-  - documentation
-  - enhancement
+  - bug
+  - question
+  - feature
   - help wanted
   - on hold
 staleLabel: stale
 markComment: >
-  Automatically marked as **stale** because there hasn't been any recent activity. It will be closed if no further activity occurs.
+  Automatically marked as **stale** because there hasn't been any activity in the last 60 days. If no further activity occurs, this discussion will be closed in 30 days.
 closeComment: >
-  Automatically **closed** because there hasn't been any activity since this this was marked as stale.
+  Automatically **closed** because there hasn't been any activity since this discussion was marked as stale.

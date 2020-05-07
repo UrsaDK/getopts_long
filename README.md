@@ -1,10 +1,10 @@
 <div align="center">
 
-  [![getopts_long logo](https://umka.dk/getopts_long/images/logo.png)](#)<br>
+  [![getopts_long logo](https://raw.githubusercontent.com/UrsaDK/getopts_long/master/docs/images/logo.png)](#)<br>
 
-  [![stable branch](https://img.shields.io/badge/dynamic/json.svg?color=lightgrey&label=stable&query=%24.default_branch&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long&logo=github)](https://github.com/UmkaDK/getopts_long/tree/master)
-  [![latest release](https://img.shields.io/badge/dynamic/json.svg?color=blue&label=release&query=%24.name&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUmkaDK%2Fgetopts_long%2Freleases%2Flatest&logo=docker)](https://hub.docker.com/r/umkadk/getopts_long)
-  [![test coverage](https://codecov.io/gh/UmkaDK/getopts_long/graph/badge.svg)](https://codecov.io/gh/UmkaDK/getopts_long)
+  [![stable branch](https://img.shields.io/badge/dynamic/json.svg?color=lightgrey&label=stable&query=%24.default_branch&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUrsaDK%2Fgetopts_long&logo=github)](https://github.com/UrsaDK/getopts_long/tree/master)
+  [![latest release](https://img.shields.io/badge/dynamic/json.svg?color=blue&label=release&query=%24.name&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUrsaDK%2Fgetopts_long%2Freleases%2Flatest&logo=docker)](https://hub.docker.com/r/ursadk/getopts_long)
+  [![test coverage](https://codecov.io/gh/UrsaDK/getopts_long/graph/badge.svg)](https://codecov.io/gh/UrsaDK/getopts_long)
   [![donate link](https://img.shields.io/badge/donate-coinbase-gold.svg?colorB=ff8e00&logo=bitcoin)](https://commerce.coinbase.com/checkout/17ae30c2-9c3f-45fb-a911-36d01a3c81b6)
 
 </div>
@@ -19,8 +19,11 @@ This is a pure BASH implementation of `getopts_long` function, which "upgrades" 
 
 This function is 100% compatible with the built-in `getopts`. It is implemented with no external dependencies, and relies solely on BASH built-in tools to provide all of its functionality.
 
-## Table of Content
+Table of Content
+----------------
 
+<!-- TOC START min:2 max:4 link:true asterisk:false update:true -->
+- [Table of Content](#table-of-content)
 - [Installation](#installation)
   - [Source the library](#source-the-library)
   - [Paste the content](#paste-the-content)
@@ -28,14 +31,12 @@ This function is 100% compatible with the built-in `getopts`. It is implemented 
 - [Usage](#usage)
   - [Extended OPTSPEC](#extended-optspec)
   - [Example script](#example-script)
-- [How it works](#how-it-works)
+- [How It Works](#how-it-works)
   - [Internal variables](#internal-variables)
   - [Error reporting](#error-reporting)
     - [Verbose mode](#verbose-mode)
     - [Silent mode](#silent-mode)
-- [Contributions](#contributions)
-  - [Test suite](#test-suite)
-  - [Container shell](#container-shell)
+<!-- TOC END -->
 
 ## Installation
 
@@ -51,7 +52,7 @@ There are a number of ways to make it available to your script, all of them come
 This is the recommended way of providing `getopts_long` functionality to your script. To use it, clone this repository somewhere on your system:
 
 ```
-git clone https://github.com/UmkaDK/getopts_long.git
+git clone https://github.com/UrsaDK/getopts_long.git
 ```
 
 Then update your script to source the function code:
@@ -73,10 +74,20 @@ This will make the function available to a single script and you will easily be 
 A more advanced way to run your script with getopts_long is to mount its directory into the getopts_long docker container:
 
 ```
-docker container run --rm --init -it -v ${YOUR_SCRIPT_DIR}:/mnt umkadk/getopts_long -l
+docker container run --rm --init -it -v ${YOUR_SCRIPT_DIR}:/mnt ursadk/getopts_long -l
 ```
 
-Your script will be available in `/mnt` directory, and getopts_long function can be sourced from `/home/lib/getopts_long.bash`.
+Your project is available under `/mnt` directory, and `getopts_long` function can be sourced from `/home/lib/getopts_long.bash`.
+
+The container also provides the following tools:
+
+  - `shellcheck` - https://github.com/koalaman/shellcheck
+  - `bats-core` - https://github.com/bats-core/bats-core
+  - `kcov` - https://github.com/SimonKagstrom/kcov
+  - `/home/bin/bats` - a custom wrapper around the above three tools that allows you to run test and generates a coverage report as long as the root directory of your project includes `bin`, `lib`, and `test` directories, which are used accordingly.
+  - `/home/bin/kcov` - a custom wrapper around the `kcov` command which cleans up output reports
+
+Please note that `/home/bin` directory in _pre-pended_ to the shell's PATH variable. As such, all files placed in `/home/bin` will be executed in preference to the system tools. For example, executing `kcov` runs `/home/bin/kcov` not `/usr/local/bin/kcov`.
 
 ## Usage
 
@@ -151,7 +162,7 @@ shift $(( OPTIND - 1 ))
 ...
 ```
 
-## How it works
+## How It Works
 
 In general the use of `getopts_long` is identical to that of the built-in `getopts`. Just like the built-in function, you need to call `getopts_long` several times. Each time it will use the next positional parameter and a possible argument, if parsable, and provide it to you. The function will not change the set of positional parameters. If you want to shift them, it must be done manually:
 
@@ -202,45 +213,3 @@ In production scripts I recommend using the silent mode, because it allows you t
 | --------------------------- | ------------ |
 | invalid option              | `VARNAME` is set to `?` (question-mark) and `OPTARG` is set to the (invalid) option character. |
 | required argument not found | `VARNAME` is set to `:` (colon) and `OPTARG` contains the option in question. |
-
-## Contributions
-
-Even though I consider this function feature complete, contributions are always welcome. New ideas, bugs, and pull requests, all will be very much appreciated. The only thing I ask is that if you're submitting a PR, please:
-
-1. Ensure that all existing tests pass;
-2. Add all tests required by your PR.
-
-
-### Test suite
-
-Tests for this function live in the `./test` subdirectory of the project root. They are implemented using [BATS](https://github.com/bats-core/bats-core) (unit tests), and [Kcov](https://github.com/SimonKagstrom/kcov) (coverage report), which are provided by the included Dockerfile.
-
-If required, a local docker image can be built using the following command:
-
-```
-docker image build --tag umkadk/getopts_long .
-```
-
-Executing the container with no arguments will run all tests and generate a coverage report in the `coverage` subdirectory of the projects root:
-
-```
-docker container run --rm --init -it -v ${PWD}:/mnt umkadk/getopts_long
-ls -l ./coverage/index.html
-```
-
-Individual tests could be run by passing a relative path of the BATS test file as an argument to `docker run` command:
-
-```
-docker container run --rm --init -it -v ${PWD}:/mnt umkadk/getopts_long ./test/no_arguments.bats
-```
-
-
-### Container shell
-
-By supplying `-l` or `--login` as a parameter to `docker run` command you can start the container with the login shell.
-
-```
-docker container run --rm --init -it -v ${PWD}:/mnt getopts_long -l
-```
-
-Inside the container, `getopts_long` source code is available under `/home`, while your current working directory on the host will be mounted under `/mnt`. This setup can be used to experiment with your own script which rely on `getopts_long` functionality.
