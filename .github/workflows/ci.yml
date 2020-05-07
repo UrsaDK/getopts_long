@@ -10,6 +10,7 @@ defaults:
     shell: bash
 
 env:
+  DOCKER_IMAGE: ursadk/ci-build
   BUILD_CACHE: /home/runner/.docker/buildkit
 
 jobs:
@@ -23,12 +24,14 @@ jobs:
           path: ${{ env.BUILD_CACHE }}
           key: ${{ hashFiles('Dockerfile') }}
 
-      - name: Start buildkit daemon
+      - name: Install latest buildkit release
         run: |
           BUILDKIT_URL="$(curl -sL https://api.github.com/repos/moby/buildkit/releases \
             | jq -r 'map(select(.name|startswith("v")))|sort_by(.name)[-1].assets[]|select(.name|endswith(".linux-amd64.tar.gz")).browser_download_url')"
           curl -L "${BUILDKIT_URL}" | sudo tar -xz -C /usr/local
 
+      - name: Start buildkit daemon
+        run: |
           sudo --non-interactive --shell <<END_SUDO
             install -d -m 0750 -o root -g docker /run/buildkit
             buildkitd &
@@ -38,30 +41,6 @@ jobs:
 
       - name: Build docker image
         run: |
-          DEFAULT_BRANCH="$(curl -sL https://api.github.com/repos/${GITHUB_REPOSITORY} \
-            | jq -r '.default_branch' )"
-          case "${GITHUB_REF}" in
-            "refs/heads/${DEFAULT_BRANCH}")       # eg: refs/heads/master
-              DOCKER_IMAGE="${GITHUB_REPOSITORY,,}:latest"
-              ;;
-            "refs/heads/"*)                       # eg: refs/heads/my/branch
-              DOCKER_IMAGE="${GITHUB_REF#refs/heads/}"
-              DOCKER_IMAGE="${GITHUB_REPOSITORY,,}:${DOCKER_IMAGE//\//-}"
-              ;;
-            "refs/pull/"*)                        # eg: refs/pull/2/merge
-              DOCKER_IMAGE="pr-${GITHUB_REF#refs/pull/}"
-              DOCKER_IMAGE="${GITHUB_REPOSITORY,,}:${DOCKER_IMAGE%/merge}"
-              ;;
-            "refs/tags/"*)                        # eg: refs/tags/v1.0.0
-              DOCKER_IMAGE="${GITHUB_REPOSITORY,,}:${GITHUB_REF#refs/tags/}"
-              ;;
-            *)
-              echo "Failed to process GITHUB_REF -- ${GITHUB_REF}" >&2
-              exit 1
-              ;;
-          esac
-          echo "::set-env name=DOCKER_IMAGE::${DOCKER_IMAGE}"
-
           buildctl build \
             --frontend=dockerfile.v0 --local dockerfile=. --local context=. \
             --export-cache type=local,dest=${BUILD_CACHE},mode=max \
