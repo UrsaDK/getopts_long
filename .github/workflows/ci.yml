@@ -4,8 +4,6 @@ on:
   push:
     branches: [master]
   pull_request:
-  release:
-    types: [published]
 
 defaults:
   run:
@@ -75,10 +73,3 @@ jobs:
         run: ./bin/docker run ${DOCKER_IMAGE} cp -a /home/coverage /mnt/coverage
 
       - uses: codecov/codecov-action@v1
-
-      - name: Publish docker image
-        if: ${{ github.event_name == 'push' || github.event_name == 'release' }}
-        run: |
-          echo ${{ secrets.DOCKERHUB_ACCESS_TOKEN }} \
-            | docker login -u ${GITHUB_ACTOR,,} --password-stdin
-          docker push ${DOCKER_IMAGE}
