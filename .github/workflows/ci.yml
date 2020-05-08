@@ -9,13 +9,12 @@ defaults:
   run:
     shell: bash
 
-env:
-  DOCKER_IMAGE: ursadk/ci-build
-  BUILD_CACHE: /home/runner/.docker/buildkit
-
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      DOCKER_IMAGE: ci-build
+      BUILD_CACHE: /home/runner/.docker/buildkit
     steps:
       - uses: actions/checkout@v2
 
@@ -24,7 +23,7 @@ jobs:
           path: ${{ env.BUILD_CACHE }}
           key: ${{ hashFiles('Dockerfile') }}
 
-      - name: Install latest buildkit release
+      - name: Install the latest buildkit release
         run: |
           BUILDKIT_URL="$(curl -sL https://api.github.com/repos/moby/buildkit/releases \
             | jq -r 'map(select(.name|startswith("v")))|sort_by(.name)[-1].assets[]|select(.name|endswith(".linux-amd64.tar.gz")).browser_download_url')"
