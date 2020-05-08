@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      DOCKER_IMAGE: ci-build
+      DOCKER_IMAGE: ci/${{ github.job }}
       BUILD_CACHE: /home/runner/.docker/buildkit
     steps:
       - uses: actions/checkout@v2
