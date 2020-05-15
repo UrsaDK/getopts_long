@@ -55,7 +55,10 @@ fi
 case "${COMMAND}" in
   'b'|'build')
     DOCKER_BUILDKIT=${DOCKER_BUILDKIT:-1} \
-      docker image build --tag "${IMAGE}" --target "${TAG}" "${@}" "${PWD}";
+      docker image build --tag "${IMAGE}" --target "${TAG}" \
+      --build-arg BUILD_DATE="$(date -u +"%Y-%m-%dT%TZ")" \
+      --build-arg BUILD_SHA="$(git rev-parse HEAD)" \
+      "${@}" "${PWD}";
     ;;
   'r'|'run')
     [[ -t 1 ]] && IT='-it' # Check if output is attached to a TTY
