@@ -1,5 +1,8 @@
 FROM debian:stable-slim AS base
-LABEL maintainer="UrsaDK <ursa.dk@icloud.com>"
+LABEL org.opencontainers.image.vendor="Dmytro Konstantinov" \
+    org.opencontainers.image.source="https://github.com/UrsaDK/getopts_long" \
+    org.opencontainers.image.revision="${BUILD_SHA}" \
+    org.opencontainers.image.created="${BUILD_DATE}"
 COPY ./dockerfs /
 RUN cp -a /etc/skel/.??* /root \
     && adduser --quiet --uid 1000 --disabled-password --disabled-login \
