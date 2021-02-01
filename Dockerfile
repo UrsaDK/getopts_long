@@ -17,7 +17,7 @@ RUN apt-get -y update \
         curl \
         git \
         jq \
-        libcurl4-openssl-dev \
+        libssl-dev \
         libdw1 \
         libiberty-dev \
         python3 \
