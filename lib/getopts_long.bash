@@ -22,6 +22,8 @@ getopts_long() {
 
     printf -v "${optvar}" "%s" "${OPTARG%%=*}"
 
+    [[ "${!optvar}" != '-' ]] || return 1  # Handle '--'
+
     if [[ "${optspec_long}" =~ (^|[[:space:]])${!optvar}:([[:space:]]|$) ]]; then
         OPTARG="${OPTARG#${!optvar}}"
         OPTARG="${OPTARG#=}"
