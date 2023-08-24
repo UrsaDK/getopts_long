@@ -9,7 +9,7 @@ getopts_long() {
     shift 2
 
     if [[ "${#}" == 0 ]]; then
-        local -i index
+        local -i i
         local -a args=()
         for (( i = BASH_ARGC[0] + BASH_ARGC[1] - 1; i >= BASH_ARGC[0]; i-- )); do
             args+=("${BASH_ARGV[i]}")
