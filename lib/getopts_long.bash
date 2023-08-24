@@ -40,7 +40,7 @@ getopts_long() {
             fi
         fi
     elif [[ "${optspec_long}" =~ (^|[[:space:]])${!optvar}([[:space:]]|$) ]]; then
-        unset OPTARG
+        OPTARG=
     else
         # Invalid option
         if [[ "${optspec_short:0:1}" == ':' ]]; then
