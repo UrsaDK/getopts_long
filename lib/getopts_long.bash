@@ -9,10 +9,10 @@ getopts_long() {
     shift 2
 
     if [[ "${#}" == 0 ]]; then
-        local args=()
-        while [[ ${#BASH_ARGV[@]} -gt ${#args[@]} ]]; do
-            local index=$(( ${#BASH_ARGV[@]} - ${#args[@]} - 1 ))
-            args[${#args[@]}]="${BASH_ARGV[${index}]}"
+        local -i i
+        local -a args=()
+        for (( i = BASH_ARGC[0] + BASH_ARGC[1] - 1; i >= BASH_ARGC[0]; i-- )); do
+            args+=("${BASH_ARGV[i]}")
         done
         set -- "${args[@]}"
     fi
