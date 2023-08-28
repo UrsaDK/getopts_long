@@ -9,10 +9,10 @@ getopts_long() {
     shift 2
 
     if [[ "${#}" == 0 ]]; then
-        local -i i
-        local -a args=()
-        for (( i = BASH_ARGC[0] + BASH_ARGC[1] - 1; i >= BASH_ARGC[0]; i-- )); do
-            args+=("${BASH_ARGV[i]}")
+        local args=()
+        while [[ ${#BASH_ARGV[@]} -gt ${#args[@]} ]]; do
+            local index=$(( ${#BASH_ARGV[@]} - ${#args[@]} - 1 ))
+            args[${#args[@]}]="${BASH_ARGV[${index}]}"
         done
         set -- "${args[@]}"
     fi
@@ -28,9 +28,10 @@ getopts_long() {
 
         # Missing argument
         if [[ -z "${OPTARG}" ]]; then
-            if [[ -n "${!OPTIND:-}" ]]; then
-                OPTARG="${!OPTIND}" && OPTIND=$(( OPTIND + 1 ))
-            elif [[ "${optspec_short:0:1}" == ':' ]]; then
+            OPTARG="${!OPTIND}" && OPTIND=$(( OPTIND + 1 ))
+            [[ -z "${OPTARG}" ]] || return 0
+
+            if [[ "${optspec_short:0:1}" == ':' ]]; then
                 OPTARG="${!optvar}" && printf -v "${optvar}" ':'
             else
                 [[ "${OPTERR}" == 0 ]] || \
@@ -40,7 +41,6 @@ getopts_long() {
         fi
     elif [[ "${optspec_long}" =~ (^|[[:space:]])${!optvar}([[:space:]]|$) ]]; then
         unset OPTARG
-        declare -g OPTARG
     else
         # Invalid option
         if [[ "${optspec_short:0:1}" == ':' ]]; then
