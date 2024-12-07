@@ -62,11 +62,13 @@ path_exists "${TEST_DIR}"
 TEMP_DIR="$(mktemp -d -t kcov.XXXXXXXXX)"
 trap 'rm -Rf ${TEMP_DIR}' EXIT
 
-# Run kcov
-echo "Generating coverage report: ${COVERAGE_DIR}/index.html"
+# Run kcov + bats
+echo "Generating coverage report: ${TEMP_DIR}/bats/index.html"
+echo -n "Running the whole tests suite: "
 KCOV_CMD="/usr/local/bin/kcov --clean --include-path=${LIB_DIR} ${*} \
   ${TEMP_DIR} /usr/local/bin/bats --recursive ${TEST_DIR}"
 if [[ ${EUID} -eq 0 ]]; then
+  echo
   KCOV_USER="$(find "${0}" -maxdepth 0 -printf '%u')"
   [[ "${KCOV_USER}" == "root" ]] && die_with_kcov_user_error
 
@@ -83,8 +85,10 @@ sed -i -E 's#/(home|mnt)/##g' \
   "${TEMP_DIR}"/bats/*.{json,xml} "${TEMP_DIR}"/bats/metadata/*
 
 # Present kcov report
-rm -Rf "${COVERAGE_DIR}"
-cp -LR "${TEMP_DIR}/bats" "${COVERAGE_DIR}"
+if rm -Rf "${COVERAGE_DIR}" 2>/dev/null; then
+  echo "Publishing coverage report: ${COVERAGE_DIR}/index.html";
+  cp -LR "${TEMP_DIR}/bats" "${COVERAGE_DIR}"
+fi
 
 # Total code coverage
 COVERAGE="$(jq -r .percent_covered "${COVERAGE_DIR}/coverage.json")"

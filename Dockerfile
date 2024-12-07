@@ -1,4 +1,6 @@
 FROM debian:stable-slim AS base
+ARG BUILD_SHA
+ARG BUILD_DATE
 LABEL org.opencontainers.image.vendor="Dmytro Konstantinov" \
     org.opencontainers.image.source="https://github.com/UrsaDK/getopts_long" \
     org.opencontainers.image.revision="${BUILD_SHA}" \
@@ -103,6 +105,7 @@ RUN TZ=UTC git show --pretty="%H%+ad" | head -2 > ./VERSION \
     && rm -Rf \
         ./.git \
         ./dockerfs \
+    && ./bin/bats \
     && ./bin/kcov
 WORKDIR /mnt
 VOLUME ["/mnt"]
