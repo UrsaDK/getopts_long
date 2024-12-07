@@ -64,10 +64,10 @@ trap 'rm -Rf ${TEMP_DIR}' EXIT
 
 # Run kcov
 echo "Generating coverage report: ${COVERAGE_DIR}/index.html"
-KCOV_CMD="/usr/local/bin/kcov --clean --include-path=${LIB_DIR} ${@} \
+KCOV_CMD="/usr/local/bin/kcov --clean --include-path=${LIB_DIR} ${*} \
   ${TEMP_DIR} /usr/local/bin/bats --recursive ${TEST_DIR}"
 if [[ ${EUID} -eq 0 ]]; then
-  KCOV_USER="$(ls -l "${0}" | awk '{print $3}')"
+  KCOV_USER="$(find "${0}" -maxdepth 0 -printf '%u')"
   [[ "${KCOV_USER}" == "root" ]] && die_with_kcov_user_error
 
   chown -R "${KCOV_USER}" "${TEMP_DIR}"

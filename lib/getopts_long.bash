@@ -23,7 +23,7 @@ getopts_long() {
     printf -v "${optvar}" "%s" "${OPTARG%%=*}"
 
     if [[ "${optspec_long}" =~ (^|[[:space:]])${!optvar}:([[:space:]]|$) ]]; then
-        OPTARG="${OPTARG#${!optvar}}"
+        OPTARG="${OPTARG#"${!optvar}"}"
         OPTARG="${OPTARG#=}"
 
         # Missing argument
