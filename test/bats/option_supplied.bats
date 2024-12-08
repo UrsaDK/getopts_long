@@ -45,23 +45,23 @@ load ../test_helper
 @test "${FEATURE}: short option, terminator, extra arguments, silent" {
     compare '-o user_val -- user_arg' \
             '-o user_val -- user_arg'
-    expect  "${actual_lines[5]}" == '$@: user_arg'
+    expect  "${getopts_long_lines[5]}" == '$@: user_arg'
 }
 @test "${FEATURE}: short option, terminator, extra arguments, verbose" {
     compare '-o user_val -- user_arg' \
             '-o user_val -- user_arg'
-    expect  "${actual_lines[5]}" == '$@: user_arg'
+    expect  "${getopts_long_lines[5]}" == '$@: user_arg'
 }
 
 @test "${FEATURE}: long option, terminator, extra arguments, silent" {
     compare '-o user_val -- user_arg' \
             '--option user_val -- user_arg'
-    expect  "${actual_lines[5]}" == '$@: user_arg'
+    expect  "${getopts_long_lines[5]}" == '$@: user_arg'
 }
 @test "${FEATURE}: long option, terminator, extra arguments, verbose" {
     compare '-o user_val -- user_arg' \
             '--option user_val -- user_arg'
-    expect  "${actual_lines[5]}" == '$@: user_arg'
+    expect  "${getopts_long_lines[5]}" == '$@: user_arg'
 }
 
 # multiple same arguments
@@ -69,27 +69,27 @@ load ../test_helper
 @test "${FEATURE}: short option, multiple same arguments, silent" {
     compare '-o user_val1 -o user_val2' \
             '-o user_val1 -o user_val2'
-    expect  "${actual_lines[0]}" == 'option supplied -- OPTARG=user_val1'
-    expect  "${actual_lines[1]}" == 'option supplied -- OPTARG=user_val2'
+    expect  "${getopts_long_lines[0]}" == 'option supplied -- OPTARG=user_val1'
+    expect  "${getopts_long_lines[1]}" == 'option supplied -- OPTARG=user_val2'
 }
 @test "${FEATURE}: short option, multiple same arguments, verbose" {
     compare '-o user_val1 -o user_val2' \
             '-o user_val1 -o user_val2'
-    expect  "${actual_lines[0]}" == 'option supplied -- OPTARG=user_val1'
-    expect  "${actual_lines[1]}" == 'option supplied -- OPTARG=user_val2'
+    expect  "${getopts_long_lines[0]}" == 'option supplied -- OPTARG=user_val1'
+    expect  "${getopts_long_lines[1]}" == 'option supplied -- OPTARG=user_val2'
 }
 
 @test "${FEATURE}: long option, multiple same arguments, silent" {
     compare '-o user_val1 -o user_val2' \
             '--option user_val1 --option user_val2'
-    expect  "${actual_lines[0]}" == 'option supplied -- OPTARG=user_val1'
-    expect  "${actual_lines[1]}" == 'option supplied -- OPTARG=user_val2'
+    expect  "${getopts_long_lines[0]}" == 'option supplied -- OPTARG=user_val1'
+    expect  "${getopts_long_lines[1]}" == 'option supplied -- OPTARG=user_val2'
 }
 @test "${FEATURE}: long option, multiple same arguments, verbose" {
     compare '-o user_val1 -o user_val2' \
             '--option user_val1 --option user_val2'
-    expect  "${actual_lines[0]}" == 'option supplied -- OPTARG=user_val1'
-    expect  "${actual_lines[1]}" == 'option supplied -- OPTARG=user_val2'
+    expect  "${getopts_long_lines[0]}" == 'option supplied -- OPTARG=user_val1'
+    expect  "${getopts_long_lines[1]}" == 'option supplied -- OPTARG=user_val2'
 }
 
 # terminator followed by options
@@ -97,25 +97,25 @@ load ../test_helper
 @test "${FEATURE}: terminator, short option, extra arguments, silent" {
     compare '-- -o user_val user_arg' \
             '-- -o user_val user_arg'
-    expect  "${actual_lines[4]}" == '$@: -o user_val user_arg'
+    expect  "${getopts_long_lines[4]}" == '$@: -o user_val user_arg'
 }
 @test "${FEATURE}: terminator, short option, extra arguments, verbose" {
     compare '-- -o user_val user_arg' \
             '-- -o user_val user_arg'
-    expect  "${actual_lines[4]}" == '$@: -o user_val user_arg'
+    expect  "${getopts_long_lines[4]}" == '$@: -o user_val user_arg'
 }
 
 @test "${FEATURE}: terminator, long option, extra arguments, silent" {
     compare '-- -o user_val user_arg' \
             '-- --option user_val user_arg' \
             '/^\$@: /d'
-    expect  "${actual_lines[4]}" == '$@: --option user_val user_arg'
+    expect  "${getopts_long_lines[4]}" == '$@: --option user_val user_arg'
 }
 @test "${FEATURE}: terminator, long option, extra arguments, verbose" {
     compare '-- -o user_val user_arg' \
             '-- --option user_val user_arg' \
             '/^\$@: /d'
-    expect  "${actual_lines[4]}" == '$@: --option user_val user_arg'
+    expect  "${getopts_long_lines[4]}" == '$@: --option user_val user_arg'
 }
 
 # option without an argument
@@ -134,8 +134,8 @@ load ../test_helper
     compare '-o' \
             '--option' \
             '/^MISSING ARGUMENT -- /d'
-    expect  "${expected_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=o'
-    expect  "${actual_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=option'
+    expect  "${bash_getopts_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=o'
+    expect  "${getopts_long_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=option'
 }
 @test "${FEATURE}: long option, missing value, verbose" {
     compare '-o' \
