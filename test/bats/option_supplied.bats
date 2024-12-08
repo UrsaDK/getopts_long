@@ -182,3 +182,24 @@ load ../test_helper
     compare '-o =user_val' \
             '--option =user_val'
 }
+
+# option with an adjoined value
+
+@test "${FEATURE}: short option, adjoined value, silent" {
+    compare '-ouser_val' \
+            '-ouser_val'
+}
+@test "${FEATURE}: short option, adjoined value, verbose" {
+    compare '-ouser_val' \
+            '-ouser_val'
+}
+
+@test "${FEATURE}: long option, adjoined value, silent" {
+    compare '-ouser_val' \
+            '--optionuser_val'
+}
+
+@test "${FEATURE}: long option, adjoined value, verbose" {
+    compare '-ouser_val' \
+            '--optionuser_val'
+}
