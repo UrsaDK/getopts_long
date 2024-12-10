@@ -26,7 +26,6 @@ while getopts ":to:v:" OPTKEY; do
 done
 
 shift $(( OPTIND - 1 ))
-[[ "${1}" == "--" ]] && shift
 
 echo "OPTERR: ${OPTERR}"
 echo "OPTKEY: ${OPTKEY}"

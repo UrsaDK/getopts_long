@@ -30,7 +30,6 @@ while getopts_long ': toggle option: variable:' OPTKEY; do
 done
 
 shift $(( OPTIND - 1 ))
-[[ "${1}" == "--" ]] && shift
 
 echo "OPTERR: ${OPTERR}"
 echo "OPTKEY: ${OPTKEY}"
