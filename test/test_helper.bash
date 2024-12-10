@@ -9,12 +9,12 @@ PATH="${TOPDIR}/bin:${PATH}"
 debug() {
 cat >&3 <<END_OF_MESSAGE
 
-EXPECTED (bash getopts)
-––––––––––––––––––––––––
+EXPECTED (eg: bash getopts)
+––––––––––––––---––––––––––
 ${2}
 
-RETURNED (getopts_long)
-––––––––––––––––––––––––
+RECEIVED (eg: getopts_long)
+––––––––––––––---––––––––––
 ${1}
 
 END_OF_MESSAGE
@@ -24,10 +24,10 @@ expect() {
   if ! test "${@}"; then
     case ${1} in
       -[[:alpha:]])
-        debug "[[ ${1} ACTUAL ]]" "${!#}"
+        debug "$(help test | grep -- "${1}")" "${!#}"
         ;;
       *)
-        debug "${!#}" "${1}"
+        debug "${1}" "${!#}"
         ;;
     esac
     return 1
@@ -55,6 +55,6 @@ compare() {
         getopts_long_output="$(echo "${getopts_long_output}" | sed -E "${3}")"
     fi
 
-    expect "${bash_getopts_output}" == "${getopts_long_output}"
-    expect "${bash_getopts_status}" == "${getopts_long_status}"
+    expect "${getopts_long_output}" == "${bash_getopts_output}"
+    expect "${getopts_long_status}" == "${bash_getopts_status}"
 }
