@@ -7,8 +7,17 @@ FEATURE="$(basename "${BATS_TEST_FILENAME}" '.bats' | tr '_' ' ')"
 PATH="${TOPDIR}/bin:${PATH}"
 
 debug() {
-    printf '\nACTUAL:\n––––––––\n%s\n' "${2}" >&3
-    printf '\nEXPECTED:\n––––––––\n%s\n\n' "${1}" >&3
+cat >&3 <<END_OF_MESSAGE
+
+EXPECTED (bash getopts)
+––––––––––––––––––––––––
+${2}
+
+RETURNED (getopts_long)
+––––––––––––––––––––––––
+${1}
+
+END_OF_MESSAGE
 }
 
 expect() {
@@ -30,22 +39,22 @@ compare() {
     : "${2?Missing required parameter -- getopts_long arguments}"
 
     run "getopts-${BATS_TEST_DESCRIPTION##* }" ${1}
-    expected_output="${output}"
-    expected_lines=( "${lines[@]}" )
-    expected_status=${status}
-    export expected_output expected_lines expected_status
+    bash_getopts_output="${output}"
+    bash_getopts_lines=( "${lines[@]}" )
+    bash_getopts_status=${status}
+    export bash_getopts_output bash_getopts_lines bash_getopts_status
 
     run "getopts_long-${BATS_TEST_DESCRIPTION##* }" ${2}
-    actual_output="${output}"
-    actual_lines=( "${lines[@]}" )
-    actual_status=${status}
-    export actual_output actual_lines actual_status
+    getopts_long_output="${output}"
+    getopts_long_lines=( "${lines[@]}" )
+    getopts_long_status=${status}
+    export getopts_long_output getopts_long_lines getopts_long_status
 
     if [[ -n "${3+SET}" ]]; then
-        expected_output="$(echo "${expected_output}" | sed -E "${3}")"
-        actual_output="$(echo "${actual_output}" | sed -E "${3}")"
+        bash_getopts_output="$(echo "${bash_getopts_output}" | sed -E "${3}")"
+        getopts_long_output="$(echo "${getopts_long_output}" | sed -E "${3}")"
     fi
 
-    expect "${expected_output}" == "${actual_output}"
-    expect "${expected_status}" == "${actual_status}"
+    expect "${bash_getopts_output}" == "${getopts_long_output}"
+    expect "${bash_getopts_status}" == "${getopts_long_status}"
 }
