@@ -9,29 +9,29 @@ PATH="${TOPDIR}/bin:${PATH}"
 debug() {
 cat >&3 <<END_OF_MESSAGE
 
-EXPECTED (bash getopts)
-––––––––––––––––––––––––
+EXPECTED (eg: bash getopts)
+––––––––––––––---––––––––––
 ${2}
 
-RETURNED (getopts_long)
-––––––––––––––––––––––––
+RECEIVED (eg: getopts_long)
+––––––––––––––---––––––––––
 ${1}
 
 END_OF_MESSAGE
 }
 
 expect() {
-  if ! test "${@}"; then
-    case ${1} in
-      -[[:alpha:]])
-        debug "[[ ${1} ACTUAL ]]" "${!#}"
-        ;;
-      *)
-        debug "${!#}" "${1}"
-        ;;
-    esac
-    return 1
-  fi
+    if ! test "${@}"; then
+        case ${1} in
+            -[[:alpha:]])
+                debug "[[ ${1} ACTUAL ]]" "${!#}"
+                ;;
+            *)
+                debug "${!#}" "${1}"
+                ;;
+        esac
+        return 1
+    fi
 }
 
 compare() {
@@ -44,7 +44,7 @@ compare() {
     bash_getopts_status=${status}
     export bash_getopts_output bash_getopts_lines bash_getopts_status
 
-    run "getopts_long-${BATS_TEST_DESCRIPTION##* }" ${2}
+    run "${GETOPTS_LONG_TEST_BIN:-getopts_long}-${BATS_TEST_DESCRIPTION##* }" ${2}
     getopts_long_output="${output}"
     getopts_long_lines=( "${lines[@]}" )
     getopts_long_status=${status}
@@ -55,6 +55,6 @@ compare() {
         getopts_long_output="$(echo "${getopts_long_output}" | sed -E "${3}")"
     fi
 
-    expect "${bash_getopts_output}" == "${getopts_long_output}"
-    expect "${bash_getopts_status}" == "${getopts_long_status}"
+    expect "${getopts_long_output}" == "${bash_getopts_output}"
+    expect "${getopts_long_status}" == "${bash_getopts_status}"
 }
