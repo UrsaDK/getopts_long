@@ -21,17 +21,17 @@ END_OF_MESSAGE
 }
 
 expect() {
-  if ! test "${@}"; then
-    case ${1} in
-      -[[:alpha:]])
-        debug "$(help test | grep -- "${1}")" "${!#}"
-        ;;
-      *)
-        debug "${1}" "${!#}"
-        ;;
-    esac
-    return 1
-  fi
+    if ! test "${@}"; then
+        case ${1} in
+            -[[:alpha:]])
+                debug "[[ ${1} ACTUAL ]]" "${!#}"
+                ;;
+            *)
+                debug "${!#}" "${1}"
+                ;;
+        esac
+        return 1
+    fi
 }
 
 compare() {

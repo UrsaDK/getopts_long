@@ -16,9 +16,9 @@ jobs:
       DOCKER_IMAGE: ci/${{ github.job }}
       BUILD_CACHE: /home/runner/.docker/buildkit
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - uses: actions/cache@v1
+      - uses: actions/cache@v4
         with:
           path: ${{ env.BUILD_CACHE }}
           key: ${{ hashFiles('Dockerfile') }}
@@ -52,4 +52,4 @@ jobs:
       - name: Prepare coverage report
         run: ./bin/docker run ${DOCKER_IMAGE} cp -a /home/coverage /mnt/coverage
 
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v5
