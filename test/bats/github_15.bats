@@ -15,7 +15,6 @@ load ../test_helper
     compare '-o-- user_arg' \
             '--option-- user_arg'
 }
-
 @test "${FEATURE}: long option, verbose" {
     compare '-o-- user_arg' \
             '--option-- user_arg'

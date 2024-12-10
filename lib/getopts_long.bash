@@ -32,7 +32,7 @@ getopts_long() {
         [[ "${!optvar}" == '-' ]] && printf -v "${optvar}" "%s" "${OPTARG}"
     fi
 
-    if [[ "${optspec_long}" =~ (^|[[:space:]])${!optvar}:([[:space:]]|$) ]]; then
+    if [[ " ${optspec_long} " == *" ${!optvar}: "* ]]; then
         OPTARG="${OPTARG#"${!optvar}"}"
         OPTARG="${OPTARG#=}"
 
@@ -49,7 +49,7 @@ getopts_long() {
                 unset OPTARG && printf -v "${optvar}" '?'
             fi
         fi
-    elif [[ "${optspec_long}" =~ (^|[[:space:]])${!optvar}([[:space:]]|$) ]]; then
+    elif [[ " ${optspec_long} " == *" ${!optvar} "* ]]; then
         unset OPTARG
     else
         # Invalid option
