@@ -52,4 +52,4 @@ jobs:
       - name: Prepare coverage report
         run: ./bin/docker run ${DOCKER_IMAGE} cp -a /home/coverage /mnt/coverage
 
-      - uses: codecov/codecov-action@v1
+      - uses: codecov/codecov-action@v5
