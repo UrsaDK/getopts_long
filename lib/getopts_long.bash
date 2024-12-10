@@ -17,7 +17,7 @@ getopts_long() {
         set -- "${args[@]}"
     fi
 
-    builtin getopts "${optspec_short}" "${optvar}" "${@}" || return 1
+    builtin getopts -- "${optspec_short}" "${optvar}" "${@}" || return 1
     [[ "${!optvar}" == '-' ]] || return 0
 
     if [[ "${OPTARG}" == *=* ]]; then
