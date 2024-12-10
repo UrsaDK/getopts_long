@@ -44,7 +44,7 @@ compare() {
     bash_getopts_status=${status}
     export bash_getopts_output bash_getopts_lines bash_getopts_status
 
-    run "getopts_long-${BATS_TEST_DESCRIPTION##* }" ${2}
+    run "${GETOPTS_LONG_TEST_BIN:-getopts_long}-${BATS_TEST_DESCRIPTION##* }" ${2}
     getopts_long_output="${output}"
     getopts_long_lines=( "${lines[@]}" )
     getopts_long_status=${status}
