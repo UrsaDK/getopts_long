@@ -11,11 +11,11 @@ cat >&3 <<END_OF_MESSAGE
 
 EXPECTED (eg: bash getopts)
 ––––––––––––––---––––––––––
-${2}
+${1}
 
 RECEIVED (eg: getopts_long)
 ––––––––––––––---––––––––––
-${1}
+${2}
 
 END_OF_MESSAGE
 }
@@ -24,7 +24,7 @@ expect() {
     if ! test "${@}"; then
         case ${1} in
             -[[:alpha:]])
-                debug "[[ ${1} ACTUAL ]]" "${!#}"
+                debug "$(help test | grep -- "${1}")" "${!#}"
                 ;;
             *)
                 debug "${!#}" "${1}"
