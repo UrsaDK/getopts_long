@@ -2,28 +2,25 @@
 
 load ../test_helper
 
-# Neither bash getopts nor getopts_long OPTSPEC includes [-], but
-# getopts_long always appends [-:] to the end of the short OPTSPEC.
+# Neither bash getopts nor getopts_long OPTSPEC includes [-]
 
-# Standard getopts should see:
-#   -t          - a toggle
-#   --          - an invalid option
-#   --          - an invalid option
-#   -t          - a toggle
-# Getopts_long should see:
-#   -t          - a toggle
-#   ---         - an invalid option
-#   -t          - a toggle
+@test "${FEATURE}: short toggle, single, silent" {
+    compare '-t- -t user_arg' \
+            '-t- -t user_arg'
+}
+@test "${FEATURE}: short toggle, single, verbose" {
+    compare '-t- -t user_arg' \
+            '-t- -t user_arg' \
+            's/getopts[[:alpha:]_-]*/GETOPTS-NORMALISED/'
+}
+
 @test "${FEATURE}: short toggle, silent" {
     compare '-t-- -t user_arg' \
-            '-t-- -t user_arg' \
-            '3{/^INVALID OPTION/d}'
+            '-t-- -t user_arg'
 }
 @test "${FEATURE}: short toggle, verbose" {
     compare '-t-- -t user_arg' \
             '-t-- -t user_arg' \
-            '4{/getopts-verbose: illegal option -- -$/d}' \
-            '5{/^INVALID OPTION or MISSING ARGUMENT -- OPTARG is unset$/d}' \
             's/getopts[[:alpha:]_-]*/GETOPTS-NORMALISED/'
 }
 
@@ -64,7 +61,7 @@ load ../test_helper
 }
 
 # Both implementations should see:
-#   -o --       - an option (-o) with a value (--)
+#   -o --       - an option with a value
 #   -t          - a toggle
 @test "${FEATURE}: short option, silent" {
     compare '-o-- -t user_arg' \
@@ -76,7 +73,7 @@ load ../test_helper
 }
 
 # Standard getopts should see:
-#   -o --       - an option with a value (--)
+#   -o --       - an option with a value
 #   -t          - a toggle
 # Getopts_long should see:
 #   --option--  - an invalid option
