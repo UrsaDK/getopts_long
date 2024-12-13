@@ -20,17 +20,7 @@ getopts_long() {
     builtin getopts -- "${optspec_short}" "${optvar}" "${@}" || return 1
     [[ "${!optvar}" == '-' ]] || return 0
 
-    if [[ "${OPTARG}" == *=* ]]; then
-        printf -v "${optvar}" "%s" "${OPTARG%%=*}"
-    else
-        for optspec in $(echo "${optspec_long}" | tr ' ' '\n' | sort -ur); do
-            if [[ "${optspec}" == *: && "${OPTARG}" == "${optspec%?}"* ]]; then
-                printf -v "${optvar}" "%s" "${optspec%?}"
-                break
-            fi
-        done
-        [[ "${!optvar}" == '-' ]] && printf -v "${optvar}" "%s" "${OPTARG}"
-    fi
+    printf -v "${optvar}" "%s" "${OPTARG%%=*}"
 
     if [[ " ${optspec_long} " == *" ${!optvar}: "* ]]; then
         OPTARG="${OPTARG#"${!optvar}"}"

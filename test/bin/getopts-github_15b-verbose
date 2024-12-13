@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+while getopts "to:v:-" OPTKEY; do
+    case ${OPTKEY} in
+        '-'|'t')
+            printf 'toggle triggered'
+            ;;
+        'o')
+            printf 'option supplied'
+            ;;
+        'v')
+            printf 'value supplied'
+            ;;
+        '?')
+            printf "INVALID OPTION or MISSING ARGUMENT"
+            ;;
+        *)
+            printf "NEVER REACHED"
+            ;;
+    esac
+    printf ' -- '
+    [[ -z "${OPTARG+SET}" ]] && echo 'OPTARG is unset' || echo "OPTARG=${OPTARG}"
+done
+
+shift $(( OPTIND - 1 ))
+
+echo "OPTERR: ${OPTERR}"
+echo "OPTKEY: ${OPTKEY}"
+echo "OPTARG: ${OPTARG}"
+echo "OPTIND: ${OPTIND}"
+echo "\$@: ${*}"
