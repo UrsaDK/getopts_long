@@ -3,8 +3,8 @@
 load ../test_helper
 
 # Both bash getopts and getopts_long OPTSPEC includes [-]
-export GETOPTS_TEST_BIN='getopts-github_15b'
-export GETOPTS_LONG_TEST_BIN='getopts_long-github_15b'
+export GETOPTS_TEST_BIN='getopts-optspec_with_dash'
+export GETOPTS_LONG_TEST_BIN='getopts_long-longspec_with_dash'
 
 # Bash getopts should see four toggles: -t -- -- -t
 # Getopts_long should see three toggles: -t --- -t
@@ -26,12 +26,12 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-github_15b'
             '--toggle-- --toggle user_arg' \
             '/^toggle triggered/d' \
             '/^INVALID OPTION --/d'
-    expect "${bash_getopts_lines[0]}" == 'toggle triggered -- OPTARG is unset'
-    expect "${bash_getopts_lines[1]}" == 'toggle triggered -- OPTARG is unset'
-    expect "${bash_getopts_lines[2]}" == 'toggle triggered -- OPTARG is unset'
-    expect "${bash_getopts_lines[3]}" == 'toggle triggered -- OPTARG is unset'
-    expect "${getopts_long_lines[0]}" == 'INVALID OPTION -- OPTARG=toggle--'
-    expect "${getopts_long_lines[1]}" == 'toggle triggered -- OPTARG is unset'
+    expect "${bash_getopts[1]}" == 'toggle triggered -- OPTARG is unset'
+    expect "${bash_getopts[2]}" == 'toggle triggered -- OPTARG is unset'
+    expect "${bash_getopts[3]}" == 'toggle triggered -- OPTARG is unset'
+    expect "${bash_getopts[4]}" == 'toggle triggered -- OPTARG is unset'
+    expect "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG=toggle--'
+    expect "${getopts_long[2]}" == 'toggle triggered -- OPTARG is unset'
 }
 @test "${FEATURE}: long toggle, verbose" {
     compare '-t-- -t user_arg' \
@@ -39,12 +39,12 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-github_15b'
             '/^toggle triggered/d' \
             '/illegal option -- toggle--$/d' \
             '/^INVALID OPTION or MISSING ARGUMENT --/d'
-    expect "${bash_getopts_lines[0]}" == 'toggle triggered -- OPTARG is unset'
-    expect "${bash_getopts_lines[1]}" == 'toggle triggered -- OPTARG is unset'
-    expect "${bash_getopts_lines[2]}" == 'toggle triggered -- OPTARG is unset'
-    expect "${bash_getopts_lines[3]}" == 'toggle triggered -- OPTARG is unset'
-    expect "${getopts_long_lines[0]}" =~ 'getopts_long-\w+-verbose: illegal option -- toggle--'
-    expect "${getopts_long_lines[2]}" == 'toggle triggered -- OPTARG is unset'
+    expect "${bash_getopts[1]}" == 'toggle triggered -- OPTARG is unset'
+    expect "${bash_getopts[2]}" == 'toggle triggered -- OPTARG is unset'
+    expect "${bash_getopts[3]}" == 'toggle triggered -- OPTARG is unset'
+    expect "${bash_getopts[4]}" == 'toggle triggered -- OPTARG is unset'
+    expect "${getopts_long[1]}" =~ 'getopts_long-\w+-verbose: illegal option -- toggle--'
+    expect "${getopts_long[3]}" == 'toggle triggered -- OPTARG is unset'
 }
 
 # Both implementations should see:
@@ -69,14 +69,14 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-github_15b'
     compare '-o-- -t user_arg' \
             '--option-- --toggle user_arg' \
             '1{/(option supplied|INVALID OPTION)/d}'
-    expect "${bash_getopts_lines[0]}" == 'option supplied -- OPTARG=--'
-    expect "${getopts_long_lines[0]}" == 'INVALID OPTION -- OPTARG=option--'
+    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG=--'
+    expect "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG=option--'
 }
 @test "${FEATURE}: long option, verbose" {
     compare '-o-- -t user_arg' \
             '--option-- --toggle user_arg' \
             '1{/(option supplied|illegal option)/d}' \
             '2{/^INVALID OPTION or MISSING ARGUMENT/d}'
-    expect "${bash_getopts_lines[0]}" == 'option supplied -- OPTARG=--'
-    expect "${getopts_long_lines[0]}" =~ 'getopts_long-\w+-verbose: illegal option -- option--$'
+    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG=--'
+    expect "${getopts_long[1]}" =~ 'getopts_long-\w+-verbose: illegal option -- option--$'
 }

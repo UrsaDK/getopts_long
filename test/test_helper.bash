@@ -45,15 +45,13 @@ compare() {
 
     run "${GETOPTS_TEST_BIN:-getopts}-${BATS_TEST_DESCRIPTION##* }" ${1}
     bash_getopts_output="${output}"
-    bash_getopts_lines=( "${lines[@]}" )
-    bash_getopts_status=${status}
-    export bash_getopts_output bash_getopts_lines bash_getopts_status
+    bash_getopts=( "${status}" "${lines[@]}" )
+    export bash_getopts
 
     run "${GETOPTS_LONG_TEST_BIN:-getopts_long}-${BATS_TEST_DESCRIPTION##* }" ${2}
     getopts_long_output="${output}"
-    getopts_long_lines=( "${lines[@]}" )
-    getopts_long_status=${status}
-    export getopts_long_output getopts_long_lines getopts_long_status
+    getopts_long=( "${status}" "${lines[@]}" )
+    export getopts_long
 
     if [[ -n "${3+SET}" ]]; then
         shift 2
@@ -65,5 +63,5 @@ compare() {
     fi
 
     expect "${getopts_long_output}" == "${bash_getopts_output}"
-    expect "${getopts_long_status}" == "${bash_getopts_status}"
+    expect "${getopts_long[0]}" == "${bash_getopts[0]}"
 }
