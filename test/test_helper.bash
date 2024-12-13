@@ -11,20 +11,25 @@ cat >&3 <<END_OF_MESSAGE
 
 EXPECTED (eg: bash getopts)
 ––––––––––––––---––––––––––
-${2}
+${1}
 
 RECEIVED (eg: getopts_long)
 ––––––––––––––---––––––––––
-${1}
+${2}
 
 END_OF_MESSAGE
 }
 
 expect() {
-    if ! test "${@}"; then
-        case ${1} in
+    if [[ "${2}" == "=~" ]]; then
+        if [[ ! "${1}" =~ ${3} ]]; then
+            debug "${!#}" "${1}"
+            return 1
+        fi
+    elif ! test "$@"; then
+        case "${1}" in
             -[[:alpha:]])
-                debug "[[ ${1} ACTUAL ]]" "${!#}"
+                debug "$(help test | grep -- "${1}")" "${!#}"
                 ;;
             *)
                 debug "${!#}" "${1}"
@@ -38,7 +43,7 @@ compare() {
     : "${1?Missing required parameter -- getopts arguments}"
     : "${2?Missing required parameter -- getopts_long arguments}"
 
-    run "getopts-${BATS_TEST_DESCRIPTION##* }" ${1}
+    run "${GETOPTS_TEST_BIN:-getopts}-${BATS_TEST_DESCRIPTION##* }" ${1}
     bash_getopts_output="${output}"
     bash_getopts_lines=( "${lines[@]}" )
     bash_getopts_status=${status}
@@ -51,8 +56,12 @@ compare() {
     export getopts_long_output getopts_long_lines getopts_long_status
 
     if [[ -n "${3+SET}" ]]; then
-        bash_getopts_output="$(echo "${bash_getopts_output}" | sed -E "${3}")"
-        getopts_long_output="$(echo "${getopts_long_output}" | sed -E "${3}")"
+        shift 2
+        for arg in "$@"; do
+            sed_args+=("-e" "$arg")
+        done
+        bash_getopts_output="$(echo "${bash_getopts_output}" | sed -E "${sed_args[@]}")"
+        getopts_long_output="$(echo "${getopts_long_output}" | sed -E "${sed_args[@]}")"
     fi
 
     expect "${getopts_long_output}" == "${bash_getopts_output}"
