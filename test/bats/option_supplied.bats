@@ -69,27 +69,27 @@ load ../test_helper
 @test "${FEATURE}: short option, multiple same arguments, silent" {
     compare '-o user_val1 -o user_val2' \
             '-o user_val1 -o user_val2'
-    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG=user_val1'
-    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG=user_val2'
+    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val"1'
+    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val"2'
 }
 @test "${FEATURE}: short option, multiple same arguments, verbose" {
     compare '-o user_val1 -o user_val2' \
             '-o user_val1 -o user_val2'
-    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG=user_val1'
-    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG=user_val2'
+    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val"1'
+    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val"2'
 }
 
 @test "${FEATURE}: long option, multiple same arguments, silent" {
     compare '-o user_val1 -o user_val2' \
             '--option user_val1 --option user_val2'
-    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG=user_val1'
-    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG=user_val2'
+    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val"1'
+    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val"2'
 }
 @test "${FEATURE}: long option, multiple same arguments, verbose" {
     compare '-o user_val1 -o user_val2' \
             '--option user_val1 --option user_val2'
-    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG=user_val1'
-    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG=user_val2'
+    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val"1'
+    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val"2'
 }
 
 # terminator followed by options
@@ -198,7 +198,7 @@ load ../test_helper
     compare '-ouser_val' \
             '--optionuser_val' \
             '1d'
-    expect  "${bash_getopts[1]}" == 'option supplied -- OPTARG=user_val'
+    expect  "${bash_getopts[1]}" == 'option supplied -- OPTARG="user_val"'
     expect  "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG="optionuser_val"'
 
 }
@@ -208,6 +208,6 @@ load ../test_helper
             '--optionuser_val' \
             '1d' \
             '2{/^INVALID OPTION or MISSING ARGUMENT/d}'
-    expect  "${bash_getopts[1]}" == 'option supplied -- OPTARG=user_val'
+    expect  "${bash_getopts[1]}" == 'option supplied -- OPTARG="user_val"'
     expect  "${getopts_long[1]}" =~ 'getopts_long-verbose: illegal option -- optionuser_val'
 }

@@ -85,7 +85,7 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-shortspec_with_dash'
     compare '-o-- -t user_arg' \
             '--option-- --toggle user_arg' \
             '1{/(option supplied|INVALID OPTION)/d}'
-    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG=--'
+    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG="--"'
     expect "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG="option--"'
 }
 @test "${FEATURE}: long option, verbose" {
@@ -93,6 +93,6 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-shortspec_with_dash'
             '--option-- --toggle user_arg' \
             '1{/(option supplied|illegal option)/d}' \
             '2{/^INVALID OPTION or MISSING ARGUMENT/d}'
-    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG=--'
+    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG="--"'
     expect "${getopts_long[1]}" =~ "getopts_long-\w+-verbose: illegal option -- option--$"
 }

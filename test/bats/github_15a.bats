@@ -82,7 +82,7 @@ load ../test_helper
     compare '-o-- -t user_arg' \
             '--option-- --toggle user_arg' \
             '1{/(option supplied|INVALID OPTION)/d}'
-    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG=--'
+    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG="--"'
     expect "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG="option--"'
 }
 @test "${FEATURE}: long option, verbose" {
@@ -90,6 +90,6 @@ load ../test_helper
             '--option-- --toggle user_arg' \
             '1{/(option supplied|illegal option)/d}' \
             '2{/^INVALID OPTION or MISSING ARGUMENT/d}'
-    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG=--'
+    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG="--"'
     expect "${getopts_long[1]}" =~ "getopts_long-verbose: illegal option -- option--$"
 }
