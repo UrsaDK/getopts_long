@@ -69,27 +69,27 @@ load ../test_helper
 @test "${FEATURE}: short option, multiple same arguments, silent" {
     compare '-o user_val1 -o user_val2' \
             '-o user_val1 -o user_val2'
-    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val"1'
-    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val"2'
+    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val1"'
+    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val2"'
 }
 @test "${FEATURE}: short option, multiple same arguments, verbose" {
     compare '-o user_val1 -o user_val2' \
             '-o user_val1 -o user_val2'
-    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val"1'
-    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val"2'
+    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val1"'
+    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val2"'
 }
 
 @test "${FEATURE}: long option, multiple same arguments, silent" {
     compare '-o user_val1 -o user_val2' \
             '--option user_val1 --option user_val2'
-    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val"1'
-    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val"2'
+    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val1"'
+    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val2"'
 }
 @test "${FEATURE}: long option, multiple same arguments, verbose" {
     compare '-o user_val1 -o user_val2' \
             '--option user_val1 --option user_val2'
-    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val"1'
-    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val"2'
+    expect  "${getopts_long[1]}" == 'option supplied -- OPTARG="user_val1"'
+    expect  "${getopts_long[2]}" == 'option supplied -- OPTARG="user_val2"'
 }
 
 # terminator followed by options
