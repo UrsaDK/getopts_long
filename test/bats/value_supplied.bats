@@ -15,15 +15,15 @@ load ../test_helper
     compare '-v user_val' \
             '--variable=user_val' \
             '/^OPTIND: /d'
-    expect "${bash_getopts_lines[4]}" == 'OPTIND: 3'
-    expect "${getopts_long_lines[4]}" == 'OPTIND: 2'
+    expect "${bash_getopts[5]}" == 'OPTIND: 3'
+    expect "${getopts_long[5]}" == 'OPTIND: 2'
 }
 @test "${FEATURE}: long option, verbose" {
     compare '-v user_val' \
             '--variable=user_val' \
             '/^OPTIND: /d'
-    expect "${bash_getopts_lines[4]}" == 'OPTIND: 3'
-    expect "${getopts_long_lines[4]}" == 'OPTIND: 2'
+    expect "${bash_getopts[5]}" == 'OPTIND: 3'
+    expect "${getopts_long[5]}" == 'OPTIND: 2'
 }
 
 # extra arguments
@@ -41,15 +41,15 @@ load ../test_helper
     compare '-v user_val user_arg' \
             '--variable=user_val user_arg' \
             '/^OPTIND: /d'
-    expect "${bash_getopts_lines[4]}" == 'OPTIND: 3'
-    expect "${getopts_long_lines[4]}" == 'OPTIND: 2'
+    expect "${bash_getopts[5]}" == 'OPTIND: 3'
+    expect "${getopts_long[5]}" == 'OPTIND: 2'
 }
 @test "${FEATURE}: long option, extra arguments, verbose" {
     compare '-v user_val user_arg' \
             '--variable=user_val user_arg' \
             '/^OPTIND: /d'
-    expect "${bash_getopts_lines[4]}" == 'OPTIND: 3'
-    expect "${getopts_long_lines[4]}" == 'OPTIND: 2'
+    expect "${bash_getopts[5]}" == 'OPTIND: 3'
+    expect "${getopts_long[5]}" == 'OPTIND: 2'
 }
 
 # extra arguments with terminator
@@ -57,29 +57,29 @@ load ../test_helper
 @test "${FEATURE}: short option, terminator, extra arguments, silent" {
     compare '-v user_val -- user_arg' \
             '-v user_val -- user_arg'
-    expect "${getopts_long_lines[5]}" == '$@: user_arg'
+    expect "${getopts_long[6]}" == '$@: user_arg'
 }
 @test "${FEATURE}: short option, terminator, extra arguments, verbose" {
     compare '-v user_val -- user_arg' \
             '-v user_val -- user_arg'
-    expect "${getopts_long_lines[5]}" == '$@: user_arg'
+    expect "${getopts_long[6]}" == '$@: user_arg'
 }
 
 @test "${FEATURE}: long option, terminator, extra arguments, silent" {
     compare '-v user_val -- user_arg' \
             '--variable=user_val -- user_arg' \
             '/^OPTIND: /d'
-    expect "${getopts_long_lines[5]}" == '$@: user_arg'
-    expect "${bash_getopts_lines[4]}" == 'OPTIND: 4'
-    expect "${getopts_long_lines[4]}" == 'OPTIND: 3'
+    expect "${getopts_long[6]}" == '$@: user_arg'
+    expect "${bash_getopts[5]}" == 'OPTIND: 4'
+    expect "${getopts_long[5]}" == 'OPTIND: 3'
 }
 @test "${FEATURE}: long option, terminator, extra arguments, verbose" {
     compare '-v user_val -- user_arg' \
             '--variable=user_val -- user_arg' \
             '/^OPTIND: /d'
-    expect "${getopts_long_lines[5]}" == '$@: user_arg'
-    expect "${bash_getopts_lines[4]}" == 'OPTIND: 4'
-    expect "${getopts_long_lines[4]}" == 'OPTIND: 3'
+    expect "${getopts_long[6]}" == '$@: user_arg'
+    expect "${bash_getopts[5]}" == 'OPTIND: 4'
+    expect "${getopts_long[5]}" == 'OPTIND: 3'
 }
 
 # multiple same arguments
@@ -87,33 +87,33 @@ load ../test_helper
 @test "${FEATURE}: short option, multiple same arguments, silent" {
     compare '-v user_val1 -v user_val2' \
             '-v user_val1 -v user_val2'
-    expect "${getopts_long_lines[0]}" == 'value supplied -- OPTARG=user_val1'
-    expect "${getopts_long_lines[1]}" == 'value supplied -- OPTARG=user_val2'
+    expect "${getopts_long[1]}" == 'value supplied -- OPTARG=user_val1'
+    expect "${getopts_long[2]}" == 'value supplied -- OPTARG=user_val2'
 }
 @test "${FEATURE}: short option, multiple same arguments, verbose" {
     compare '-v user_val1 -v user_val2' \
             '-v user_val1 -v user_val2'
-    expect "${getopts_long_lines[0]}" == 'value supplied -- OPTARG=user_val1'
-    expect "${getopts_long_lines[1]}" == 'value supplied -- OPTARG=user_val2'
+    expect "${getopts_long[1]}" == 'value supplied -- OPTARG=user_val1'
+    expect "${getopts_long[2]}" == 'value supplied -- OPTARG=user_val2'
 }
 
 @test "${FEATURE}: long option, multiple same arguments, silent" {
     compare '-v user_val1 -v user_val2' \
             '--variable=user_val1 --variable=user_val2' \
             '/^OPTIND: /d'
-    expect "${getopts_long_lines[0]}" == 'value supplied -- OPTARG=user_val1'
-    expect "${getopts_long_lines[1]}" == 'value supplied -- OPTARG=user_val2'
-    expect "${bash_getopts_lines[5]}" == 'OPTIND: 5'
-    expect "${getopts_long_lines[5]}" == 'OPTIND: 3'
+    expect "${getopts_long[1]}" == 'value supplied -- OPTARG=user_val1'
+    expect "${getopts_long[2]}" == 'value supplied -- OPTARG=user_val2'
+    expect "${bash_getopts[6]}" == 'OPTIND: 5'
+    expect "${getopts_long[6]}" == 'OPTIND: 3'
 }
 @test "${FEATURE}: long option, multiple same arguments, verbose" {
     compare '-v user_val1 -v user_val2' \
             '--variable=user_val1 --variable=user_val2' \
             '/^OPTIND: /d'
-    expect "${getopts_long_lines[0]}" == 'value supplied -- OPTARG=user_val1'
-    expect "${getopts_long_lines[1]}" == 'value supplied -- OPTARG=user_val2'
-    expect "${bash_getopts_lines[5]}" == 'OPTIND: 5'
-    expect "${getopts_long_lines[5]}" == 'OPTIND: 3'
+    expect "${getopts_long[1]}" == 'value supplied -- OPTARG=user_val1'
+    expect "${getopts_long[2]}" == 'value supplied -- OPTARG=user_val2'
+    expect "${bash_getopts[6]}" == 'OPTIND: 5'
+    expect "${getopts_long[6]}" == 'OPTIND: 3'
 }
 
 # terminator followed by options
@@ -121,25 +121,25 @@ load ../test_helper
 @test "${FEATURE}: terminator, short option, extra arguments, silent" {
     compare '-- -v user_val user_arg' \
             '-- -v user_val user_arg'
-    expect "${getopts_long_lines[4]}" == '$@: -v user_val user_arg'
+    expect "${getopts_long[5]}" == '$@: -v user_val user_arg'
 }
 @test "${FEATURE}: terminator, short option, extra arguments, verbose" {
     compare '-- -v user_val user_arg' \
             '-- -v user_val user_arg'
-    expect "${getopts_long_lines[4]}" == '$@: -v user_val user_arg'
+    expect "${getopts_long[5]}" == '$@: -v user_val user_arg'
 }
 
 @test "${FEATURE}: terminator, long option, extra arguments, silent" {
     compare '-- -v user_val user_arg' \
             '-- --variable=user_val user_arg' \
             '/^\$@: /d'
-    expect "${getopts_long_lines[4]}" == '$@: --variable=user_val user_arg'
+    expect "${getopts_long[5]}" == '$@: --variable=user_val user_arg'
 }
 @test "${FEATURE}: terminator, long option, extra arguments, verbose" {
     compare '-- -v user_val user_arg' \
             '-- --variable=user_val user_arg' \
             '/^\$@: /d'
-    expect "${getopts_long_lines[4]}" == '$@: --variable=user_val user_arg'
+    expect "${getopts_long[5]}" == '$@: --variable=user_val user_arg'
 }
 
 # variable without an argument
@@ -158,8 +158,8 @@ load ../test_helper
     compare '-v' \
             '--variable' \
             '/^MISSING ARGUMENT -- /d'
-    expect "${bash_getopts_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=v'
-    expect "${getopts_long_lines[0]}" == 'MISSING ARGUMENT -- OPTARG=variable'
+    expect "${bash_getopts[1]}" == 'MISSING ARGUMENT -- OPTARG=v'
+    expect "${getopts_long[1]}" == 'MISSING ARGUMENT -- OPTARG=variable'
 }
 @test "${FEATURE}: long option, missing value, verbose" {
     compare '-v' \
@@ -182,15 +182,15 @@ load ../test_helper
     compare '-v -user_val' \
             '--variable=-user_val' \
             '/^OPTIND: /d'
-    expect "${bash_getopts_lines[4]}" == 'OPTIND: 3'
-    expect "${getopts_long_lines[4]}" == 'OPTIND: 2'
+    expect "${bash_getopts[5]}" == 'OPTIND: 3'
+    expect "${getopts_long[5]}" == 'OPTIND: 2'
 }
 @test "${FEATURE}: long option, value starts with -, verbose" {
     compare '-v -user_val' \
             '--variable=-user_val' \
             '/^OPTIND: /d'
-    expect "${bash_getopts_lines[4]}" == 'OPTIND: 3'
-    expect "${getopts_long_lines[4]}" == 'OPTIND: 2'
+    expect "${bash_getopts[5]}" == 'OPTIND: 3'
+    expect "${getopts_long[5]}" == 'OPTIND: 2'
 }
 
 # option with a value that start with an equals sign
@@ -208,13 +208,13 @@ load ../test_helper
     compare '-v =user_val' \
             '--variable==user_val' \
             '/^OPTIND: /d'
-    expect "${bash_getopts_lines[4]}" == 'OPTIND: 3'
-    expect "${getopts_long_lines[4]}" == 'OPTIND: 2'
+    expect "${bash_getopts[5]}" == 'OPTIND: 3'
+    expect "${getopts_long[5]}" == 'OPTIND: 2'
 }
 @test "${FEATURE}: long option, value starts with =, verbose" {
     compare '-v =user_val' \
             '--variable==user_val' \
             '/^OPTIND: /d'
-    expect "${bash_getopts_lines[4]}" == 'OPTIND: 3'
-    expect "${getopts_long_lines[4]}" == 'OPTIND: 2'
+    expect "${bash_getopts[5]}" == 'OPTIND: 3'
+    expect "${getopts_long[5]}" == 'OPTIND: 2'
 }

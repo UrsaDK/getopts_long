@@ -18,6 +18,17 @@ This is a pure BASH implementation of `getopts_long` function, which "upgrades" 
 
 This function is 100% compatible with the built-in `getopts`. It is implemented with no external dependencies, and relies solely on BASH built-in tools to provide all of its functionality.
 
+The implementation supports the following option syntax:
+
+  - Short options are compatible with bash’s built-in getopts:
+    - `-o`
+    - `-o value`
+    - `-ovalue`
+  - Long options support GNU-like syntax:
+    - `--option`
+    - `--option value`
+    - `--option=value`
+
 Table of Content
 ----------------
 
@@ -177,7 +188,11 @@ while getopts ...; do
 done
 ```
 
-Identical to `getopts`, `getopts_long` will parse options and their possible arguments. It will stop parsing on the first non-option argument (a string that doesn't begin with a hyphen (`-`) that isn't an argument for any option in front of it). It will also stop parsing when it sees the `--` (double-hyphen), which means end of options.
+Identical to `getopts`, `getopts_long` will parse options and their possible arguments. It will stop parsing on the first non-option argument (a string that doesn't begin with a hyphen (`-`) that isn't an argument for any option in front of it). It will also stop parsing when it sees the `--` (double-hyphen) as a stand-alone argument.
+
+> IMPORTANT: IMPORTANT: There’s only one exception to the rule that says getopts_long behaves like getopts: when handling `-` within short options!
+>
+> To support long options, getopts_long provides its own implementation for `-` option, which means the user can no longer define `-` as part of the short option OPTSPEC.
 
 ### Internal variables
 

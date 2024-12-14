@@ -2,7 +2,7 @@ getopts_long() {
     : "${1:?Missing required parameter -- long optspec}"
     : "${2:?Missing required parameter -- variable name}"
 
-    local optspec_short="${1%% *}-:"
+    local optspec_short="${1%% *}"
     local optspec_long="${1#* }"
     local optvar="${2}"
 
@@ -16,6 +16,11 @@ getopts_long() {
         done
         set -- "${args[@]}"
     fi
+
+    # Sanitize and normalize short optspec
+    optspec_short="${optspec_short//-:}"
+    optspec_short="${optspec_short//-}"
+    [[ "${!OPTIND:0:2}" == "--" ]] && optspec_short+='-:'
 
     builtin getopts -- "${optspec_short}" "${optvar}" "${@}" || return 1
     [[ "${!optvar}" == '-' ]] || return 0
