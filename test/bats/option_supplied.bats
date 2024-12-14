@@ -134,8 +134,8 @@ load ../test_helper
     compare '-o' \
             '--option' \
             '/^MISSING ARGUMENT -- /d'
-    expect  "${bash_getopts[1]}" == 'MISSING ARGUMENT -- OPTARG=o'
-    expect  "${getopts_long[1]}" == 'MISSING ARGUMENT -- OPTARG=option'
+    expect  "${bash_getopts[1]}" == 'MISSING ARGUMENT -- OPTARG="o"'
+    expect  "${getopts_long[1]}" == 'MISSING ARGUMENT -- OPTARG="option"'
 }
 @test "${FEATURE}: long option, missing value, verbose" {
     compare '-o' \
