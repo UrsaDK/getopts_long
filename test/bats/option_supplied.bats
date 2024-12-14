@@ -199,7 +199,7 @@ load ../test_helper
             '--optionuser_val' \
             '1d'
     expect  "${bash_getopts[1]}" == 'option supplied -- OPTARG=user_val'
-    expect  "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG=optionuser_val'
+    expect  "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG="optionuser_val"'
 
 }
 
