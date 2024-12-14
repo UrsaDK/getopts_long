@@ -70,26 +70,26 @@ load ../test_helper
     compare '-t -t' \
             '-t -t'
     expect  "${getopts_long[1]}" == "${getopts_long[2]}"
-    expect  "${getopts_long[1]}" == 'toggle triggered -- OPTARG is unset'
+    expect  "${getopts_long[1]}" == 'toggle triggered -- OPTARG'
 }
 @test "${FEATURE}: short option, multiple same arguments, verbose" {
     compare '-t -t' \
             '-t -t'
     expect  "${getopts_long[1]}" == "${getopts_long[2]}"
-    expect  "${getopts_long[1]}" == 'toggle triggered -- OPTARG is unset'
+    expect  "${getopts_long[1]}" == 'toggle triggered -- OPTARG'
 }
 
 @test "${FEATURE}: long option, multiple same arguments, silent" {
     compare '-t -t' \
             '--toggle --toggle'
     expect  "${getopts_long[1]}" == "${getopts_long[2]}"
-    expect  "${getopts_long[1]}" == 'toggle triggered -- OPTARG is unset'
+    expect  "${getopts_long[1]}" == 'toggle triggered -- OPTARG'
 }
 @test "${FEATURE}: long option, multiple same arguments, verbose" {
     compare '-t -t' \
             '--toggle --toggle'
     expect  "${getopts_long[1]}" == "${getopts_long[2]}"
-    expect  "${getopts_long[1]}" == 'toggle triggered -- OPTARG is unset'
+    expect  "${getopts_long[1]}" == 'toggle triggered -- OPTARG'
 }
 
 # terminator followed by options
