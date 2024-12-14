@@ -63,5 +63,5 @@ compare() {
     fi
 
     expect "${getopts_long_output}" == "${bash_getopts_output}"
-    expect "${getopts_long[0]}" == "${bash_getopts[0]}"
+    expect "Exit status: ${getopts_long[0]}" == "Exit status: ${bash_getopts[0]}"
 }
