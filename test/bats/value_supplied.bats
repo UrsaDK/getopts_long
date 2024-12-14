@@ -87,22 +87,22 @@ load ../test_helper
 @test "${FEATURE}: short option, multiple same arguments, silent" {
     compare '-v user_val1 -v user_val2' \
             '-v user_val1 -v user_val2'
-    expect "${getopts_long[1]}" == 'value supplied -- OPTARG=user_val1'
-    expect "${getopts_long[2]}" == 'value supplied -- OPTARG=user_val2'
+    expect "${getopts_long[1]}" == 'value supplied -- OPTARG="user_val1"'
+    expect "${getopts_long[2]}" == 'value supplied -- OPTARG="user_val2"'
 }
 @test "${FEATURE}: short option, multiple same arguments, verbose" {
     compare '-v user_val1 -v user_val2' \
             '-v user_val1 -v user_val2'
-    expect "${getopts_long[1]}" == 'value supplied -- OPTARG=user_val1'
-    expect "${getopts_long[2]}" == 'value supplied -- OPTARG=user_val2'
+    expect "${getopts_long[1]}" == 'value supplied -- OPTARG="user_val1"'
+    expect "${getopts_long[2]}" == 'value supplied -- OPTARG="user_val2"'
 }
 
 @test "${FEATURE}: long option, multiple same arguments, silent" {
     compare '-v user_val1 -v user_val2' \
             '--variable=user_val1 --variable=user_val2' \
             '/^OPTIND: /d'
-    expect "${getopts_long[1]}" == 'value supplied -- OPTARG=user_val1'
-    expect "${getopts_long[2]}" == 'value supplied -- OPTARG=user_val2'
+    expect "${getopts_long[1]}" == 'value supplied -- OPTARG="user_val1"'
+    expect "${getopts_long[2]}" == 'value supplied -- OPTARG="user_val2"'
     expect "${bash_getopts[6]}" == 'OPTIND: 5'
     expect "${getopts_long[6]}" == 'OPTIND: 3'
 }
@@ -110,8 +110,8 @@ load ../test_helper
     compare '-v user_val1 -v user_val2' \
             '--variable=user_val1 --variable=user_val2' \
             '/^OPTIND: /d'
-    expect "${getopts_long[1]}" == 'value supplied -- OPTARG=user_val1'
-    expect "${getopts_long[2]}" == 'value supplied -- OPTARG=user_val2'
+    expect "${getopts_long[1]}" == 'value supplied -- OPTARG="user_val1"'
+    expect "${getopts_long[2]}" == 'value supplied -- OPTARG="user_val2"'
     expect "${bash_getopts[6]}" == 'OPTIND: 5'
     expect "${getopts_long[6]}" == 'OPTIND: 3'
 }
