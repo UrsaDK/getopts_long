@@ -26,7 +26,7 @@ while getopts_long ': toggle option: variable:' OPTKEY; do
             ;;
     esac
     printf ' -- '
-    [[ -z "${OPTARG+SET}" ]] && echo 'OPTARG is unset' || echo "OPTARG=${OPTARG}"
+    declare -p OPTARG 2>&1 | grep -oe 'OPTARG.*'
 done
 
 shift $(( OPTIND - 1 ))
