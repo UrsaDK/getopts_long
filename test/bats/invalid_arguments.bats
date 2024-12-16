@@ -55,13 +55,13 @@ load ../test_helper
 @test "${FEATURE}: short option, terminator, extra arguments, silent" {
     compare '-i -- user_arg' \
             '-i -- user_arg'
-    expect  "${getopts_long[6]}" == '$@: user_arg'
+    expect  "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 @test "${FEATURE}: short option, terminator, extra arguments, verbose" {
     compare '-i -- user_arg' \
             '-i -- user_arg' \
             's/getopts_long-verbose/getopts-verbose/g'
-    expect  "${getopts_long[7]}" == '$@: user_arg'
+    expect  "${getopts_long[7]}" == '$@: ([0]="user_arg")'
 }
 
 @test "${FEATURE}: long option, terminator, extra arguments, silent" {
@@ -70,13 +70,13 @@ load ../test_helper
             '/^INVALID OPTION -- /d'
     expect  "${bash_getopts[1]}" == 'INVALID OPTION -- OPTARG="i"'
     expect  "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG="invalid"'
-    expect  "${getopts_long[6]}" == '$@: user_arg'
+    expect  "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 @test "${FEATURE}: long option, terminator, extra arguments, verbose" {
     compare '-i -- user_arg' \
             '--invalid -- user_arg' \
             's/getopts_long-verbose: (.*) invalid$/getopts-verbose: \1 i/g'
-    expect  "${getopts_long[7]}" == '$@: user_arg'
+    expect  "${getopts_long[7]}" == '$@: ([0]="user_arg")'
 }
 
 # terminator followed by options
@@ -84,24 +84,24 @@ load ../test_helper
 @test "${FEATURE}: terminator, short option, extra arguments, silent" {
     compare '-- -i user_arg' \
             '-- -i user_arg'
-    expect  "${getopts_long[5]}" == '$@: -i user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="-i" [1]="user_arg")'
 }
 @test "${FEATURE}: terminator, short option, extra arguments, verbose" {
     compare '-- -i user_arg' \
             '-- -i user_arg' \
             's/getopts_long-verbose/getopts-verbose/g'
-    expect  "${getopts_long[5]}" == '$@: -i user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="-i" [1]="user_arg")'
 }
 
 @test "${FEATURE}: terminator, long option, extra arguments, silent" {
     compare '-- -i user_arg' \
             '-- --invalid user_arg' \
             '/^\$@: /d'
-    expect  "${getopts_long[5]}" == '$@: --invalid user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="--invalid" [1]="user_arg")'
 }
 @test "${FEATURE}: terminator, long option, extra arguments, verbose" {
     compare '-- -i user_arg' \
             '-- --invalid user_arg' \
             '/^\$@: /d'
-    expect  "${getopts_long[5]}" == '$@: --invalid user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="--invalid" [1]="user_arg")'
 }

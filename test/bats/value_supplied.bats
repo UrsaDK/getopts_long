@@ -57,19 +57,19 @@ load ../test_helper
 @test "${FEATURE}: short option, terminator, extra arguments, silent" {
     compare '-v user_val -- user_arg' \
             '-v user_val -- user_arg'
-    expect "${getopts_long[6]}" == '$@: user_arg'
+    expect "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 @test "${FEATURE}: short option, terminator, extra arguments, verbose" {
     compare '-v user_val -- user_arg' \
             '-v user_val -- user_arg'
-    expect "${getopts_long[6]}" == '$@: user_arg'
+    expect "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 
 @test "${FEATURE}: long option, terminator, extra arguments, silent" {
     compare '-v user_val -- user_arg' \
             '--variable=user_val -- user_arg' \
             '/^OPTIND: /d'
-    expect "${getopts_long[6]}" == '$@: user_arg'
+    expect "${getopts_long[6]}" == '$@: ([0]="user_arg")'
     expect "${bash_getopts[5]}" == 'OPTIND: 4'
     expect "${getopts_long[5]}" == 'OPTIND: 3'
 }
@@ -77,7 +77,7 @@ load ../test_helper
     compare '-v user_val -- user_arg' \
             '--variable=user_val -- user_arg' \
             '/^OPTIND: /d'
-    expect "${getopts_long[6]}" == '$@: user_arg'
+    expect "${getopts_long[6]}" == '$@: ([0]="user_arg")'
     expect "${bash_getopts[5]}" == 'OPTIND: 4'
     expect "${getopts_long[5]}" == 'OPTIND: 3'
 }
@@ -121,25 +121,25 @@ load ../test_helper
 @test "${FEATURE}: terminator, short option, extra arguments, silent" {
     compare '-- -v user_val user_arg' \
             '-- -v user_val user_arg'
-    expect "${getopts_long[5]}" == '$@: -v user_val user_arg'
+    expect "${getopts_long[5]}" == '$@: ([0]="-v" [1]="user_val" [2]="user_arg")'
 }
 @test "${FEATURE}: terminator, short option, extra arguments, verbose" {
     compare '-- -v user_val user_arg' \
             '-- -v user_val user_arg'
-    expect "${getopts_long[5]}" == '$@: -v user_val user_arg'
+    expect "${getopts_long[5]}" == '$@: ([0]="-v" [1]="user_val" [2]="user_arg")'
 }
 
 @test "${FEATURE}: terminator, long option, extra arguments, silent" {
     compare '-- -v user_val user_arg' \
             '-- --variable=user_val user_arg' \
             '/^\$@: /d'
-    expect "${getopts_long[5]}" == '$@: --variable=user_val user_arg'
+    expect "${getopts_long[5]}" == '$@: ([0]="--variable=user_val" [1]="user_arg")'
 }
 @test "${FEATURE}: terminator, long option, extra arguments, verbose" {
     compare '-- -v user_val user_arg' \
             '-- --variable=user_val user_arg' \
             '/^\$@: /d'
-    expect "${getopts_long[5]}" == '$@: --variable=user_val user_arg'
+    expect "${getopts_long[5]}" == '$@: ([0]="--variable=user_val" [1]="user_arg")'
 }
 
 # variable without an argument

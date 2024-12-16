@@ -32,4 +32,6 @@ echo "OPTERR: ${OPTERR}"
 echo "OPTKEY: ${OPTKEY}"
 echo "OPTARG: ${OPTARG}"
 echo "OPTIND: ${OPTIND}"
-echo "\$@: ${*}"
+
+args=("$@")
+declare -p args | sed -e 's/declare -a args=/$@: /'
