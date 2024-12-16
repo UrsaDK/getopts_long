@@ -45,23 +45,23 @@ load ../test_helper
 @test "${FEATURE}: short option, terminator, extra arguments, silent" {
     compare '-o user_val -- user_arg' \
             '-o user_val -- user_arg'
-    expect  "${getopts_long[6]}" == '$@: user_arg'
+    expect  "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 @test "${FEATURE}: short option, terminator, extra arguments, verbose" {
     compare '-o user_val -- user_arg' \
             '-o user_val -- user_arg'
-    expect  "${getopts_long[6]}" == '$@: user_arg'
+    expect  "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 
 @test "${FEATURE}: long option, terminator, extra arguments, silent" {
     compare '-o user_val -- user_arg' \
             '--option user_val -- user_arg'
-    expect  "${getopts_long[6]}" == '$@: user_arg'
+    expect  "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 @test "${FEATURE}: long option, terminator, extra arguments, verbose" {
     compare '-o user_val -- user_arg' \
             '--option user_val -- user_arg'
-    expect  "${getopts_long[6]}" == '$@: user_arg'
+    expect  "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 
 # multiple same arguments
@@ -97,25 +97,25 @@ load ../test_helper
 @test "${FEATURE}: terminator, short option, extra arguments, silent" {
     compare '-- -o user_val user_arg' \
             '-- -o user_val user_arg'
-    expect  "${getopts_long[5]}" == '$@: -o user_val user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="-o" [1]="user_val" [2]="user_arg")'
 }
 @test "${FEATURE}: terminator, short option, extra arguments, verbose" {
     compare '-- -o user_val user_arg' \
             '-- -o user_val user_arg'
-    expect  "${getopts_long[5]}" == '$@: -o user_val user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="-o" [1]="user_val" [2]="user_arg")'
 }
 
 @test "${FEATURE}: terminator, long option, extra arguments, silent" {
     compare '-- -o user_val user_arg' \
             '-- --option user_val user_arg' \
             '/^\$@: /d'
-    expect  "${getopts_long[5]}" == '$@: --option user_val user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="--option" [1]="user_val" [2]="user_arg")'
 }
 @test "${FEATURE}: terminator, long option, extra arguments, verbose" {
     compare '-- -o user_val user_arg' \
             '-- --option user_val user_arg' \
             '/^\$@: /d'
-    expect  "${getopts_long[5]}" == '$@: --option user_val user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="--option" [1]="user_val" [2]="user_arg")'
 }
 
 # option without an argument

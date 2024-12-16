@@ -61,15 +61,15 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-no_shortspec'
     compare '-t -- -v user_val' \
             '--toggle -- --variable=user_val' \
             '/^\$@: /d'
-    expect "${bash_getopts[6]}" == '$@: -v user_val'
-    expect "${getopts_long[6]}" == '$@: --variable=user_val'
+    expect "${bash_getopts[6]}" == '$@: ([0]="-v" [1]="user_val")'
+    expect "${getopts_long[6]}" == '$@: ([0]="--variable=user_val")'
 }
 @test "${FEATURE}: terminator followed by long variable, verbose" {
     compare '-t -- -v user_val' \
             '--toggle -- --variable=user_val' \
             '/^\$@: /d'
-    expect "${bash_getopts[6]}" == '$@: -v user_val'
-    expect "${getopts_long[6]}" == '$@: --variable=user_val'
+    expect "${bash_getopts[6]}" == '$@: ([0]="-v" [1]="user_val")'
+    expect "${getopts_long[6]}" == '$@: ([0]="--variable=user_val")'
 }
 
 @test "${FEATURE}: long variable followed by terminator, silent" {
@@ -78,8 +78,8 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-no_shortspec'
             '/^(OPTIND|\$@): /d'
     expect "${bash_getopts[5]}" == 'OPTIND: 4'
     expect "${getopts_long[5]}" == 'OPTIND: 3'
-    expect "${bash_getopts[6]}" == '$@: -t'
-    expect "${getopts_long[6]}" == '$@: --toggle'
+    expect "${bash_getopts[6]}" == '$@: ([0]="-t")'
+    expect "${getopts_long[6]}" == '$@: ([0]="--toggle")'
 }
 @test "${FEATURE}: long variable followed by terminator, verbose" {
     compare '-v user_val -- -t'  \
@@ -87,6 +87,6 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-no_shortspec'
             '/^(OPTIND|\$@): /d'
     expect "${bash_getopts[5]}" == 'OPTIND: 4'
     expect "${getopts_long[5]}" == 'OPTIND: 3'
-    expect "${bash_getopts[6]}" == '$@: -t'
-    expect "${getopts_long[6]}" == '$@: --toggle'
+    expect "${bash_getopts[6]}" == '$@: ([0]="-t")'
+    expect "${getopts_long[6]}" == '$@: ([0]="--toggle")'
 }

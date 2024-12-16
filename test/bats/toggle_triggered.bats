@@ -45,23 +45,23 @@ load ../test_helper
 @test "${FEATURE}: short option, terminator, extra arguments, silent" {
     compare '-t -- user_arg' \
             '-t -- user_arg'
-    expect  "${getopts_long[6]}" == '$@: user_arg'
+    expect  "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 @test "${FEATURE}: short option, terminator, extra arguments, verbose" {
     compare '-t -- user_arg' \
             '-t -- user_arg'
-    expect  "${getopts_long[6]}" == '$@: user_arg'
+    expect  "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 
 @test "${FEATURE}: long option, terminator, extra arguments, silent" {
     compare '-t -- user_arg' \
             '--toggle -- user_arg'
-    expect  "${getopts_long[6]}" == '$@: user_arg'
+    expect  "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 @test "${FEATURE}: long option, terminator, extra arguments, verbose" {
     compare '-t -- user_arg' \
             '--toggle -- user_arg'
-    expect  "${getopts_long[6]}" == '$@: user_arg'
+    expect  "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 
 # multiple same arguments
@@ -97,23 +97,23 @@ load ../test_helper
 @test "${FEATURE}: terminator, short option, extra arguments, silent" {
     compare '-- -t user_arg' \
             '-- -t user_arg'
-    expect  "${getopts_long[5]}" == '$@: -t user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="-t" [1]="user_arg")'
 }
 @test "${FEATURE}: terminator, short option, extra arguments, verbose" {
     compare '-- -t user_arg' \
             '-- -t user_arg'
-    expect  "${getopts_long[5]}" == '$@: -t user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="-t" [1]="user_arg")'
 }
 
 @test "${FEATURE}: terminator, long option, extra arguments, silent" {
     compare '-- -t user_arg' \
             '-- --toggle user_arg' \
             '/^\$@: /d'
-    expect  "${getopts_long[5]}" == '$@: --toggle user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="--toggle" [1]="user_arg")'
 }
 @test "${FEATURE}: terminator, long option, extra arguments, verbose" {
     compare '-- -t user_arg' \
             '-- --toggle user_arg' \
             '/^\$@: /d'
-    expect  "${getopts_long[5]}" == '$@: --toggle user_arg'
+    expect  "${getopts_long[5]}" == '$@: ([0]="--toggle" [1]="user_arg")'
 }
