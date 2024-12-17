@@ -9,9 +9,26 @@ getopts_long() {
     shift 2
 
     if [[ "${#}" == 0 ]]; then
-        local -i i
-        local -a args=()
-        for (( i = BASH_ARGC[0] + BASH_ARGC[1] - 1; i >= BASH_ARGC[0]; i-- )); do
+        local args=()
+        local -i start_index=0
+        local -i end_index=$(( ${#BASH_ARGV[@]} - 1 ))
+
+        # Minimise the number of times `declare -f` is executed
+        if [[ -n "${FUNCNAME[1]}" ]]; then
+            if [[ "${FUNCNAME[1]}" == "( anon )" ]] \
+                    || declare -f "${FUNCNAME[1]}" > /dev/null 2>&1; then
+                if ! shopt -q extdebug; then
+                    echo "${BASH_SOURCE[1]}: line ${BASH_LINENO[0]}:" \
+                    "${FUNCNAME[0]} failed to detect supplied arguments" \
+                    "-- enable extdebug or pass arguments explicitly" >&2
+                    return 2
+                fi
+                start_index=${BASH_ARGC[0]}
+                end_index=$(( start_index + BASH_ARGC[1] - 1 ))
+            fi
+        fi
+
+        for (( i = end_index; i >= start_index; i-- )); do
             args+=("${BASH_ARGV[i]}")
         done
         set -- "${args[@]}"
