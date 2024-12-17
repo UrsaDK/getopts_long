@@ -22,7 +22,7 @@ getopts_long() {
     optspec_short="${optspec_short//-}"
     [[ "${!OPTIND:0:2}" == "--" ]] && optspec_short+='-:'
 
-    builtin getopts -- "${optspec_short}" "${optvar}" "${@}" || return 1
+    builtin getopts -- "${optspec_short}" "${optvar}" "${@}" || return ${?}
     [[ "${!optvar}" == '-' ]] || return 0
 
     printf -v "${optvar}" "%s" "${OPTARG%%=*}"
