@@ -18,8 +18,8 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-longspec_with_dash_colon'
     compare '-z' \
             '---zz' \
             '/^INVALID OPTION/d'
-    expect "${bash_getopts[1]}" == 'INVALID OPTION -- OPTARG="z"'
-    expect "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG="-zz"'
+    expect "${bash_getopts[1]}" == 'INVALID OPTION -- declare -- OPTARG="z"'
+    expect "${getopts_long[1]}" == 'INVALID OPTION -- declare -- OPTARG="-zz"'
 }
 @test "${FEATURE}: option with adjacent value, verbose" {
     compare '-z' \

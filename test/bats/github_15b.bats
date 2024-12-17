@@ -40,9 +40,9 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-shortspec_with_dash'
             '--toggle-- --toggle user_arg' \
             '1{/^toggle triggered/d}' \
             '/^INVALID OPTION/d'
-    expect "${bash_getopts[2]}" == 'INVALID OPTION -- OPTARG="-"'
-    expect "${bash_getopts[3]}" == 'INVALID OPTION -- OPTARG="-"'
-    expect "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG="toggle--"'
+    expect "${bash_getopts[2]}" == 'INVALID OPTION -- declare -- OPTARG="-"'
+    expect "${bash_getopts[3]}" == 'INVALID OPTION -- declare -- OPTARG="-"'
+    expect "${getopts_long[1]}" == 'INVALID OPTION -- declare -- OPTARG="toggle--"'
     expect "${bash_getopts[1]}" == 'toggle triggered -- OPTARG'
     expect "${bash_getopts[4]}" == 'toggle triggered -- OPTARG'
     expect "${getopts_long[2]}" == 'toggle triggered -- OPTARG'
@@ -85,14 +85,14 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-shortspec_with_dash'
     compare '-o-- -t user_arg' \
             '--option-- --toggle user_arg' \
             '1{/(option supplied|INVALID OPTION)/d}'
-    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG="--"'
-    expect "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG="option--"'
+    expect "${bash_getopts[1]}" == 'option supplied -- declare -- OPTARG="--"'
+    expect "${getopts_long[1]}" == 'INVALID OPTION -- declare -- OPTARG="option--"'
 }
 @test "${FEATURE}: long option, verbose" {
     compare '-o-- -t user_arg' \
             '--option-- --toggle user_arg' \
             '1{/(option supplied|illegal option)/d}' \
             '2{/^INVALID OPTION or MISSING ARGUMENT/d}'
-    expect "${bash_getopts[1]}" == 'option supplied -- OPTARG="--"'
+    expect "${bash_getopts[1]}" == 'option supplied -- declare -- OPTARG="--"'
     expect "${getopts_long[1]}" =~ "getopts_long-\w+-verbose: illegal option -- option--$"
 }

@@ -16,8 +16,8 @@ load ../test_helper
     compare '-i' \
             '--invalid' \
             '/^INVALID OPTION -- /d'
-    expect  "${bash_getopts[1]}" == 'INVALID OPTION -- OPTARG="i"'
-    expect  "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG="invalid"'
+    expect  "${bash_getopts[1]}" == 'INVALID OPTION -- declare -- OPTARG="i"'
+    expect  "${getopts_long[1]}" == 'INVALID OPTION -- declare -- OPTARG="invalid"'
 }
 @test "${FEATURE}: long option, verbose" {
     compare '-i' \
@@ -41,8 +41,8 @@ load ../test_helper
     compare '-i user_arg' \
             '--invalid user_arg' \
             '/^INVALID OPTION -- /d'
-    expect  "${bash_getopts[1]}" == 'INVALID OPTION -- OPTARG="i"'
-    expect  "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG="invalid"'
+    expect  "${bash_getopts[1]}" == 'INVALID OPTION -- declare -- OPTARG="i"'
+    expect  "${getopts_long[1]}" == 'INVALID OPTION -- declare -- OPTARG="invalid"'
 }
 @test "${FEATURE}: long option, extra arguments, verbose" {
     compare '-i user_arg' \
@@ -68,8 +68,8 @@ load ../test_helper
     compare '-i -- user_arg' \
             '--invalid -- user_arg' \
             '/^INVALID OPTION -- /d'
-    expect  "${bash_getopts[1]}" == 'INVALID OPTION -- OPTARG="i"'
-    expect  "${getopts_long[1]}" == 'INVALID OPTION -- OPTARG="invalid"'
+    expect  "${bash_getopts[1]}" == 'INVALID OPTION -- declare -- OPTARG="i"'
+    expect  "${getopts_long[1]}" == 'INVALID OPTION -- declare -- OPTARG="invalid"'
     expect  "${getopts_long[6]}" == '$@: ([0]="user_arg")'
 }
 @test "${FEATURE}: long option, terminator, extra arguments, verbose" {
