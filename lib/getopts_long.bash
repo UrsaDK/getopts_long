@@ -10,9 +10,26 @@ getopts_long() {
 
     if [[ "${#}" == 0 ]]; then
         local args=()
-        while [[ ${#BASH_ARGV[@]} -gt ${#args[@]} ]]; do
-            local index=$(( ${#BASH_ARGV[@]} - ${#args[@]} - 1 ))
-            args[${#args[@]}]="${BASH_ARGV[${index}]}"
+        local -i start_index=0
+        local -i end_index=$(( ${#BASH_ARGV[@]} - 1 ))
+
+        # Minimise the number of times `declare -f` is executed
+        if [[ -n "${FUNCNAME[1]}" ]]; then
+            if [[ "${FUNCNAME[1]}" == "( anon )" ]] \
+                    || declare -f "${FUNCNAME[1]}" > /dev/null 2>&1; then
+                if ! shopt -q extdebug; then
+                    echo "${BASH_SOURCE[1]}: line ${BASH_LINENO[0]}:" \
+                    "${FUNCNAME[0]} failed to detect supplied arguments" \
+                    "-- enable extdebug or pass arguments explicitly" >&2
+                    return 2
+                fi
+                start_index=${BASH_ARGC[0]}
+                end_index=$(( start_index + BASH_ARGC[1] - 1 ))
+            fi
+        fi
+
+        for (( i = end_index; i >= start_index; i-- )); do
+            args+=("${BASH_ARGV[i]}")
         done
         set -- "${args[@]}"
     fi
@@ -22,7 +39,7 @@ getopts_long() {
     optspec_short="${optspec_short//-}"
     [[ "${!OPTIND:0:2}" == "--" ]] && optspec_short+='-:'
 
-    builtin getopts -- "${optspec_short}" "${optvar}" "${@}" || return 1
+    builtin getopts -- "${optspec_short}" "${optvar}" "${@}" || return ${?}
     [[ "${!optvar}" == '-' ]] || return 0
 
     printf -v "${optvar}" "%s" "${OPTARG%%=*}"

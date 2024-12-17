@@ -190,9 +190,8 @@ done
 
 Identical to `getopts`, `getopts_long` will parse options and their possible arguments. It will stop parsing on the first non-option argument (a string that doesn't begin with a hyphen (`-`) that isn't an argument for any option in front of it). It will also stop parsing when it sees the `--` (double-hyphen) as a stand-alone argument.
 
-> ⚠️ **IMPORTANT**
->
-> To support long options and enforce identical behaviour between getopts and getopts_long when handling hyphens, getopts_long provides its own implementation for `-` option. This means that the user can no longer include a hyphen (`-`) within short option OPTSPEC.
+> [!IMPORTANT]
+> To support long options and enforce identical behaviour between getopts and getopts_long when handling hyphens, getopts_long provides its own implementation for `-` option. This means that the user can not use hyphen (`-`) within their short option OPTSPEC, as this would override getopts_long implementation.
 
 ### Internal variables
 

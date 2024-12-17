@@ -1,0 +1,80 @@
+#!/usr/bin/env bash
+
+TOPDIR="$(cd "$(dirname "${0}")"/../.. && pwd)"
+# shellcheck disable=SC1090
+source "${TOPDIR}/lib/getopts_long.bash"
+
+getopts_function() {
+    while getopts_long ':to:v: toggle option: variable:' OPTKEY; do
+        case ${OPTKEY} in
+            't'|'toggle')
+                printf 'toggle triggered'
+                ;;
+            'o'|'option')
+                printf 'option supplied'
+                ;;
+            'v'|'variable')
+                printf 'value supplied'
+                ;;
+            '?')
+                printf "INVALID OPTION"
+                ;;
+            ':')
+                printf "MISSING ARGUMENT"
+                ;;
+            *)
+                printf "NEVER REACHED"
+                ;;
+        esac
+        printf ' -- '
+        declare -p OPTARG 2>&1 | grep -oe 'OPTARG.*'
+    done
+
+    shift $(( OPTIND - 1 ))
+
+    echo "OPTERR: ${OPTERR}"
+    echo "OPTKEY: ${OPTKEY}"
+    echo "OPTARG: ${OPTARG}"
+    echo "OPTIND: ${OPTIND}"
+
+    local function_args=("$@")
+    declare -p function_args \
+        | sed -e 's/declare -a function_args=/$@: /'
+}
+
+proxy() {
+    getopts_function "$@"
+}
+
+toggles() {
+    getopts_function -t --toggle -- user_arg
+}
+
+options() {
+    getopts_function -o user_val1 --option user_val2 -- user_arg
+}
+
+variables() {
+    getopts_function -vuser_val1 --variable=user_val2 -- user_arg
+}
+
+disable_extdebug='false'
+if ! shopt -q extdebug; then
+    disable_extdebug='true'
+    shopt -s extdebug
+fi
+
+: "${1:?Missing required argument -- function name}"
+function_name=${1}
+shift
+
+if declare -f "$function_name" > /dev/null; then
+    ${function_name} "$@"
+else
+    echo "Function not found -- ${function_name}"
+    exit 1
+fi
+
+if ${disable_extdebug}; then
+    shopt -u extdebug
+fi
