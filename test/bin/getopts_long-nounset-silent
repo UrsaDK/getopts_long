@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+
+TOPDIR="$(cd "$(dirname "${0}")"/../.. && pwd)"
+# shellcheck disable=SC1090
+source "${TOPDIR}/lib/getopts_long.bash"
+
+(
+    set -o nounset
+
+    while getopts_long ':to:v: toggle option: variable:' OPTKEY; do
+        case ${OPTKEY} in
+            't'|'toggle')
+                printf 'toggle triggered'
+                ;;
+            'o'|'option')
+                printf 'option supplied'
+                ;;
+            'v'|'variable')
+                printf 'value supplied'
+                ;;
+            '?')
+                printf "INVALID OPTION"
+                ;;
+            ':')
+                printf "MISSING ARGUMENT"
+                ;;
+            *)
+                printf "NEVER REACHED"
+                ;;
+        esac
+        printf ' -- '
+        declare -p OPTARG 2>&1 | grep -oe 'OPTARG.*'
+    done
+
+    shift $(( OPTIND - 1 ))
+
+    echo "OPTERR: ${OPTERR:-}"
+    echo "OPTKEY: ${OPTKEY:-}"
+    echo "OPTARG: ${OPTARG:-}"
+    echo "OPTIND: ${OPTIND:-}"
+
+    args=("$@")
+    declare -p args | sed -e 's/declare -a args=/$@: /'
+)
