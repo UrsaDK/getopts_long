@@ -53,10 +53,9 @@ getopts_long() {
 
         # Missing argument
         if [[ -z "${OPTARG}" ]]; then
-            OPTARG="${!OPTIND}" && OPTIND=$(( OPTIND + 1 ))
-            [[ -z "${OPTARG}" ]] || return 0
-
-            if [[ "${optspec_short:0:1}" == ':' ]]; then
+            if [[ -n "${!OPTIND:-}" ]]; then
+                OPTARG="${!OPTIND}" && OPTIND=$(( OPTIND + 1 ))
+            elif [[ "${optspec_short:0:1}" == ':' ]]; then
                 OPTARG="${!optvar}" && printf -v "${optvar}" ':'
             else
                 [[ "${OPTERR}" == 0 ]] || \
