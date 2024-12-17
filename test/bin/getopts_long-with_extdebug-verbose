@@ -58,23 +58,17 @@ variables() {
     getopts_function -vuser_val1 --variable=user_val2 -- user_arg
 }
 
-disable_extdebug='false'
-if ! shopt -q extdebug; then
-    disable_extdebug='true'
+(
     shopt -s extdebug
-fi
 
-: "${1:?Missing required parameter -- function name}"
-function_name=${1}
-shift
+    : "${1:?Missing required parameter -- function name}"
+    function_name=${1}
+    shift
 
-if declare -f "$function_name" > /dev/null; then
-    ${function_name} "$@"
-else
-    echo "Function not found -- ${function_name}"
-    exit 1
-fi
-
-if ${disable_extdebug}; then
-    shopt -u extdebug
-fi
+    if declare -f "$function_name" > /dev/null; then
+        ${function_name} "$@"
+    else
+        echo "Function not found -- ${function_name}"
+        exit 1
+    fi
+)

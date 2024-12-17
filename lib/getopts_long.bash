@@ -37,7 +37,10 @@ getopts_long() {
     # Sanitize and normalize short optspec
     optspec_short="${optspec_short//-:}"
     optspec_short="${optspec_short//-}"
-    [[ "${!OPTIND:0:2}" == "--" ]] && optspec_short+='-:'
+    if [[ -n "${!OPTIND:-}" && "${!OPTIND:0:2}" == "--" ]]; then
+        optspec_short+='-:'
+    fi
+
 
     builtin getopts -- "${optspec_short}" "${optvar}" "${@}" || return ${?}
     [[ "${!optvar}" == '-' ]] || return 0
@@ -50,10 +53,9 @@ getopts_long() {
 
         # Missing argument
         if [[ -z "${OPTARG}" ]]; then
-            OPTARG="${!OPTIND}" && OPTIND=$(( OPTIND + 1 ))
-            [[ -z "${OPTARG}" ]] || return 0
-
-            if [[ "${optspec_short:0:1}" == ':' ]]; then
+            if [[ -n "${!OPTIND:-}" ]]; then
+                OPTARG="${!OPTIND}" && OPTIND=$(( OPTIND + 1 ))
+            elif [[ "${optspec_short:0:1}" == ':' ]]; then
                 OPTARG="${!optvar}" && printf -v "${optvar}" ':'
             else
                 [[ "${OPTERR}" == 0 ]] || \
