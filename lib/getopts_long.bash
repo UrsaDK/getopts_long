@@ -37,7 +37,10 @@ getopts_long() {
     # Sanitize and normalize short optspec
     optspec_short="${optspec_short//-:}"
     optspec_short="${optspec_short//-}"
-    [[ "${!OPTIND:0:2}" == "--" ]] && optspec_short+='-:'
+    if [[ -n "${!OPTIND:-}" && "${!OPTIND:0:2}" == "--" ]]; then
+        optspec_short+='-:'
+    fi
+
 
     builtin getopts -- "${optspec_short}" "${optvar}" "${@}" || return ${?}
     [[ "${!optvar}" == '-' ]] || return 0
