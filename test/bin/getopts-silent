@@ -22,14 +22,15 @@ while getopts ":to:v:" OPTKEY; do
             ;;
     esac
     printf ' -- '
-    [[ -z "${OPTARG+SET}" ]] && echo 'OPTARG is unset' || echo "OPTARG=${OPTARG}"
+    declare -p OPTARG 2>&1 | grep -oe 'OPTARG.*'
 done
 
 shift $(( OPTIND - 1 ))
-[[ "${1}" == "--" ]] && shift
 
 echo "OPTERR: ${OPTERR}"
 echo "OPTKEY: ${OPTKEY}"
 echo "OPTARG: ${OPTARG}"
 echo "OPTIND: ${OPTIND}"
-echo "\$@: ${*}"
+
+args=("$@")
+declare -p args | sed -e 's/declare -a args=/$@: /'

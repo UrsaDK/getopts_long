@@ -2,7 +2,7 @@ getopts_long() {
     : "${1:?Missing required parameter -- long optspec}"
     : "${2:?Missing required parameter -- variable name}"
 
-    local optspec_short="${1%% *}-:"
+    local optspec_short="${1%% *}"
     local optspec_long="${1#* }"
     local optvar="${2}"
 
@@ -10,20 +10,42 @@ getopts_long() {
 
     if [[ "${#}" == 0 ]]; then
         local args=()
-        while [[ ${#BASH_ARGV[@]} -gt ${#args[@]} ]]; do
-            local index=$(( ${#BASH_ARGV[@]} - ${#args[@]} - 1 ))
-            args[${#args[@]}]="${BASH_ARGV[${index}]}"
+        local -i start_index=0
+        local -i end_index=$(( ${#BASH_ARGV[@]} - 1 ))
+
+        # Minimise the number of times `declare -f` is executed
+        if [[ -n "${FUNCNAME[1]}" ]]; then
+            if [[ "${FUNCNAME[1]}" == "( anon )" ]] \
+                    || declare -f "${FUNCNAME[1]}" > /dev/null 2>&1; then
+                if ! shopt -q extdebug; then
+                    echo "${BASH_SOURCE[1]}: line ${BASH_LINENO[0]}:" \
+                    "${FUNCNAME[0]} failed to detect supplied arguments" \
+                    "-- enable extdebug or pass arguments explicitly" >&2
+                    return 2
+                fi
+                start_index=${BASH_ARGC[0]}
+                end_index=$(( start_index + BASH_ARGC[1] - 1 ))
+            fi
+        fi
+
+        for (( i = end_index; i >= start_index; i-- )); do
+            args+=("${BASH_ARGV[i]}")
         done
         set -- "${args[@]}"
     fi
 
-    builtin getopts "${optspec_short}" "${optvar}" "${@}" || return 1
+    # Sanitize and normalize short optspec
+    optspec_short="${optspec_short//-:}"
+    optspec_short="${optspec_short//-}"
+    [[ "${!OPTIND:0:2}" == "--" ]] && optspec_short+='-:'
+
+    builtin getopts -- "${optspec_short}" "${optvar}" "${@}" || return ${?}
     [[ "${!optvar}" == '-' ]] || return 0
 
     printf -v "${optvar}" "%s" "${OPTARG%%=*}"
 
-    if [[ "${optspec_long}" =~ (^|[[:space:]])${!optvar}:([[:space:]]|$) ]]; then
-        OPTARG="${OPTARG#${!optvar}}"
+    if [[ " ${optspec_long} " == *" ${!optvar}: "* ]]; then
+        OPTARG="${OPTARG#"${!optvar}"}"
         OPTARG="${OPTARG#=}"
 
         # Missing argument
@@ -38,8 +60,9 @@ getopts_long() {
                 unset OPTARG && printf -v "${optvar}" '?'
             fi
         fi
-    elif [[ "${optspec_long}" =~ (^|[[:space:]])${!optvar}([[:space:]]|$) ]]; then
+    elif [[ " ${optspec_long} " == *" ${!optvar} "* ]]; then
         unset OPTARG
+        declare -g OPTARG
     else
         # Invalid option
         if [[ "${optspec_short:0:1}" == ':' ]]; then

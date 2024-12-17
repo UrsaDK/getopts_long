@@ -7,45 +7,61 @@ FEATURE="$(basename "${BATS_TEST_FILENAME}" '.bats' | tr '_' ' ')"
 PATH="${TOPDIR}/bin:${PATH}"
 
 debug() {
-    printf '\nACTUAL:\n––––––––\n%s\n' "${2}" >&3
-    printf '\nEXPECTED:\n––––––––\n%s\n\n' "${1}" >&3
+cat >&3 <<END_OF_MESSAGE
+
+EXPECTED (eg: bash getopts)
+––––––––––––––---––––––––––
+${1}
+
+RECEIVED (eg: getopts_long)
+––––––––––––––---––––––––––
+${2}
+
+END_OF_MESSAGE
 }
 
 expect() {
-  if ! test "${@}"; then
-    case ${1} in
-      -[[:alpha:]])
-        debug "[[ ${1} ACTUAL ]]" "${!#}"
-        ;;
-      *)
-        debug "${!#}" "${1}"
-        ;;
-    esac
-    return 1
-  fi
+    if [[ "${2}" == "=~" ]]; then
+        if [[ ! "${1}" =~ ${3} ]]; then
+            debug "${!#}" "${1}"
+            return 1
+        fi
+    elif ! test "$@"; then
+        case "${1}" in
+            -[[:alpha:]])
+                debug "$(help test | grep -- "${1}")" "${!#}"
+                ;;
+            *)
+                debug "${!#}" "${1}"
+                ;;
+        esac
+        return 1
+    fi
 }
 
 compare() {
     : "${1?Missing required parameter -- getopts arguments}"
     : "${2?Missing required parameter -- getopts_long arguments}"
 
-    run "getopts-${BATS_TEST_DESCRIPTION##* }" ${1}
-    expected_output="${output}"
-    expected_lines=( "${lines[@]}" )
-    expected_status=${status}
-    export expected_output expected_lines expected_status
+    run "${GETOPTS_TEST_BIN:-getopts}-${BATS_TEST_DESCRIPTION##* }" ${1}
+    bash_getopts_output="${output}"
+    bash_getopts=( "${status}" "${lines[@]}" )
+    export bash_getopts
 
-    run "getopts_long-${BATS_TEST_DESCRIPTION##* }" ${2}
-    actual_output="${output}"
-    actual_lines=( "${lines[@]}" )
-    actual_status=${status}
-    export actual_output actual_lines actual_status
+    run "${GETOPTS_LONG_TEST_BIN:-getopts_long}-${BATS_TEST_DESCRIPTION##* }" ${2}
+    getopts_long_output="${output}"
+    getopts_long=( "${status}" "${lines[@]}" )
+    export getopts_long
 
     if [[ -n "${3+SET}" ]]; then
-        expected_output="$(echo "${expected_output}" | sed -E "${3}")"
-        actual_output="$(echo "${actual_output}" | sed -E "${3}")"
+        shift 2
+        for arg in "$@"; do
+            sed_args+=("-e" "$arg")
+        done
+        bash_getopts_output="$(echo "${bash_getopts_output}" | sed -E "${sed_args[@]}")"
+        getopts_long_output="$(echo "${getopts_long_output}" | sed -E "${sed_args[@]}")"
     fi
 
-    expect "${expected_output}" == "${actual_output}"
-    expect "${expected_status}" == "${actual_status}"
+    expect "${getopts_long_output}" == "${bash_getopts_output}"
+    expect "Exit status: ${getopts_long[0]}" == "Exit status: ${bash_getopts[0]}"
 }

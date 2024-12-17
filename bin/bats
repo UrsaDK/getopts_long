@@ -29,5 +29,4 @@ shellcheck --format="tty" --shell="bash" --check-sourced \
 
 # Run bats without generating code coverage
 echo "Running tests: ${*:-"${TEST_DIR}"}"
-/usr/local/bin/bats ${*:+'--tap'} --recursive "${@:-"${TEST_DIR}"}"
-[[ -z "${*}" ]] && "$(dirname "${0}")/kcov"
+/usr/local/bin/bats --recursive "${*:-"${TEST_DIR}"}"

@@ -5,7 +5,6 @@
   [![stable branch](https://img.shields.io/badge/dynamic/json.svg?color=lightgrey&label=stable&query=%24.default_branch&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUrsaDK%2Fgetopts_long&logo=github)](https://github.com/UrsaDK/getopts_long/tree/master)
   [![latest release](https://img.shields.io/badge/dynamic/json.svg?color=blue&label=release&query=%24.name&url=https%3A%2F%2Fapi.github.com%2Frepos%2FUrsaDK%2Fgetopts_long%2Freleases%2Flatest&logo=docker)](https://hub.docker.com/r/ursadk/getopts_long)
   [![test coverage](https://codecov.io/gh/UrsaDK/getopts_long/graph/badge.svg)](https://codecov.io/gh/UrsaDK/getopts_long)
-  [![donate link](https://img.shields.io/badge/donate-coinbase-gold.svg?colorB=ff8e00&logo=bitcoin)](https://commerce.coinbase.com/checkout/17ae30c2-9c3f-45fb-a911-36d01a3c81b6)
 
 </div>
 
@@ -18,6 +17,17 @@ This is a pure BASH implementation of `getopts_long` function, which "upgrades" 
   - `--option=value`
 
 This function is 100% compatible with the built-in `getopts`. It is implemented with no external dependencies, and relies solely on BASH built-in tools to provide all of its functionality.
+
+The implementation supports the following option syntax:
+
+  - Short options are compatible with bash’s built-in getopts:
+    - `-o`
+    - `-o value`
+    - `-ovalue`
+  - Long options support GNU-like syntax:
+    - `--option`
+    - `--option value`
+    - `--option=value`
 
 Table of Content
 ----------------
@@ -157,7 +167,6 @@ while getopts_long ':af: all file:' OPTKEY; do
 done
 
 shift $(( OPTIND - 1 ))
-[[ "${1}" == "--" ]] && shift
 
 ...
 ```
@@ -179,7 +188,10 @@ while getopts ...; do
 done
 ```
 
-Identical to `getopts`, `getopts_long` will parse options and their possible arguments. It will stop parsing on the first non-option argument (a string that doesn't begin with a hyphen (`-`) that isn't an argument for any option in front of it). It will also stop parsing when it sees the `--` (double-hyphen), which means end of options.
+Identical to `getopts`, `getopts_long` will parse options and their possible arguments. It will stop parsing on the first non-option argument (a string that doesn't begin with a hyphen (`-`) that isn't an argument for any option in front of it). It will also stop parsing when it sees the `--` (double-hyphen) as a stand-alone argument.
+
+> [!IMPORTANT]
+> To support long options and enforce identical behaviour between getopts and getopts_long when handling hyphens, getopts_long provides its own implementation for `-` option. This means that the user can not use hyphen (`-`) within their short option OPTSPEC, as this would override getopts_long implementation.
 
 ### Internal variables
 

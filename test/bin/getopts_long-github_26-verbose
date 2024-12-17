@@ -4,12 +4,12 @@ TOPDIR="$(cd "$(dirname "${0}")"/../.. && pwd)"
 # shellcheck disable=SC1090
 source "${TOPDIR}/lib/getopts_long.bash"
 
-while getopts_long 'to:v: toggle option: variable:' OPTKEY; do
+while getopts_long 'to:v: toggle option: variable: -toggle -option:' OPTKEY; do
     case ${OPTKEY} in
-        't'|'toggle')
+        't'|'toggle'|'-toggle')
             printf 'toggle triggered'
             ;;
-        'o'|'option')
+        '-'|'o'|'option'|'-option')
             printf 'option supplied'
             ;;
         'v'|'variable')
