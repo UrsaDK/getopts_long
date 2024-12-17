@@ -36,5 +36,7 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-nounset'
 }
 @test "${FEATURE}: missing last argument, verbose" {
     compare '-o' \
-            '--option'
+            '--option' \
+            '1{s/getopts.+verbose:/getopts-NORMALIZED:/}' \
+            '1{s/(option requires an argument --) (o|option)$/\1 NORMALIZED/}'
 }
