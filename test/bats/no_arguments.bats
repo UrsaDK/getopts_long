@@ -21,10 +21,10 @@ load ../test_helper
 @test "${FEATURE}: terminator, extra arguments, silent" {
     compare '-- user_arg' \
             '-- user_arg'
-    expect  "${getopts_long[5]}" == '$@: ([0]="user_arg")'
+    expect  "${getopts_long[5]}" == 'declare -a $@=([0]="user_arg")'
 }
 @test "${FEATURE}: terminator, extra arguments, verbose" {
     compare '-- user_arg' \
             '-- user_arg'
-    expect  "${getopts_long[5]}" == '$@: ([0]="user_arg")'
+    expect  "${getopts_long[5]}" == 'declare -a $@=([0]="user_arg")'
 }
