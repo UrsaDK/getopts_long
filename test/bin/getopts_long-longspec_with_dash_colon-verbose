@@ -23,15 +23,17 @@ while getopts_long 'to:v: -: toggle option: variable:' OPTKEY; do
             ;;
     esac
     printf ' -- '
-    declare -p OPTARG 2>&1 | grep -oe 'OPTARG.*'
+    declare -p OPTARG 2>&1 | grep -oe 'declare.*'
 done
 
 shift $(( OPTIND - 1 ))
 
-echo "OPTERR: ${OPTERR}"
-echo "OPTKEY: ${OPTKEY}"
-echo "OPTARG: ${OPTARG}"
-echo "OPTIND: ${OPTIND}"
+declare -p OPTERR 2>&1 | grep -oe 'declare.*'
+declare -p OPTKEY 2>&1 | grep -oe 'declare.*'
+declare -p OPTARG 2>&1 | grep -oe 'declare.*'
+declare -p OPTIND 2>&1 | grep -oe 'declare.*'
 
-args=("$@")
-declare -p args | sed -e 's/declare -a args=/$@: /'
+script_args=("$@")
+declare -p script_args 2>&1 \
+    | sed -e 's/script_args/$@/' \
+    | grep -oe 'declare.*'

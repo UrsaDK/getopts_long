@@ -27,19 +27,20 @@ getopts_function() {
                 ;;
         esac
         printf ' -- '
-        declare -p OPTARG 2>&1 | grep -oe 'OPTARG.*'
+        declare -p OPTARG 2>&1 | grep -oe 'declare.*'
     done
 
     shift $(( OPTIND - 1 ))
 
-    echo "OPTERR: ${OPTERR}"
-    echo "OPTKEY: ${OPTKEY}"
-    echo "OPTARG: ${OPTARG}"
-    echo "OPTIND: ${OPTIND}"
+    declare -p OPTERR 2>&1 | grep -oe 'declare.*'
+    declare -p OPTKEY 2>&1 | grep -oe 'declare.*'
+    declare -p OPTARG 2>&1 | grep -oe 'declare.*'
+    declare -p OPTIND 2>&1 | grep -oe 'declare.*'
 
     local function_args=("$@")
     declare -p function_args \
-        | sed -e 's/declare -a function_args=/$@: /'
+        | sed -e 's/function_args/$@/' \
+        | grep -oe 'declare.*'
 }
 
 proxy() {
