@@ -58,35 +58,31 @@ export GETOPTS_LONG_TEST_BIN='getopts_long-no_shortspec'
 }
 
 @test "${FEATURE}: terminator followed by long variable, silent" {
-    compare '-t -- -v user_val' \
+    compare '-t -- -vuser_val' \
             '--toggle -- --variable=user_val' \
-            '/^\$@: /d'
-    expect "${bash_getopts[6]}" == 'declare -a $@=([0]="-v" [1]="user_val")'
+            '6{s/\[0]="(-v|--variable=)/[0]="-NORMALIZED=/}'
+    expect "${bash_getopts[6]}" == 'declare -a $@=([0]="-vuser_val")'
     expect "${getopts_long[6]}" == 'declare -a $@=([0]="--variable=user_val")'
 }
 @test "${FEATURE}: terminator followed by long variable, verbose" {
-    compare '-t -- -v user_val' \
+    compare '-t -- -vuser_val' \
             '--toggle -- --variable=user_val' \
-            '/^\$@: /d'
-    expect "${bash_getopts[6]}" == 'declare -a $@=([0]="-v" [1]="user_val")'
+            '6{s/\[0]="(-v|--variable=)/[0]="-NORMALIZED=/}'
+    expect "${bash_getopts[6]}" == 'declare -a $@=([0]="-vuser_val")'
     expect "${getopts_long[6]}" == 'declare -a $@=([0]="--variable=user_val")'
 }
 
 @test "${FEATURE}: long variable followed by terminator, silent" {
-    compare '-v user_val -- -t' \
+    compare '-vuser_val -- -t' \
             '--variable=user_val -- --toggle' \
-            '/^(OPTIND|\$@): /d'
-    expect "${bash_getopts[5]}" == 'declare -i OPTIND="4"'
-    expect "${getopts_long[5]}" == 'declare -i OPTIND="3"'
+            '6{s/\[0]="(-t|--toggle)"/[0]="NORMALIZED"/}'
     expect "${bash_getopts[6]}" == 'declare -a $@=([0]="-t")'
     expect "${getopts_long[6]}" == 'declare -a $@=([0]="--toggle")'
 }
 @test "${FEATURE}: long variable followed by terminator, verbose" {
-    compare '-v user_val -- -t'  \
+    compare '-vuser_val -- -t'  \
             '--variable=user_val -- --toggle' \
-            '/^(OPTIND|\$@): /d'
-    expect "${bash_getopts[5]}" == 'declare -i OPTIND="4"'
-    expect "${getopts_long[5]}" == 'declare -i OPTIND="3"'
+            '6{s/\[0]="(-t|--toggle)"/[0]="NORMALIZED"/}'
     expect "${bash_getopts[6]}" == 'declare -a $@=([0]="-t")'
     expect "${getopts_long[6]}" == 'declare -a $@=([0]="--toggle")'
 }

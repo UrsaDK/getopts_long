@@ -39,7 +39,8 @@ getopts_function() {
 
     local function_args=("$@")
     declare -p function_args \
-        | sed -e 's/script_args/$@/' | grep -oe 'declare.*'
+        | sed -e 's/function_args/$@/' \
+        | grep -oe 'declare.*'
 }
 
 proxy() {
