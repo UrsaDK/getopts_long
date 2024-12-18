@@ -34,4 +34,6 @@ declare -p OPTARG 2>&1 | grep -oe 'declare.*'
 declare -p OPTIND 2>&1 | grep -oe 'declare.*'
 
 script_args=("$@")
-declare -p script_args 2>&1 | sed -e 's/script_args/$@/' | grep -oe 'declare.*'
+declare -p script_args 2>&1 \
+    | sed -e 's/script_args/$@/' \
+    | grep -oe 'declare.*'
