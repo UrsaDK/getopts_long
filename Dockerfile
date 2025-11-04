@@ -7,8 +7,7 @@ LABEL org.opencontainers.image.vendor="Dmytro Konstantinov" \
     org.opencontainers.image.created="${BUILD_DATE}"
 COPY ./dockerfs /
 RUN cp -a /etc/skel/.??* /root \
-    && adduser --quiet --uid 1000 --disabled-password --disabled-login \
-        --no-create-home --home /home --shell /bin/bash --gecos "" guest \
+    && useradd -u 1000 -M -d /home -s /bin/bash -U -p '!*' guest \
     && cp /etc/skel/.??* /home \
     && chown -R guest:guest /home /mnt
 RUN apt-get -y update \
